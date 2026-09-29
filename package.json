@@ -1,0 +1,23 @@
+{
+  "name": "public-site",
+  "version": "1.0.0",
+  "description": "Public site for The Department of Second Drafts",
+  "main": "index.js",
+  "scripts": {
+    "dev": "http-server -p 3000 src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Second-Drafts/public-site.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Second-Drafts/public-site/issues"
+  },
+  "homepage": "https://github.com/Second-Drafts/public-site#readme",
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "http-server": "^14.1.1"
+  }
+}
