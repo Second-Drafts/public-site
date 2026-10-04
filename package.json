@@ -4,7 +4,9 @@
   "description": "Public site for The Department of Second Drafts",
   "main": "index.js",
   "scripts": {
-    "dev": "http-server -p 3000 src",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "deploy": "node scripts/deploy.js"
   },
   "repository": {
@@ -18,7 +20,8 @@
   },
   "homepage": "https://github.com/Second-Drafts/public-site#readme",
   "devDependencies": {
+    "astro": "^7.3.5",
     "gh-pages": "^6.1.1",
-    "http-server": "^14.1.1"
+    "typescript": "^7.0.2"
   }
 }
