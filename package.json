@@ -1,27 +1,28 @@
 {
-  "name": "public-site",
-  "version": "1.0.0",
-  "description": "Public site for The Department of Second Drafts",
-  "main": "index.js",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "deploy": "node scripts/deploy.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Second-Drafts/public-site.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/Second-Drafts/public-site/issues"
-  },
-  "homepage": "https://github.com/Second-Drafts/public-site#readme",
-  "devDependencies": {
-    "astro": "^7.3.5",
-    "gh-pages": "^6.1.1",
-    "typescript": "^7.0.2"
-  }
+	"name": "public-site",
+	"version": "1.0.0",
+	"description": "Public site for The Department of Second Drafts",
+	"main": "index.js",
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"predeploy": "npm run build",
+		"deploy": "node scripts/deploy.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Second-Drafts/public-site.git"
+	},
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Second-Drafts/public-site/issues"
+	},
+	"homepage": "https://github.com/Second-Drafts/public-site#readme",
+	"devDependencies": {
+		"astro": "^7.3.5",
+		"gh-pages": "^6.1.1",
+		"typescript": "^7.0.2"
+	}
 }
