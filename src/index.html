@@ -32,11 +32,18 @@
         there's much more to come for storytellers of all types.
       </p>
       <p style="text-wrap: pretty; text-align: right">– The Department</p>
-      <img
-        src="img/logo.svg"
-        alt="The Department of Second Drafts"
-        style="width: 100%; max-width: 600px; margin: 0 auto"
-      />
+      <picture>
+        <source srcset="img/logo.svg" media="(prefers-color-scheme: light)" />
+        <source
+          srcset="img/logo-white.svg"
+          media="(prefers-color-scheme: dark)"
+        />
+        <img
+          src="img/logo.svg"
+          alt="The Department of Second Drafts"
+          style="width: 100%; max-width: 600px; margin: 0 auto"
+        />
+      </picture>
     </main>
   </body>
 </html>
