@@ -4,7 +4,8 @@
   "description": "Public site for The Department of Second Drafts",
   "main": "index.js",
   "scripts": {
-    "dev": "http-server -p 3000 src"
+    "dev": "http-server -p 3000 src",
+    "deploy": "node scripts/deploy.js"
   },
   "repository": {
     "type": "git",
