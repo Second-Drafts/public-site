@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://seconddrafts.com/sitemap.xml
+Sitemap: https://seconddrafts.com/sitemap-index.xml
