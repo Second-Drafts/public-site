@@ -1,0 +1,23 @@
+---
+import Base from "../layouts/Base.astro";
+
+const tools = {
+  "word-counter": {
+    title: "Word Counter",
+    description: "A simple tool to count words in your text.",
+  },
+}
+---
+
+<Base title="Tools">
+			<h1 style="text-align: center">Tools</h1>
+      <h2 style="text-align: center">Our collection of free writing tools</h2>
+
+      {Object.entries(tools).map(([key, tool]) => (
+        <p style="text-wrap: pretty">
+          <a href={`/tools/${key}`}>{tool.title}</a>
+          <br />
+          {tool.description}
+        </p>
+      ))}
+</Base>

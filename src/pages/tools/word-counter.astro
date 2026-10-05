@@ -1,0 +1,24 @@
+---
+
+import Base from "../../layouts/Base.astro";
+
+---
+
+<Base title="Word Counter">
+  <h1 style="text-align: center">Word Counter</h1>
+	<p label-for="input">Type or paste some text to quickly check its word count</p>
+  <textarea id="input" rows="10" style="width: 100%"></textarea>
+  <p><span id="count">0</span> words</p>
+</Base>
+
+<script>
+  const input = document.querySelector<HTMLTextAreaElement>("#input");
+  const count = document.querySelector<HTMLElement>("#count");
+
+  const countWords = (text: string): number =>
+    text.split(/\s+/).filter(Boolean).length;
+
+  input?.addEventListener("input", () => {
+    if (count) count.textContent = String(countWords(input.value));
+  });
+</script>	
