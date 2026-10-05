@@ -1,0 +1,41 @@
+---
+interface Props {
+	title?: string;
+}
+
+const { title } = Astro.props;
+const siteName = "The Department of Second Drafts";
+const fullTitle = title ? `${siteName}: ${title}` : siteName;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{fullTitle}</title>
+		<style is:global>
+			:root {
+				--color-primary: #222;
+				--color-background: #fffdfd;
+			}
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--color-primary: #fff;
+					--color-background: #222;
+				}
+			}
+			body {
+				line-height: 1.8;
+				font-size: 1.2rem;
+				color: var(--color-primary);
+				background: var(--color-background);
+			}
+		</style>
+	</head>
+	<body>
+		<main style="max-width: 600px; margin: 4rem auto">
+			<slot />
+		</main>
+	</body>
+</html>
