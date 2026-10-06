@@ -100,7 +100,7 @@ Markers draw on: a stroke animates its dash from 0 to full over 240ms ease-out, 
 
 ## Iconography
 
-The brand has no icon set of its own yet. Use **Lucide** at 20px, 1.75px stroke, round caps and joins — the round caps echo the marker nib. Icons are `ink` or `ink-muted`; a status icon uses its `-ink` token. Never draw marker strokes as icons and never use emoji.
+Not many icons will be needed for the marketing site. It should probably make icons for custom for the purposes that it needs. If they're for common use cases it can bring in something free. If it's a more illustrative usage we can create a fancier one-off as long as the one-offs all match in style.
 
 ## Components
 
