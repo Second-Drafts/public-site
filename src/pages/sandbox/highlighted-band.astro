@@ -1,0 +1,65 @@
+---
+import Button from "../../components/Button.astro";
+import HighlightedBand from "../../components/HighlightedBand.astro";
+import Link from "../../components/Link.astro";
+import Logo from "../../components/Logo.astro";
+import Mark from "../../components/Mark.astro";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+---
+
+<SandboxLayout
+	title="HighlightedBand"
+	description="One band per page that changes the light: the whole section takes the pink marker. Toggle Night shift; the band stays the same."
+>
+	<Guidelines source="DESIGN.md → The Highlighted band">
+		<ul>
+			<li>For a closing call to action, a footer or a pull quote. One per page, full-bleed, square-cornered, at the very end.</li>
+			<li>No pink inside it: no circle Mark, no In review tag, no pink collaborator nib. Reach for strike, highlight or check.</li>
+			<li>Buttons inside are primary. Links underline in ink, not green.</li>
+			<li>In Night shift the band is the brightest thing on screen.</li>
+		</ul>
+	</Guidelines>
+
+	<p class="sb-prose">
+		Everything above the band is ordinary Paper or Night shift. Scroll down: the band sits outside the page column so it
+		runs edge to edge.
+	</p>
+
+	<HighlightedBand slot="after" as="footer">
+		<div class="sb-band">
+			<div>
+				<h2 class="sd-text-headline sb-band__headline">
+					Your <Mark kind="strike">first</Mark> second draft starts here.
+				</h2>
+				<p class="sb-band__copy">
+					Tools for every kind of storyteller, built by writers. <Link href="#">Read about the Department</Link>.
+				</p>
+				<Button href="#" size="lg">Start a draft</Button>
+			</div>
+			<Logo width={200} />
+		</div>
+	</HighlightedBand>
+</SandboxLayout>
+
+<style>
+	.sb-prose {
+		max-width: 34em;
+	}
+	.sb-band {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-8);
+	}
+	.sb-band__headline {
+		max-width: 14em;
+		margin: 0 0 var(--space-4);
+		font-weight: 600;
+	}
+	.sb-band__copy {
+		max-width: 34em;
+		margin: 0 0 var(--space-6);
+	}
+</style>

@@ -1,0 +1,37 @@
+---
+/*
+ * HighlightedBand — the one band per page that changes the light: the whole section takes the pink marker.
+ * Rules: DESIGN.md → The Highlighted band.
+ *
+ *   <HighlightedBand as="footer">…</HighlightedBand>
+ *
+ * - One per page, full-bleed, at the very end. Never a card or a rounded panel.
+ * - No pink inside: no circle Mark, no In-review tag, no pink collaborator nib.
+ * - Buttons inside are primary. Links underline in ink (Link handles that).
+ * Every token and component inside adapts through data-theme="highlighted".
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"section"> {
+	as?: "section" | "footer" | "aside" | "div";
+}
+
+const { as: Tag = "section", class: className, ...rest } = Astro.props;
+---
+
+<Tag {...rest} data-theme="highlighted" class:list={["sd-band", className]}>
+	<div class="sd-band__inner"><slot /></div>
+</Tag>
+
+<style>
+	.sd-band {
+		display: block;
+		background: var(--paper);
+		color: var(--ink);
+		padding: var(--space-16) var(--space-6);
+	}
+	.sd-band__inner {
+		max-width: 72rem;
+		margin-inline: auto;
+	}
+</style>

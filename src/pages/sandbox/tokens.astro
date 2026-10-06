@@ -1,0 +1,313 @@
+---
+/*
+ * Read from design-system/tokens.json so this page follows the tokens. Swatches are painted with the live CSS
+ * variables inside each theme's ground; the hex beside them is what tokens.json says, so a mismatch shows up here.
+ */
+import tokens from "../../../design-system/tokens.json";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEME_NAMES, THEMES, type Theme } from "./_components/themes";
+
+type Themed = Partial<Record<Theme, string>>;
+
+// A theme without its own value inherits Paper's; "{marker-blue}" means an alias.
+const valueFor = (value: Themed, theme: Theme) => value[theme] ?? value.light ?? "";
+
+const colours = tokens.color.tokens.map((token) => ({ ...token, value: token.value as Themed }));
+const typeGroups = tokens.type.groups;
+const shadow = tokens.shadow.tokens[0];
+---
+
+<SandboxLayout
+	title="Tokens"
+	description="The page comes first: paper and ink do almost all the work. Markers are annotations on top."
+>
+	<section class="sb-section">
+		<h2 class="sd-text-title">Colour</h2>
+		<p class="sb-note">
+			Markers are fills and strokes, not text; when a marker colour must be text, use its <code>-ink</code> token.
+		</p>
+		<div class="sb-scroll">
+			<table class="sb-colours">
+				<thead>
+					<tr>
+						<th class="sd-text-label" scope="col">Token</th>
+						{
+							THEMES.map((theme) => (
+								<th class="sd-text-label" scope="col">
+									{THEME_NAMES[theme]}
+								</th>
+							))
+						}
+					</tr>
+				</thead>
+				<tbody>
+					{
+						colours.map((token) => (
+							<tr>
+								<th scope="row" class="sb-colours__token">
+									<code class="sd-text-code">{token.name}</code>
+									<span class="sb-colours__usage">{token.usage}</span>
+								</th>
+								{THEMES.map((theme) => (
+									<td data-theme={theme} class="sb-colours__cell">
+										<span class="sb-swatch" style={`background: var(--${token.name})`} />
+										<code class="sd-text-meta">{valueFor(token.value, theme)}</code>
+									</td>
+								))}
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+	</section>
+
+	<section class="sb-section">
+		<h2 class="sd-text-title">Type</h2>
+		<p class="sb-note">
+			Josefin Sans for display, Literata for prose, IBM Plex Mono for facts about the writing. Each sample uses its
+			<code>.sd-text-*</code> class from tokens.css.
+		</p>
+		{
+			typeGroups.map((group) => (
+				<div class="sb-type-group">
+					<h3 class="sd-text-heading">{group.name}</h3>
+					{group.styles.map((style) => (
+						<div class="sb-type">
+							<p class={`sd-text-${style.name} sb-type__sample`}>{style.sample}</p>
+							<p class="sb-type__spec sd-text-meta">
+								sd-text-{style.name} · {style.fontSize}/{style.lineHeight} · {style.fontWeight}
+								{style.letterSpacing !== "0" && ` · ${style.letterSpacing}`}
+							</p>
+							<p class="sb-type__usage">{style.usage}</p>
+						</div>
+					))}
+				</div>
+			))
+		}
+	</section>
+
+	<section class="sb-section">
+		<h2 class="sd-text-title">Space</h2>
+		<p class="sb-note">A 4px base. Fields stack space-6 apart; sections space-12.</p>
+		<dl class="sb-scale">
+			{
+				tokens.spacing.tokens.map((token) => (
+					<div class="sb-scale__row">
+						<dt>
+							<code class="sd-text-code">{token.name}</code> <span class="sd-text-meta">{token.value}</span>
+						</dt>
+						<dd>
+							<span class="sb-bar" style={`width: var(--${token.name})`} />
+							<span class="sb-scale__usage">{token.usage}</span>
+						</dd>
+					</div>
+				))
+			}
+		</dl>
+	</section>
+
+	<section class="sb-section">
+		<h2 class="sd-text-title">Radius</h2>
+		<div class="sb-tiles">
+			{
+				tokens.radius.tokens.map((token) => (
+					<figure class="sb-tile">
+						<span class="sb-tile__shape" style={`border-radius: var(--${token.name})`} />
+						<figcaption>
+							<code class="sd-text-code">{token.name}</code> <span class="sd-text-meta">{token.value}</span>
+							<span class="sb-tile__usage">{token.usage}</span>
+						</figcaption>
+					</figure>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="sb-section">
+		<h2 class="sd-text-title">Stroke</h2>
+		<p class="sb-note">{tokens.stroke.note}</p>
+		<div class="sb-tiles">
+			{
+				tokens.stroke.tokens.map((token) => (
+					<figure class="sb-tile">
+						<span class="sb-stroke" style={`height: var(--${token.name})`} />
+						<figcaption>
+							<code class="sd-text-code">{token.name}</code> <span class="sd-text-meta">{token.value}</span>
+							<span class="sb-tile__usage">{token.usage}</span>
+						</figcaption>
+					</figure>
+				))
+			}
+		</div>
+	</section>
+
+	<Specimen title="Shadow" description={`${tokens.shadow.note} ${shadow.usage}`}>
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme}>
+					<div class="sb-lift">
+						<code class="sd-text-code">{shadow.name}</code>
+					</div>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>
+
+<style>
+	.sb-section {
+		margin-bottom: var(--space-12);
+	}
+	.sb-section h2 {
+		margin: 0 0 var(--space-2);
+	}
+	.sb-note {
+		max-width: 34em;
+		margin: 0 0 var(--space-6);
+		color: var(--ink-muted);
+	}
+	code {
+		font-family: var(--font-mono);
+	}
+
+	.sb-scroll {
+		overflow-x: auto;
+	}
+	.sb-colours {
+		width: 100%;
+		min-width: 40rem;
+		border-collapse: collapse;
+	}
+	.sb-colours th[scope="col"] {
+		padding: var(--space-2) var(--space-3);
+		text-align: left;
+		color: var(--ink-muted);
+	}
+	.sb-colours__token {
+		width: 40%;
+		padding: var(--space-3) var(--space-4) var(--space-3) 0;
+		text-align: left;
+		font-weight: 400;
+		vertical-align: top;
+		border-top: var(--stroke-hairline) solid var(--rule);
+	}
+	.sb-colours__usage {
+		display: block;
+		margin-top: var(--space-1);
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	.sb-colours__cell {
+		padding: var(--space-3);
+		background: var(--paper);
+		color: var(--ink);
+		vertical-align: top;
+	}
+	.sb-swatch {
+		display: block;
+		height: 40px;
+		margin-bottom: var(--space-1);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-sm);
+	}
+
+	.sb-type-group {
+		margin-bottom: var(--space-8);
+	}
+	.sb-type-group h3 {
+		margin: 0 0 var(--space-4);
+		color: var(--ink-muted);
+	}
+	.sb-type {
+		padding: var(--space-4) 0;
+		border-top: var(--stroke-hairline) solid var(--rule);
+	}
+	.sb-type__sample {
+		margin: 0 0 var(--space-2);
+	}
+	.sb-type__spec {
+		margin: 0;
+		color: var(--ink-muted);
+	}
+	.sb-type__usage {
+		max-width: 44em;
+		margin: var(--space-1) 0 0;
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+
+	.sb-scale {
+		margin: 0;
+	}
+	.sb-scale__row {
+		display: grid;
+		grid-template-columns: 10rem 1fr;
+		gap: var(--space-4);
+		align-items: center;
+		padding: var(--space-2) 0;
+	}
+	.sb-scale__row dd {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-4);
+		margin: 0;
+	}
+	.sb-bar {
+		height: 16px;
+		background: var(--marker-blue);
+		border-radius: 2px;
+	}
+	.sb-scale__usage,
+	.sb-tile__usage {
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+
+	.sb-tiles {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+		gap: var(--space-6);
+	}
+	.sb-tile {
+		margin: 0;
+	}
+	.sb-tile__shape {
+		display: block;
+		width: 96px;
+		height: 64px;
+		margin-bottom: var(--space-3);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	.sb-tile__usage {
+		display: block;
+	}
+	.sb-stroke {
+		display: block;
+		width: 100%;
+		margin: var(--space-6) 0 var(--space-6);
+		background: var(--ink);
+	}
+
+	.sb-lift {
+		padding: var(--space-6);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+		box-shadow: var(--shadow-lift);
+	}
+
+	@media (max-width: 40rem) {
+		.sb-scale__row {
+			grid-template-columns: 1fr;
+			gap: var(--space-1);
+		}
+	}
+</style>

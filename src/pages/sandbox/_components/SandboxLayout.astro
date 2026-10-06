@@ -1,0 +1,136 @@
+---
+/*
+ * Shell for the dev-only sandbox pages. Loads the design system and adds a nav and a Paper / Night shift toggle.
+ * Full-bleed content (the Highlighted band) goes in slot="after", outside the centred column.
+ */
+import Button from "../../../components/Button.astro";
+import DesignSystemHead from "../../../components/DesignSystemHead.astro";
+import { SANDBOX_PAGES } from "./themes";
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description } = Astro.props;
+const current = Astro.url.pathname.replace(/\/$/, "");
+const nav = [{ href: "/sandbox", label: "Index" }, ...SANDBOX_PAGES];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="robots" content="noindex" />
+		<title>{title} · Sandbox</title>
+		<script is:inline>
+			try {
+				if (localStorage.getItem("sandbox-theme") === "dark") document.documentElement.dataset.theme = "dark";
+			} catch {}
+		</script>
+		<DesignSystemHead />
+	</head>
+	<body>
+		<header class="sb-bar">
+			<nav aria-label="Sandbox pages">
+				<ul class="sb-nav">
+					{
+						nav.map((page) => (
+							<li>
+								<a
+									class="sb-nav__link sd-text-label"
+									href={page.href}
+									aria-current={page.href === current ? "page" : undefined}
+								>
+									{page.label}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</nav>
+			<Button variant="secondary" size="sm" id="sb-theme-toggle">Night shift</Button>
+		</header>
+		<main class="sb-main">
+			<h1 class="sd-text-headline sb-title">{title}</h1>
+			{description && <p class="sb-lede">{description}</p>}
+			<slot />
+		</main>
+		<slot name="after" />
+		<script>
+			const root = document.documentElement;
+			const toggle = document.querySelector<HTMLButtonElement>("#sb-theme-toggle");
+			const label = toggle?.querySelector(".sd-btn__label");
+			const render = () => {
+				if (label) label.textContent = root.dataset.theme === "dark" ? "Paper" : "Night shift";
+			};
+			toggle?.addEventListener("click", () => {
+				const next = root.dataset.theme === "dark" ? "light" : "dark";
+				root.dataset.theme = next;
+				try {
+					localStorage.setItem("sandbox-theme", next);
+				} catch {}
+				render();
+			});
+			render();
+		</script>
+	</body>
+</html>
+
+<style>
+	.sb-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3) var(--space-6);
+		padding: var(--space-3) var(--space-6);
+		border-bottom: var(--stroke-hairline) solid var(--rule);
+	}
+	.sb-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-4);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sb-nav__link {
+		color: var(--ink-muted);
+		text-decoration: none;
+	}
+	.sb-nav__link:hover {
+		color: var(--ink);
+	}
+	/* current location is marker-blue */
+	.sb-nav__link[aria-current="page"] {
+		color: var(--ink);
+		text-decoration: underline;
+		text-decoration-color: var(--marker-blue);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 4px;
+	}
+	.sb-nav__link:focus-visible {
+		outline: none;
+		border-radius: var(--radius-sm);
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+	.sb-main {
+		max-width: 72rem;
+		margin: 0 auto;
+		padding: var(--space-12) var(--space-6) var(--space-16);
+	}
+	.sb-title {
+		margin: 0 0 var(--space-4);
+	}
+	.sb-lede {
+		max-width: 34em;
+		margin: 0 0 var(--space-12);
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+	}
+</style>

@@ -1,0 +1,37 @@
+---
+import Link from "../../components/Link.astro";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout title="Link" description="Ink text with a marker-green underline.">
+	<Guidelines source="DESIGN.md → Colour, The Highlighted band">
+		<p>
+			Links are <code>ink</code> text with a <code>marker-green</code> underline (3px, offset 3px). The underline is
+			the cue; the colour is identity.
+		</p>
+		<p>Inside the Highlighted band, links underline in <code>ink</code>, not green.</p>
+	</Guidelines>
+
+	<Specimen title="In prose" description="Tab to a link for the focus ring." min="20rem">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<p class="sb-prose">
+						The Department supervises <Link href="#">a collection of tools</Link> for writers of all sorts.
+						Read <Link href="#">about the Department</Link> or go straight to the <Link href="#">word counter</Link>.
+					</p>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>
+
+<style>
+	.sb-prose {
+		margin: 0;
+	}
+</style>

@@ -1,0 +1,21 @@
+/*
+ * The Department of Second Drafts — global layer of the design system.
+ * Tokens come straight from design-system/tokens.css (generated from tokens.json; don't copy them here).
+ * Component styles live in each src/components/*.astro. Only page-wide rules belong in this file.
+ * Rules: DESIGN.md.
+ */
+@import "../../design-system/tokens.css";
+
+::selection {
+  background: var(--selection);
+  color: var(--on-marker);
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-prose);
+  font-size: 17px;
+  line-height: 28px;
+}

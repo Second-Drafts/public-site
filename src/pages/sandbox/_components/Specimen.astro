@@ -1,0 +1,38 @@
+---
+/* A titled group of examples. Children (usually ThemePanels) sit in a grid that stacks on narrow screens. */
+interface Props {
+	title: string;
+	description?: string;
+	/** Smallest column width before the grid wraps. */
+	min?: string;
+}
+
+const { title, description, min = "18rem" } = Astro.props;
+---
+
+<section class="sb-specimen">
+	<h2 class="sd-text-title sb-specimen__title">{title}</h2>
+	{description && <p class="sb-specimen__desc">{description}</p>}
+	<div class="sb-specimen__grid" style={`--sb-min: ${min}`}>
+		<slot />
+	</div>
+</section>
+
+<style>
+	.sb-specimen {
+		margin-bottom: var(--space-12);
+	}
+	.sb-specimen__title {
+		margin: 0 0 var(--space-2);
+	}
+	.sb-specimen__desc {
+		max-width: 34em;
+		margin: 0 0 var(--space-4);
+		color: var(--ink-muted);
+	}
+	.sb-specimen__grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sb-min)), 1fr));
+		gap: var(--space-4);
+	}
+</style>

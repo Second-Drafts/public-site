@@ -1,9 +1,46 @@
-<html>
-  <head>
-    <title>Sandbox</title>
-  </head>
-  <body>
-    <h1>Sandbox</h1>
-    <p>A place to visualize components and experiments.</p>
-  </body>
-</html>
+---
+import Link from "../../components/Link.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import { SANDBOX_PAGES } from "./_components/themes";
+---
+
+<SandboxLayout
+	title="Sandbox"
+	description="A place to see the design system's Astro components and try experiments. Dev only: these pages are left out of the build."
+>
+	<ul class="sb-index">
+		{
+			SANDBOX_PAGES.map((page) => (
+				<li>
+					<Link href={page.href} class="sd-text-heading">
+						{page.label}
+					</Link>
+					<p>{page.description}</p>
+				</li>
+			))
+		}
+	</ul>
+	<p class="sb-source sd-text-meta">
+		Components: src/components · Global styles: src/styles/design-system.css · Rules: DESIGN.md
+	</p>
+</SandboxLayout>
+
+<style>
+	.sb-index {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+		gap: var(--space-6) var(--space-8);
+		margin: 0 0 var(--space-12);
+		padding: 0;
+		list-style: none;
+	}
+	.sb-index p {
+		margin: var(--space-2) 0 0;
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+	.sb-source {
+		color: var(--ink-muted);
+	}
+</style>

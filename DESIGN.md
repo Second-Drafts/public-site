@@ -104,4 +104,6 @@ The brand has no icon set of its own yet. Use **Lucide** at 20px, 1.75px stroke,
 
 ## Components
 
+**In this repo, use the Astro components in `src/components/`** (`Button`, `Mark`, `StatusTag`, `TextField`, `MarginNote`, `Link`, `HighlightedBand`, `Logo`), loaded through `DesignSystemHead.astro`. See them all at `/sandbox` in dev. The React bundle below is the Claude Design reference.
+
 `window.SecondDrafts` exposes `Button`, `Mark`, `StatusTag`, `TextField` and `MarginNote` (React 18). Load `design-system/tokens.css`, `design-system/components/bundle.css`, React, then `design-system/components/bundle.js`. Per-component guidelines are in `design-system/components/<Name>/README.md`; token values in `design-system/tokens.json`. Logos are in `public/img/`. Prefix your own classes something other than `sd-`.

@@ -1,0 +1,69 @@
+---
+/*
+ * Frames guidance text at the top of a sandbox page, usually a component README imported as Markdown:
+ *   import { Content } from "../../../design-system/components/Button/README.md";
+ *   <Guidelines source="design-system/components/Button/README.md"><Content /></Guidelines>
+ */
+interface Props {
+	/** Where the text comes from, shown as a caption. */
+	source: string;
+}
+
+const { source } = Astro.props;
+---
+
+<aside class="sb-guidelines">
+	<p class="sb-guidelines__source sd-text-meta">{source}</p>
+	<slot />
+</aside>
+
+<style>
+	.sb-guidelines {
+		max-width: 44rem;
+		margin: 0 0 var(--space-12);
+		padding: var(--space-4) var(--space-6);
+		background: var(--paper-sunken);
+		border-radius: var(--radius-md);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	.sb-guidelines__source {
+		margin: 0 0 var(--space-2);
+		color: var(--ink-muted);
+	}
+	.sb-guidelines :global(p),
+	.sb-guidelines :global(ul) {
+		margin: 0 0 var(--space-3);
+	}
+	.sb-guidelines :global(:last-child) {
+		margin-bottom: 0;
+	}
+	.sb-guidelines :global(ul) {
+		padding-left: var(--space-6);
+	}
+	.sb-guidelines :global(code) {
+		font-family: var(--font-mono);
+		font-size: 13px;
+		padding: 0 3px;
+		border-radius: var(--radius-sm);
+		background: var(--paper-raised);
+	}
+	.sb-guidelines :global(table) {
+		margin: 0 0 var(--space-3);
+		border-collapse: collapse;
+	}
+	.sb-guidelines :global(th),
+	.sb-guidelines :global(td) {
+		padding: var(--space-1) var(--space-3) var(--space-1) 0;
+		border-bottom: var(--stroke-hairline) solid var(--rule);
+		text-align: left;
+		vertical-align: top;
+	}
+	.sb-guidelines :global(th) {
+		font-family: var(--font-display);
+		font-size: 12px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+	}
+</style>

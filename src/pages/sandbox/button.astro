@@ -1,0 +1,99 @@
+---
+import Button from "../../components/Button.astro";
+import { Content } from "../../../design-system/components/Button/README.md";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+
+// Lucide icons (20px grid, 1.75 stroke, round caps), pasted in until an Icon component exists.
+const send =
+	'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.111z"/><path d="m21.854 2.147-10.94 10.939"/></svg>';
+const download =
+	'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg>';
+---
+
+<SandboxLayout title="Button" description="Buttons start an action. One primary or accent per view.">
+	<Guidelines source="design-system/components/Button/README.md"><Content /></Guidelines>
+
+	<Specimen title="Variants" description="Hover for the overlay (primary, accent), the sunken fill (secondary) and the yellow highlight (quiet). Tab for the focus ring.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme}>
+					<Button>Save</Button>
+					{theme !== "highlighted" && <Button variant="accent">Send to editor</Button>}
+					{theme !== "highlighted" && <Button variant="secondary">Export</Button>}
+					<Button variant="quiet">Cancel</Button>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Sizes" description="sm in margin notes and toolbars; lg only for marketing.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<Button size="sm">Save</Button>
+					<Button>Save</Button>
+					<Button size="lg">Save</Button>
+					<Button variant="quiet" size="sm">Reply</Button>
+					<Button variant="quiet" size="sm">Resolve</Button>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="With an icon" description="An 18px Lucide icon in the icon slot, before the label.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<Button variant="accent">
+						<Fragment slot="icon" set:html={send} />
+						Send to editor
+					</Button>
+					<Button variant="secondary">
+						<Fragment slot="icon" set:html={download} />
+						Export
+					</Button>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Disabled" description="40% opacity, no pointer, no hover.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<Button disabled>Save</Button>
+					<Button variant="accent" disabled>
+						Publish
+					</Button>
+					<Button variant="secondary" disabled>
+						Duplicate
+					</Button>
+					<Button variant="quiet" disabled>
+						Cancel
+					</Button>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="As a link" description="Pass href and the Button renders an <a>, for calls to action that navigate.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme}>
+					<Button href="#" size="lg">
+						Start a draft
+					</Button>
+					{theme !== "highlighted" && (
+						<Button href="#" variant="secondary" size="lg">
+							Read about us
+						</Button>
+					)}
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

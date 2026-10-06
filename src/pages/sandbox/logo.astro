@@ -1,0 +1,47 @@
+---
+import Logo from "../../components/Logo.astro";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout title="Logo" description="The lockup, with its clear space built in.">
+	<Guidelines source="DESIGN.md → Logo">
+		<ul>
+			<li><code>logo.svg</code> on Paper and on the Highlighted band. <code>logo-white.svg</code> on Night shift.</li>
+			<li>Minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.</li>
+			<li>Never recolour the markers, re-letter the name, or animate the logo's strokes.</li>
+			<li>Open item: the pink circle disappears on the Highlighted band; a band-specific lockup is still to be drawn.</li>
+		</ul>
+	</Guidelines>
+
+	<Specimen title="In each theme" description="The dashed outline shows the clear space; the logo picks its file from the nearest data-theme.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme}>
+					<Logo class="sb-outline" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Sizes" description="160px is the floor: asking for less still renders 160.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<Logo width={120} class="sb-outline" />
+					<Logo width={160} class="sb-outline" />
+					<Logo width={320} class="sb-outline" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>
+
+<style>
+	.sb-outline {
+		outline: 1px dashed var(--rule-strong);
+	}
+</style>

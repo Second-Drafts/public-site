@@ -1,0 +1,64 @@
+---
+/*
+ * Logo — the Department's lockup, with its clear space built in.
+ * Rules: DESIGN.md → Logo.
+ *
+ *   <Logo />            240px wide
+ *   <Logo width={320} />
+ *
+ * logo.svg on Paper and the Highlighted band, logo-white.svg on Night shift. Both images are in the
+ * page and CSS shows the one that matches the nearest [data-theme]. Never recolour or animate it.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends Omit<HTMLAttributes<"span">, "style"> {
+	/** Width of the artwork in px. Never below 160. */
+	width?: number;
+	alt?: string;
+}
+
+const MIN_WIDTH = 160;
+const ASPECT = 332 / 639; // the SVGs' viewBox
+// Clear space all round = height of the "D" in DEPARTMENT: 48 of the logo's 639 units.
+const CLEAR_SPACE = 48 / 639;
+
+const { width: requested = 240, alt = "The Department of Second Drafts", class: className, ...rest } = Astro.props;
+const width = Math.max(MIN_WIDTH, requested);
+const height = Math.round(width * ASPECT);
+const clearSpace = Math.round(width * CLEAR_SPACE);
+---
+
+<span {...rest} class:list={["sd-logo", className]} style={`padding: ${clearSpace}px`}>
+	<img class="sd-logo__img sd-logo__img--paper" src="/img/logo.svg" width={width} height={height} alt={alt} />
+	<img class="sd-logo__img sd-logo__img--night" src="/img/logo-white.svg" width={width} height={height} alt={alt} />
+</span>
+
+<style>
+	.sd-logo {
+		display: inline-block;
+		max-width: 100%;
+		box-sizing: border-box;
+	}
+	.sd-logo__img {
+		display: block;
+		max-width: 100%;
+		min-width: 160px;
+		height: auto;
+	}
+	.sd-logo__img--night {
+		display: none;
+	}
+	:global([data-theme="dark"]) .sd-logo__img--paper {
+		display: none;
+	}
+	:global([data-theme="dark"]) .sd-logo__img--night {
+		display: block;
+	}
+	/* a Paper or Highlighted surface inside Night shift goes back to the black-ink logo */
+	:global([data-theme="dark"] :is([data-theme="light"], [data-theme="highlighted"])) .sd-logo__img--paper {
+		display: block;
+	}
+	:global([data-theme="dark"] :is([data-theme="light"], [data-theme="highlighted"])) .sd-logo__img--night {
+		display: none;
+	}
+</style>

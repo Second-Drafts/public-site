@@ -1,0 +1,92 @@
+---
+/*
+ * StatusTag — where a piece of writing is in its life. Every status carries its word.
+ * Guidelines: design-system/components/StatusTag/README.md
+ *
+ *   <StatusTag status="review" />
+ *   <StatusTag status="approved">Scheduled</StatusTag>   (renames the word; keep it to one or two)
+ */
+import type { HTMLAttributes } from "astro/types";
+
+type Status = "draft" | "review" | "approved" | "published" | "blocked";
+
+interface Props extends HTMLAttributes<"span"> {
+	status?: Status;
+}
+
+const LABELS: Record<Status, string> = {
+	draft: "Draft",
+	review: "In review",
+	approved: "Approved",
+	published: "Published",
+	blocked: "Blocked",
+};
+
+const { status: requested = "draft", class: className, ...rest } = Astro.props;
+const status: Status = requested in LABELS ? requested : "draft";
+---
+
+<span {...rest} class:list={["sd-tag", `sd-tag--${status}`, className]}>
+	{
+		status === "approved" && (
+			<svg class="sd-tag__glyph" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M3 13 L9 20 L21 3" />
+			</svg>
+		)
+	}
+	{
+		status === "blocked" && (
+			<svg class="sd-tag__glyph" viewBox="0 0 24 24" aria-hidden="true">
+				<path d="M5 5 L19 19 M19 5 L5 19" />
+			</svg>
+		)
+	}
+	<slot>{LABELS[status]}</slot>
+</span>
+
+<style>
+	.sd-tag {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+		font-family: var(--font-display);
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		padding: 5px var(--space-3) 3px;
+		border-radius: var(--radius-pill);
+		border: var(--stroke-hairline) solid transparent;
+		color: var(--on-marker);
+		white-space: nowrap;
+	}
+	.sd-tag__glyph {
+		width: 12px;
+		height: 12px;
+		margin-top: -2px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.sd-tag--draft {
+		background: var(--marker-yellow);
+	}
+	.sd-tag--review {
+		background: var(--marker-pink);
+	}
+	.sd-tag--approved {
+		background: var(--marker-orange);
+	}
+	.sd-tag--published {
+		background: var(--ink);
+		color: var(--ink-inverse);
+	}
+	.sd-tag--blocked {
+		background: transparent;
+		color: var(--red-pen);
+		border-color: var(--red-pen);
+	}
+</style>

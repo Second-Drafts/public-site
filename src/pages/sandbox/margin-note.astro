@@ -1,0 +1,77 @@
+---
+import Button from "../../components/Button.astro";
+import MarginNote from "../../components/MarginNote.astro";
+import { Content } from "../../../design-system/components/MarginNote/README.md";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+
+const collaborators = ["yellow", "pink", "blue", "green", "orange"] as const;
+// No MarginNote in the Highlighted band: the pink nib would vanish.
+const themes = THEMES.filter((theme) => theme !== "highlighted");
+---
+
+<SandboxLayout title="MarginNote" description="A comment in the manuscript margin, from a teammate or an agent.">
+	<Guidelines source="design-system/components/MarginNote/README.md"><Content /></Guidelines>
+
+	<Specimen title="From a teammate" min="22rem">
+		{
+			themes.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<MarginNote author="Amy" color="pink" time="2m ago" quote="nobody remembers painting">
+						<p>Could this be the first clue? It would pay off nicely in chapter nine.</p>
+						<Fragment slot="actions">
+							<Button variant="quiet" size="sm">Reply</Button>
+							<Button variant="quiet" size="sm">Resolve</Button>
+						</Fragment>
+					</MarginNote>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="From an agent" description="Named for what it does, with the AGENT badge. Its suggestion adds Accept." min="22rem">
+		{
+			themes.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<MarginNote author="Continuity agent" agent color="blue" time="just now" quote="the red door">
+						<p>In chapter 3 the door is green. Change one of them, or note the repaint?</p>
+						<Fragment slot="actions">
+							<Button variant="quiet" size="sm">Accept</Button>
+							<Button variant="quiet" size="sm">Reply</Button>
+							<Button variant="quiet" size="sm">Resolve</Button>
+						</Fragment>
+					</MarginNote>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Resolved, and without a quote" min="22rem">
+		{
+			themes.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<MarginNote author="Sam" color="green" time="yesterday" resolved>
+						<p>Filed. The timeline now matches the outline.</p>
+					</MarginNote>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Collaborator markers" description="Assigned in join order: yellow, pink, blue, green, orange." min="22rem">
+		{
+			themes.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					{collaborators.map((color, index) => (
+						<MarginNote author={`Collaborator ${index + 1}`} color={color} time={`${index + 1}h ago`}>
+							<p>Marked in {color}.</p>
+						</MarginNote>
+					))}
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

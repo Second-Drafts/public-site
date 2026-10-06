@@ -1,0 +1,159 @@
+---
+/*
+ * MarginNote — a comment in the manuscript margin, from a teammate or an agent.
+ * Guidelines: design-system/components/MarginNote/README.md
+ *
+ *   <MarginNote author="Continuity agent" agent color="blue" time="2m ago" quote="the red door">
+ *     <p>In chapter 3 the door was green.</p>
+ *     <Fragment slot="actions">
+ *       <Button variant="quiet" size="sm">Accept</Button>
+ *       <Button variant="quiet" size="sm">Resolve</Button>
+ *     </Fragment>
+ *   </MarginNote>
+ *
+ * Collaborators take markers in join order: yellow, pink, blue, green, orange. Agents get the AGENT badge, never a special colour.
+ */
+import type { HTMLAttributes } from "astro/types";
+import Mark from "./Mark.astro";
+
+interface Props extends HTMLAttributes<"article"> {
+	author: string;
+	/** The collaborator's marker. */
+	color?: "yellow" | "pink" | "blue" | "green" | "orange";
+	/** Marks the author as an AI agent. */
+	agent?: boolean;
+	/** Relative time, e.g. "2m ago". */
+	time?: string;
+	/** The passage being discussed, shown highlighted. */
+	quote?: string;
+	/** Fades the note once it's dealt with. */
+	resolved?: boolean;
+}
+
+const {
+	author,
+	color = "pink",
+	agent = false,
+	time,
+	quote,
+	resolved = false,
+	class: className,
+	...rest
+} = Astro.props;
+---
+
+<article {...rest} class:list={["sd-note", resolved && "sd-note--resolved", className]}>
+	<header class="sd-note__head">
+		<span class:list={["sd-note__nib", `sd-note__nib--${color}`]} aria-hidden="true"></span>
+		<span class="sd-note__author">{author}</span>
+		{agent && <span class="sd-note__agent">AGENT</span>}
+		{time && <span class="sd-note__time">{time}</span>}
+	</header>
+	{
+		quote && (
+			<p class="sd-note__quote">
+				<Mark>{quote}</Mark>
+			</p>
+		)
+	}
+	<div class="sd-note__body"><slot /></div>
+	{
+		Astro.slots.has("actions") && (
+			<footer class="sd-note__actions">
+				<slot name="actions" />
+			</footer>
+		)
+	}
+</article>
+
+<style>
+	.sd-note {
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+		padding: var(--space-3) var(--space-4) var(--space-4);
+		color: var(--ink);
+		max-width: 340px;
+		box-sizing: border-box;
+	}
+	.sd-note--resolved {
+		opacity: 0.6;
+	}
+	.sd-note__head {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		min-height: 24px;
+	}
+	.sd-note__nib {
+		width: 18px;
+		height: 8px;
+		border-radius: var(--radius-pill);
+		flex: none;
+	}
+	.sd-note__nib--yellow {
+		background: var(--marker-yellow);
+	}
+	.sd-note__nib--pink {
+		background: var(--marker-pink);
+	}
+	.sd-note__nib--blue {
+		background: var(--marker-blue);
+	}
+	.sd-note__nib--green {
+		background: var(--marker-green);
+	}
+	.sd-note__nib--orange {
+		background: var(--marker-orange);
+	}
+	.sd-note__author {
+		font-family: var(--font-display);
+		font-size: 15px;
+		line-height: 20px;
+		font-weight: 600;
+		padding-top: 2px;
+	}
+	.sd-note__agent {
+		font-family: var(--font-mono);
+		font-size: 11px;
+		line-height: 14px;
+		font-weight: 500;
+		letter-spacing: 0.06em;
+		color: var(--ink-muted);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		padding: 1px 4px;
+	}
+	.sd-note__time {
+		margin-left: auto;
+		font-family: var(--font-mono);
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 500;
+		color: var(--ink-muted);
+	}
+	.sd-note__quote {
+		margin: var(--space-2) 0 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	.sd-note__body {
+		margin-top: var(--space-2);
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	/* the body is slotted from the page, so its paragraphs aren't in this component's scope */
+	.sd-note__body :global(p) {
+		margin: 0 0 var(--space-2);
+	}
+	.sd-note__body :global(p:last-child) {
+		margin-bottom: 0;
+	}
+	.sd-note__actions {
+		display: flex;
+		gap: var(--space-1);
+		margin: var(--space-3) 0 0 calc(-1 * var(--space-2));
+	}
+</style>

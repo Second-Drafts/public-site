@@ -1,0 +1,230 @@
+---
+import Button from "../../components/Button.astro";
+import HighlightedBand from "../../components/HighlightedBand.astro";
+import Link from "../../components/Link.astro";
+import Logo from "../../components/Logo.astro";
+import MarginNote from "../../components/MarginNote.astro";
+import Mark from "../../components/Mark.astro";
+import StatusTag from "../../components/StatusTag.astro";
+import TextField from "../../components/TextField.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+
+const pieces = [
+	{ title: "Prologue", words: "2,310 words", status: "published" },
+	{ title: "Chapter eleven", words: "6,120 words", status: "approved" },
+	{ title: "Chapter twelve", words: "7,480 words", status: "review" },
+	{ title: "Chapter thirteen", words: "1,904 words", status: "draft" },
+	{ title: "Epilogue", words: "0 words", status: "blocked" },
+] as const;
+---
+
+<SandboxLayout
+	title="Composition"
+	description="The components together: a manuscript under revision, its margin, a hand-off to an editor, and the closing band."
+>
+	<header class="sb-doc">
+		<div>
+			<p class="sd-text-label sb-flush">Chapter twelve</p>
+			<h2 class="sd-text-headline sb-doc__title">The door in the hill</h2>
+			<p class="sd-text-meta sb-doc__meta">7,480 words · v14 · edited 2m ago</p>
+		</div>
+		<StatusTag status="review" />
+	</header>
+
+	<div class="sb-manuscript">
+		<article class="sb-page">
+			<p>
+				Mara found the door on the third day of the thaw. It was set into the hillside where no door had been,{" "}
+				<Mark>painted a red that nobody remembered</Mark>, and it was locked from the inside.
+			</p>
+			<p>
+				She told the village council, who told the <Mark kind="strike">mayor</Mark>{" "}
+				<Mark kind="underline">harbourmaster</Mark>, who told no one at all. By evening the whole valley knew.
+			</p>
+			<p>
+				“Doors don’t grow,” said her brother. He said it the way people say things they need to be true. Mara wrote it
+				down in the notebook she kept for <Mark kind="circle">things about to stop being true</Mark>.
+			</p>
+			<p>
+				The next morning, the door was open. What came after is in the <Link href="#">outline for chapter thirteen</Link>,
+				which is still a draft.
+			</p>
+		</article>
+
+		<aside class="sb-margin" aria-label="Comments">
+			<MarginNote author="Continuity agent" agent color="blue" time="just now" quote="painted a red">
+				<p>In chapter 3 the door is green. Change one of them, or note the repaint?</p>
+				<Fragment slot="actions">
+					<Button variant="quiet" size="sm">Accept</Button>
+					<Button variant="quiet" size="sm">Reply</Button>
+					<Button variant="quiet" size="sm">Resolve</Button>
+				</Fragment>
+			</MarginNote>
+			<MarginNote author="Amy" color="pink" time="2m ago" quote="things about to stop being true">
+				<p>This is the line. Could the book’s title come from here?</p>
+				<Fragment slot="actions">
+					<Button variant="quiet" size="sm">Reply</Button>
+					<Button variant="quiet" size="sm">Resolve</Button>
+				</Fragment>
+			</MarginNote>
+			<MarginNote author="Sam" color="yellow" time="yesterday" resolved>
+				<p>Harbourmaster reads better. Filed.</p>
+			</MarginNote>
+		</aside>
+	</div>
+
+	<div class="sb-columns">
+		<section>
+			<h2 class="sd-text-title sb-section-title">In this project</h2>
+			<ul class="sb-pieces">
+				{
+					pieces.map((piece) => (
+						<li class="sb-piece">
+							<span class="sd-text-heading">{piece.title}</span>
+							<span class="sd-text-meta sb-piece__words">{piece.words}</span>
+							<StatusTag status={piece.status} />
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section>
+			<h2 class="sd-text-title sb-section-title">Send to your editor</h2>
+			<form class="sb-form">
+				<TextField label="Editor" type="email" name="editor" placeholder="e.g. editor@example.com" />
+				<TextField
+					label="Note"
+					name="note"
+					multiline
+					rows={3}
+					placeholder="e.g. The middle sags around page 140."
+					hint="Your editor sees this with the draft."
+				/>
+				<div class="sb-actions">
+					<Button variant="accent">Send to editor</Button>
+					<Button variant="quiet">Cancel</Button>
+				</div>
+			</form>
+		</section>
+	</div>
+
+	<HighlightedBand slot="after" as="footer">
+		<div class="sb-band">
+			<div>
+				<h2 class="sd-text-headline sb-band__headline">
+					Your <Mark kind="strike">first</Mark> second draft starts here.
+				</h2>
+				<p class="sb-band__copy">
+					Tools for every kind of storyteller, built by writers. <Link href="#">Read about the Department</Link>.
+				</p>
+				<Button href="#" size="lg">Start a draft</Button>
+			</div>
+			<Logo width={200} />
+		</div>
+	</HighlightedBand>
+</SandboxLayout>
+
+<style>
+	.sb-flush {
+		margin: 0;
+	}
+	.sb-doc {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--space-4);
+		max-width: 56rem;
+		margin-bottom: var(--space-8);
+		padding-bottom: var(--space-6);
+		border-bottom: var(--stroke-hairline) solid var(--rule);
+	}
+	.sb-doc__title {
+		margin: var(--space-2) 0;
+		font-weight: 600;
+	}
+	.sb-doc__meta {
+		margin: 0;
+		color: var(--ink-muted);
+	}
+
+	.sb-manuscript {
+		display: grid;
+		grid-template-columns: minmax(0, 34em) minmax(16rem, 340px);
+		gap: var(--space-12);
+		margin-bottom: var(--space-16);
+	}
+	.sb-page p {
+		margin: 0 0 var(--space-6);
+	}
+	.sb-margin {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.sb-columns {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+		gap: var(--space-12);
+	}
+	.sb-section-title {
+		margin: 0 0 var(--space-6);
+	}
+	.sb-pieces {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+	}
+	.sb-piece {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2) var(--space-4);
+		padding: var(--space-3) var(--space-4);
+	}
+	.sb-piece + .sb-piece {
+		border-top: var(--stroke-hairline) solid var(--rule);
+	}
+	.sb-piece__words {
+		margin-right: auto;
+		color: var(--ink-muted);
+	}
+	.sb-form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.sb-actions {
+		display: flex;
+		gap: var(--space-3);
+	}
+
+	.sb-band {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-8);
+	}
+	.sb-band__headline {
+		max-width: 14em;
+		margin: 0 0 var(--space-4);
+		font-weight: 600;
+	}
+	.sb-band__copy {
+		max-width: 34em;
+		margin: 0 0 var(--space-6);
+	}
+
+	@media (max-width: 52rem) {
+		.sb-manuscript {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--space-8);
+		}
+	}
+</style>

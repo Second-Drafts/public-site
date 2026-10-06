@@ -14,4 +14,12 @@ The rules live in [`../DESIGN.md`](../DESIGN.md). This folder holds the files th
 
 Logos are in `public/img/` (`logo.svg`, `logo-white.svg`).
 
-For an Astro page without React, use `tokens.css` + `components/bundle.css` and write the markup with the `sd-*` classes (the structure is visible in `bundle.js`).
+## In this site
+
+The site uses Astro components, not the React bundle. They are ported from `bundle.css` / `bundle.js` and keep the same `sd-*` class names, so the two can be compared:
+
+- `src/components/` — `Button`, `Mark`, `StatusTag`, `TextField`, `MarginNote`, plus `Link`, `HighlightedBand` and `Logo` from DESIGN.md. Each one has its own scoped styles.
+- `src/components/DesignSystemHead.astro` — put it in a layout's `<head>`. It loads `src/styles/design-system.css` (which imports `tokens.css` here) and the Google Fonts.
+- `/sandbox` (dev only) shows every component in every theme.
+
+When a new export comes in from Claude Design, replace the files in this folder, then copy any CSS or markup changes into the matching component by hand.

@@ -1,0 +1,146 @@
+---
+/*
+ * Mark — one of the logo's hand-drawn marker strokes over inline text.
+ * Guidelines: design-system/components/Mark/README.md
+ *
+ *   <Mark>this matters</Mark>                yellow highlight (<mark>)
+ *   <Mark kind="strike">first</Mark>         red-pen strike (<del>)
+ *
+ * The strokes are decoration; the words must already say the thing.
+ * Markup is kept on single lines on purpose: whitespace inside an inline mark would be drawn on.
+ * Astro drops a line break between text and a component, so when a Mark starts a new line write
+ * `text{" "}` at the end of the line before it.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+type Kind = "highlight" | "underline" | "circle" | "strike" | "check";
+
+interface Props extends HTMLAttributes<"span"> {
+	/** highlight = yellow · underline = green · circle = pink · strike = red pen · check = orange tick after. */
+	kind?: Kind;
+}
+
+/* hand-drawn strokes, in a 100-wide box, stretched to fit the text */
+const PATHS = {
+	underline: "M2 7 C 22 3, 46 9, 70 5 S 94 4, 98 6",
+	circle: "M60 5 C 30 1, 3 8, 3 20 C 3 33, 34 38, 62 36 C 90 34, 99 24, 96 14 C 92 4, 62 1, 34 6",
+	strike: "M0 7 C 30 5, 66 6, 100 4",
+	check: "M3 13 L9 20 L21 3",
+};
+
+const VIEWBOX: Partial<Record<Kind, string>> = {
+	underline: "0 0 100 12",
+	circle: "0 0 100 40",
+	strike: "0 0 100 12",
+};
+
+const { kind = "highlight", class: className, ...rest } = Astro.props;
+const Tag = kind === "highlight" ? "mark" : kind === "strike" ? "del" : "span";
+const viewBox = VIEWBOX[kind];
+---
+
+<Tag {...rest} class:list={["sd-mark", `sd-mark--${kind}`, className]}><slot />{viewBox && <svg class={`sd-mark__svg sd-mark__svg--${kind}`} viewBox={viewBox} preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d={PATHS[kind as keyof typeof PATHS]} pathLength="1" /></svg>}{kind === "check" && <svg class="sd-mark__check" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d={PATHS.check} pathLength="1" /></svg>}</Tag>
+
+<style>
+	.sd-mark {
+		position: relative;
+		color: inherit;
+	}
+	.sd-mark--highlight {
+		background: var(--marker-yellow);
+		color: var(--on-marker);
+		padding: 0 0.18em;
+		margin: 0 -0.05em;
+		border-radius: 0.2em 0.45em 0.25em 0.5em;
+		-webkit-box-decoration-break: clone;
+		box-decoration-break: clone;
+	}
+	.sd-mark--underline,
+	.sd-mark--circle,
+	.sd-mark--strike {
+		display: inline-block;
+		text-decoration: none;
+	}
+	.sd-mark__svg {
+		position: absolute;
+		overflow: visible;
+		pointer-events: none;
+		fill: none;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.sd-mark__svg path {
+		vector-effect: non-scaling-stroke;
+	}
+	.sd-mark__svg--underline {
+		left: -3%;
+		width: 106%;
+		top: calc(50% + 0.5em);
+		height: 0.4em;
+		stroke: var(--marker-green);
+		stroke-width: var(--stroke-marker);
+	}
+	.sd-mark__svg--circle {
+		left: -0.45em;
+		top: calc(50% - 0.9em);
+		width: calc(100% + 0.9em);
+		height: 1.8em;
+		stroke: var(--marker-pink);
+		stroke-width: 3px;
+	}
+	.sd-mark--strike {
+		color: var(--ink-muted);
+	}
+	.sd-mark__svg--strike {
+		left: -2%;
+		width: 104%;
+		top: calc(50% - 0.15em);
+		height: 0.3em;
+		stroke: var(--red-pen);
+		stroke-width: var(--stroke-pen);
+	}
+	.sd-mark__check {
+		display: inline-block;
+		width: 0.95em;
+		height: 0.95em;
+		margin-left: 0.2em;
+		vertical-align: -0.05em;
+		fill: none;
+		stroke: var(--marker-orange);
+		stroke-width: 3.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		overflow: visible;
+	}
+
+	/*
+	 * Markers draw on once; under reduced motion they appear finished.
+	 * The stretched strokes (underline, circle, strike) wipe on left to right. bundle.css animated their dash, but with
+	 * non-scaling-stroke the browser sizes a pathLength dash in viewBox units and draws it in screen pixels, so any
+	 * mark wider than ~100px was left part-drawn. The check keeps its proportions, so it still draws along its dash.
+	 */
+	@media (prefers-reduced-motion: no-preference) {
+		.sd-mark__svg {
+			animation: sd-wipe 240ms ease-out 80ms both;
+		}
+		.sd-mark__check path {
+			stroke-dasharray: 1;
+			stroke-dashoffset: 1;
+			animation: sd-draw 240ms ease-out 80ms forwards;
+		}
+	}
+	/* generous bounds so round caps and the circle's overshoot aren't clipped */
+	@keyframes sd-wipe {
+		from {
+			clip-path: polygon(-10% -100%, -10% -100%, -10% 200%, -10% 200%);
+		}
+		to {
+			clip-path: polygon(-10% -100%, 110% -100%, 110% 200%, -10% 200%);
+		}
+	}
+	@keyframes sd-draw {
+		to {
+			stroke-dashoffset: 0;
+		}
+	}
+</style>

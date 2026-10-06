@@ -1,0 +1,57 @@
+---
+import TextField from "../../components/TextField.astro";
+import { Content } from "../../../design-system/components/TextField/README.md";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout title="TextField" description="A labelled input or textarea, set in the prose face because it is writing.">
+	<Guidelines source="design-system/components/TextField/README.md"><Content /></Guidelines>
+
+	<Specimen title="States" description="Fields stack space-6 apart. Click into one for the focus border.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<TextField label="Title" placeholder="e.g. The Long Second Act" />
+					<TextField label="Working title" value="The Long Second Act" hint="Only you and your collaborators see this." />
+					<TextField
+						label="Title"
+						value="Chapter one"
+						error="That title is already in this project. Try another."
+					/>
+					<TextField label="Project" value="Second Drafts" disabled />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Multiline" description="multiline renders a textarea; rows sets its height.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<TextField
+						label="Logline"
+						multiline
+						rows={3}
+						placeholder="e.g. A cartographer maps a city that keeps moving."
+						hint="One or two sentences."
+					/>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Native types" description="Native attributes pass through to the input.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<TextField label="Email" type="email" name="email" autocomplete="email" placeholder="e.g. you@example.com" />
+					<TextField label="Word target" type="number" name="target" value="80000" hint="Words, not pages." />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

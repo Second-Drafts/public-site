@@ -1,0 +1,108 @@
+---
+import Mark from "../../components/Mark.astro";
+import { Content } from "../../../design-system/components/Mark/README.md";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout
+	title="Mark"
+	description="One of the logo's marker strokes, drawn over inline text. Strokes draw on once when the page loads; reload to watch again."
+>
+	<Guidelines source="design-system/components/Mark/README.md"><Content /></Guidelines>
+
+	<Specimen title="Kinds" description="No circle in the Highlighted band: pink vanishes on pink.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<p class="sb-line">
+						<Mark>highlight</Mark>
+					</p>
+					<p class="sb-line">
+						<Mark kind="underline">underline</Mark>
+					</p>
+					{theme !== "highlighted" && (
+						<p class="sb-line">
+							<Mark kind="circle">circle</Mark>
+						</p>
+					)}
+					<p class="sb-line">
+						<Mark kind="strike">strike</Mark>
+					</p>
+					<p class="sb-line">
+						<Mark kind="check">check</Mark>
+					</p>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="In a sentence" description="At most two marks in a paragraph, and the words say the thing on their own." min="24rem">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<p class="sb-prose">
+						The scene opens on <Mark>a red door that nobody remembers painting</Mark>, and closes before
+						anyone asks why.
+					</p>
+					<p class="sb-prose">
+						Move the reveal to <Mark kind="circle">chapter four</Mark> so the reader has{" "}
+						<Mark kind="underline">a reason</Mark> to keep going.
+					</p>
+					<p class="sb-prose">
+						Your <Mark kind="strike">first</Mark> second draft starts here. Continuity check{" "}
+						<Mark kind="check">passed</Mark>.
+					</p>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="A highlight across lines" description="Only highlight may wrap; each line keeps its own rounded ends.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<p class="sb-prose sb-narrow">
+						She kept the letter for eleven years. <Mark>When she finally opened it, the handwriting was her
+						own, and the date was tomorrow.</Mark>
+					</p>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="At display sizes" description="Marketing only: never on headings in product UI." min="24rem">
+		{
+			THEMES.filter((theme) => theme !== "dark").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<p class="sd-text-headline sb-flush">
+						Your <Mark kind="strike">first</Mark> second draft starts here.
+					</p>
+					{theme === "light" && (
+						<p class="sd-text-display sb-flush">
+							<Mark kind="circle">second</Mark> drafts
+						</p>
+					)}
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>
+
+<style>
+	.sb-line,
+	.sb-prose,
+	.sb-flush {
+		margin: 0;
+	}
+	.sb-line {
+		font-size: 20px;
+		line-height: 32px;
+	}
+	.sb-narrow {
+		max-width: 22em;
+	}
+</style>

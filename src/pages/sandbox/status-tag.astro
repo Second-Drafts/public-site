@@ -1,0 +1,39 @@
+---
+import StatusTag from "../../components/StatusTag.astro";
+import { Content } from "../../../design-system/components/StatusTag/README.md";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout title="StatusTag" description="Where a piece of writing is in its life.">
+	<Guidelines source="design-system/components/StatusTag/README.md"><Content /></Guidelines>
+
+	<Specimen title="Statuses" description="No In review tag in the Highlighted band: pink on pink.">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme}>
+					<StatusTag status="draft" />
+					{theme !== "highlighted" && <StatusTag status="review" />}
+					<StatusTag status="approved" />
+					<StatusTag status="published" />
+					<StatusTag status="blocked" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Renamed for a workflow" description="Map new states to the five colours; keep the word to one or two.">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<StatusTag status="review">With editor</StatusTag>
+					<StatusTag status="approved">Scheduled</StatusTag>
+					<StatusTag status="published">Sent</StatusTag>
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

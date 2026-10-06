@@ -1,0 +1,128 @@
+---
+/*
+ * TextField — a labelled input or textarea. What the writer types is set in prose, because it is writing.
+ * Guidelines: design-system/components/TextField/README.md
+ *
+ *   <TextField label="Title" name="title" placeholder="e.g. The Long Second Act" />
+ *   <TextField label="Logline" multiline rows={3} hint="One sentence." />
+ *
+ * Native attributes go on the input; `class` goes on the wrapper.
+ */
+import type { HTMLAttributes } from "astro/types";
+import { uniqueId } from "../lib/uniqueId";
+
+interface Props extends HTMLAttributes<"input"> {
+	/** Short noun, shown in the uppercase label style. */
+	label: string;
+	/** Helper text under the field. */
+	hint?: string;
+	/** Replaces the hint and turns the field red-pen. Say what is wrong and how to fix it. */
+	error?: string;
+	/** Render a <textarea>. */
+	multiline?: boolean;
+	rows?: number;
+}
+
+const {
+	label,
+	hint,
+	error,
+	multiline = false,
+	rows = 4,
+	id = uniqueId("sd-field"),
+	class: className,
+	value,
+	...rest
+} = Astro.props;
+
+// A parent's scoped styles arrive as data-astro-cid-* props; they belong on the wrapper, next to `class`.
+const isScope = ([key]: [string, unknown]) => key.startsWith("data-astro-cid");
+const scope = Object.fromEntries(Object.entries(rest).filter(isScope));
+const native = Object.fromEntries(Object.entries(rest).filter((entry) => !isScope(entry)));
+
+const message = error ?? hint;
+const messageId = `${id}-msg`;
+const control = {
+	...native,
+	id,
+	class: "sd-field__input",
+	"aria-describedby": message ? messageId : undefined,
+	"aria-invalid": error ? "true" : undefined,
+};
+// Defaults merged here, not written as attributes, so a caller's `type` replaces them instead of duplicating.
+const input = { type: "text", value, ...control };
+const textarea = { rows, ...control };
+---
+
+<div {...scope} class:list={["sd-field", error && "sd-field--error", className]}>
+	<label class="sd-field__label" for={id}>{label}</label>
+	{multiline ? <textarea {...textarea}>{value}</textarea> : <input {...input} />}
+	{
+		message && (
+			<p id={messageId} class:list={["sd-field__msg", error && "sd-field__msg--error"]}>
+				{message}
+			</p>
+		)
+	}
+</div>
+
+<style>
+	.sd-field {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-width: 0;
+	}
+	.sd-field__label {
+		font-family: var(--font-display);
+		font-size: 12px;
+		line-height: 16px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--ink);
+	}
+	.sd-field__input {
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		padding: 6px var(--space-3);
+		width: 100%;
+		box-sizing: border-box;
+		resize: vertical;
+	}
+	.sd-field__input::placeholder {
+		color: var(--ink-muted);
+		opacity: 1;
+		font-style: italic;
+	}
+	.sd-field__input:focus {
+		outline: none;
+		border-color: var(--focus);
+		box-shadow: 0 0 0 1px var(--focus);
+	}
+	.sd-field__input:disabled {
+		opacity: 0.4;
+	}
+	/* hugs the input: closer than the label above it */
+	.sd-field__msg {
+		margin: calc(-1 * var(--space-1)) 0 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	.sd-field--error .sd-field__input {
+		border-color: var(--red-pen);
+	}
+	.sd-field--error .sd-field__input:focus {
+		box-shadow: 0 0 0 1px var(--red-pen);
+	}
+	.sd-field__msg--error {
+		color: var(--red-pen);
+	}
+</style>

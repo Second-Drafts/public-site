@@ -1,0 +1,38 @@
+---
+/*
+ * Link — ink text with a marker-green underline. The underline is the cue; the colour is identity.
+ * Rules: DESIGN.md → Colour. Inside the Highlighted band the underline turns ink.
+ *
+ *   <Link href="/about-us">about the Department</Link>
+ *
+ * Astro drops a line break between text and a component; end the line before a Link with `{" "}`.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"a"> {}
+
+const { class: className, ...rest } = Astro.props;
+---
+
+<a {...rest} class:list={["sd-link", className]}><slot /></a>
+
+<style>
+	.sd-link {
+		color: var(--ink);
+		text-decoration: underline;
+		text-decoration-color: var(--marker-green);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 3px;
+	}
+	.sd-link:focus-visible {
+		outline: none;
+		border-radius: var(--radius-sm);
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+	/* Green would sit on pink; links in the band underline in ink. */
+	:global([data-theme="highlighted"]) .sd-link {
+		text-decoration-color: var(--ink);
+	}
+</style>

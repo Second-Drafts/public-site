@@ -1,0 +1,14 @@
+---
+/*
+ * Loads the design system: tokens, global rules and the three Google Fonts.
+ * Put it inside a layout's <head>. Components bring their own styles.
+ */
+import "../styles/design-system.css";
+
+const fonts =
+	"https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap";
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href={fonts} />
