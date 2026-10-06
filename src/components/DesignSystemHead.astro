@@ -2,13 +2,40 @@
 /*
  * Loads the design system: tokens, global rules and the three Google Fonts.
  * Put it inside a layout's <head>. Components bring their own styles.
+ *
+ * Theme: an explicit data-theme always wins. Without one, the reader's system setting picks Paper or Night shift.
+ * tokens.css only has [data-theme] blocks, so the system-default and print blocks are generated here from
+ * tokens.json at build time; they can't drift from the tokens.
  */
+import tokens from "../../design-system/tokens.json";
 import "../styles/design-system.css";
 
 const fonts =
 	"https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap";
+
+type Themed = { light?: string; dark?: string };
+
+// "{marker-blue}" in tokens.json is an alias.
+const toCss = (value: string) => value.replace(/^\{(.+)\}$/, "var(--$1)");
+
+const themed = [...tokens.color.tokens, ...tokens.shadow.tokens].map((token) => ({
+	name: token.name,
+	value: token.value as Themed,
+}));
+
+const declarations = (theme: keyof Themed) =>
+	themed
+		.filter((token) => token.value[theme] !== undefined)
+		.map((token) => `--${token.name}: ${toCss(token.value[theme]!)};`)
+		.join(" ");
+
+// screen only, so a dark-mode reader still prints in Paper.
+const systemDark = `@media screen and (prefers-color-scheme: dark) { :root:not([data-theme]) { ${declarations("dark")} } }`;
+// Print is always Paper, even under an explicit Night shift. :not(#print) only raises specificity above tokens.css.
+const print = `@media print { :root:not(#print), [data-theme="dark"]:not(#print) { ${declarations("light")} } }`;
 ---
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link rel="stylesheet" href={fonts} />
+<Fragment set:html={`<style>${systemDark}\n${print}</style>`} />

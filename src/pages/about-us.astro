@@ -3,28 +3,34 @@ import Base from "../layouts/Base.astro";
 ---
 
 <Base title="About Us">
-	<h1 style="text-align: center">About the Department</h1>
-	<p style="text-wrap: pretty">
-		The Department of Second Drafts supervises a collection of tools for
-		writers of all sorts: novelists, essayists, screenwriters, Substackers,
-		researchers, poets, cartoonists, copywriters. Long-form, short-form,
-		formless. The Department was founded by writers, for writers. Whatever
-		kind of writing you do, we are here to help with the process.
+	<h1 class="sd-text-headline">About the Department</h1>
+	<p>
+		The Department of Second Drafts supervises a collection of tools for writers of all sorts: novelists, essayists,
+		screenwriters, Substackers, researchers, poets, cartoonists, copywriters. Long-form, short-form, formless. The
+		Department was founded by writers, for writers. Whatever kind of writing you do, we are here to help with the
+		process.
 	</p>
-	<p style="text-wrap: pretty">
-		Writing is deeply personal, and everyone does it differently. Some
-		writers need to keep detailed research notes, build an outline with
-		pointers to those notes, cite their sources, transcribe their
-		interviews. Some need their complex mystery to be fact-checked before a
-		listener finds a gap. Some need to build a whole world, to create people
-		and planets and universal rules that exist not only within their own
-		mind. Some just need dark mode. Our goal is to create tools as building
-		blocks so you can use the ones you need, however you like.
+	<p>
+		Writing is deeply personal, and everyone does it differently. Some writers need to keep detailed research notes,
+		build an outline with pointers to those notes, cite their sources, transcribe their interviews. Some need their
+		complex mystery to be fact-checked before a listener finds a gap. Some need to build a whole world, to create people
+		and planets and universal rules that exist not only within their own mind. Some just need dark mode. Our goal is to
+		create tools as building blocks so you can use the ones you need, however you like.
 	</p>
-	<p style="text-wrap: pretty">
-		Why second drafts? Most writing exists to be shared, and getting it
-		ready for an audience can be daunting and difficult. In some ways, this
-		is where the real work of writing begins.
+	<p>
+		Why second drafts? Most writing exists to be shared, and getting it ready for an audience can be daunting and
+		difficult. In some ways, this is where the real work of writing begins.
 	</p>
-	<p style="text-wrap: pretty">We can help with that.</p>
+	<p>We can help with that.</p>
 </Base>
+
+<style>
+	h1 {
+		margin: 0 0 var(--space-8);
+		font-weight: 600;
+	}
+	p {
+		margin: 0 0 var(--space-6);
+		text-wrap: pretty;
+	}
+</style>

@@ -1,4 +1,6 @@
 ---
+import DesignSystemHead from "../components/DesignSystemHead.astro";
+
 interface Props {
 	title?: string;
 }
@@ -13,29 +15,22 @@ const fullTitle = title ? `${siteName}: ${title}` : siteName;
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="color-scheme" content="light dark" />
 		<title>{fullTitle}</title>
-		<style is:global>
-			:root {
-				--color-primary: #222;
-				--color-background: #fffdfd;
-			}
-			@media (prefers-color-scheme: dark) {
-				:root {
-					--color-primary: #fff;
-					--color-background: #222;
-				}
-			}
-			body {
-				line-height: 1.8;
-				font-size: 1.2rem;
-				color: var(--color-primary);
-				background: var(--color-background);
-			}
-		</style>
+		<!-- No data-theme here: the reader's system setting picks Paper or Night shift (see DesignSystemHead). -->
+		<DesignSystemHead />
 	</head>
 	<body>
-		<main style="max-width: 600px; margin: 4rem auto">
+		<main class="page">
 			<slot />
 		</main>
 	</body>
 </html>
+
+<style>
+	.page {
+		max-width: 34em;
+		margin: 0 auto;
+		padding: var(--space-16) var(--space-6);
+	}
+</style>

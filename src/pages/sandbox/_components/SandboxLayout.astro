@@ -26,7 +26,8 @@ const nav = [{ href: "/sandbox", label: "Index" }, ...SANDBOX_PAGES];
 		<title>{title} · Sandbox</title>
 		<script is:inline>
 			try {
-				if (localStorage.getItem("sandbox-theme") === "dark") document.documentElement.dataset.theme = "dark";
+				const stored = localStorage.getItem("sandbox-theme");
+				if (stored === "dark" || stored === "light") document.documentElement.dataset.theme = stored;
 			} catch {}
 		</script>
 		<DesignSystemHead />
@@ -60,13 +61,17 @@ const nav = [{ href: "/sandbox", label: "Index" }, ...SANDBOX_PAGES];
 		<slot name="after" />
 		<script>
 			const root = document.documentElement;
+			const systemDark = matchMedia("(prefers-color-scheme: dark)");
 			const toggle = document.querySelector<HTMLButtonElement>("#sb-theme-toggle");
 			const label = toggle?.querySelector(".sd-btn__label");
+			// With no data-theme the page follows the system setting, so that's the current theme.
+			const current = () => root.dataset.theme ?? (systemDark.matches ? "dark" : "light");
 			const render = () => {
-				if (label) label.textContent = root.dataset.theme === "dark" ? "Paper" : "Night shift";
+				if (label) label.textContent = current() === "dark" ? "Paper" : "Night shift";
 			};
+			systemDark.addEventListener("change", render);
 			toggle?.addEventListener("click", () => {
-				const next = root.dataset.theme === "dark" ? "light" : "dark";
+				const next = current() === "dark" ? "light" : "dark";
 				root.dataset.theme = next;
 				try {
 					localStorage.setItem("sandbox-theme", next);

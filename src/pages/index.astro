@@ -1,26 +1,35 @@
 ---
+import Logo from "../components/Logo.astro";
 import Base from "../layouts/Base.astro";
 // This is server-side code. This will log in the terminal, not the browser console.
 console.log("Homepage loaded");
 ---
 
 <Base>
-    <h1 style="text-align: center">The Department of Second Drafts</h1>
-    <p style="text-wrap: pretty; text-align: justify">
-      Welcome! You're one of the very first to have found us. We promise
-      there's much more to come for storytellers of all types.
-    </p>
-    <p style="text-align: right">– The Department</p>
-    <picture>
-      <source srcset="img/logo.svg" media="(prefers-color-scheme: light)" />
-      <source
-        srcset="img/logo-white.svg"
-        media="(prefers-color-scheme: dark)"
-      />
-      <img
-        src="img/logo.svg"
-        alt="The Department of Second Drafts"
-        style="width: 100%; max-width: 600px; margin: 0 auto"
-      />
-    </picture>
+	<h1 class="masthead">
+		<Logo width={360} />
+	</h1>
+	<p>
+		Welcome! You're one of the very first to have found us. We promise there's much more to come for storytellers of
+		all types.
+	</p>
+	<p class="signature">– The Department</p>
 </Base>
+
+<style>
+	.masthead {
+		display: flex;
+		justify-content: center;
+		margin: 0 0 var(--space-8);
+	}
+	p {
+		margin: 0 0 var(--space-6);
+		text-wrap: pretty;
+		font-size: 20px;
+		line-height: 32px;
+	}
+	.signature {
+		text-align: right;
+		font-style: italic;
+	}
+</style>

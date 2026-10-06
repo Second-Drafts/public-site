@@ -61,4 +61,28 @@ const clearSpace = Math.round(width * CLEAR_SPACE);
 	:global([data-theme="dark"] :is([data-theme="light"], [data-theme="highlighted"])) .sd-logo__img--night {
 		display: none;
 	}
+	/* no data-theme on the page: follow the reader's system setting, as the tokens do */
+	@media screen and (prefers-color-scheme: dark) {
+		:global(:root:not([data-theme])) .sd-logo__img--paper {
+			display: none;
+		}
+		:global(:root:not([data-theme])) .sd-logo__img--night {
+			display: block;
+		}
+		:global(:root:not([data-theme]) :is([data-theme="light"], [data-theme="highlighted"])) .sd-logo__img--paper {
+			display: block;
+		}
+		:global(:root:not([data-theme]) :is([data-theme="light"], [data-theme="highlighted"])) .sd-logo__img--night {
+			display: none;
+		}
+	}
+	/* print is always Paper */
+	@media print {
+		.sd-logo__img--paper {
+			display: block !important;
+		}
+		.sd-logo__img--night {
+			display: none !important;
+		}
+	}
 </style>

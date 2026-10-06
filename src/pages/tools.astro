@@ -1,23 +1,54 @@
 ---
+import Link from "../components/Link.astro";
 import Base from "../layouts/Base.astro";
 
 const tools = {
-  "word-counter": {
-    title: "Word Counter",
-    description: "A simple tool to count words in your text.",
-  },
-}
+	"word-counter": {
+		title: "Word Counter",
+		description: "A simple tool to count words in your text.",
+	},
+};
 ---
 
 <Base title="Tools">
-			<h1 style="text-align: center">Tools</h1>
-      <h2 style="text-align: center">Our collection of free writing tools</h2>
+	<h1 class="sd-text-headline">Tools</h1>
+	<p class="lede">Our collection of free writing tools</p>
 
-      {Object.entries(tools).map(([key, tool]) => (
-        <p style="text-wrap: pretty">
-          <a href={`/tools/${key}`}>{tool.title}</a>
-          <br />
-          {tool.description}
-        </p>
-      ))}
+	<ul class="tools">
+		{
+			Object.entries(tools).map(([key, tool]) => (
+				<li>
+					<Link href={`/tools/${key}`} class="sd-text-heading">
+						{tool.title}
+					</Link>
+					<p>{tool.description}</p>
+				</li>
+			))
+		}
+	</ul>
 </Base>
+
+<style>
+	h1 {
+		margin: 0 0 var(--space-2);
+		font-weight: 600;
+	}
+	.lede {
+		margin: 0 0 var(--space-12);
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+	}
+	.tools {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.tools p {
+		margin: var(--space-2) 0 0;
+		color: var(--ink-muted);
+	}
+</style>

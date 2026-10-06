@@ -1,49 +1,119 @@
 ---
+import TextField from "../../components/TextField.astro";
 import Base from "../../layouts/Base.astro";
 ---
 
 <Base title="Word Counter">
-  <h1 style="text-align: center">Word Counter</h1>
-  <p label-for="input">
+  <h1 class="sd-text-headline">Word Counter</h1>
+  <p class="lede">
     Type or paste some text to quickly check its word or character count
   </p>
-  <textarea id="input" rows="10" style="width: 100%"></textarea>
-  <p>
+  <TextField id="input" label="Your text" multiline rows={10} />
+  <p class="count">
     <span id="count">0</span><span
       id="denominator-display"
       style="display: none;">/<span id="target-display">0</span></span
     >&nbsp;
     <span id="unit-display">words</span>
   </p>
-  <fieldset>
-    <legend>Targets</legend>
+  <fieldset class="targets">
+    <legend class="sd-text-label">Targets</legend>
     <!-- Show target toggle -->
-    <input type="checkbox" id="show-target" />
-    <label for="show-target">Show target</label>&nbsp;
-    <br />
+    <label class="check" for="show-target">
+      <input type="checkbox" id="show-target" />
+      Show target
+    </label>
     <!-- Dropdown for unit (words, characters) -->
-    <label for="unit">Unit</label>&nbsp;
-    <!-- default is words -->
-    <select id="unit" value="words">
-      <option value="characters">Characters</option>
-      <option value="words">Words</option>
-    </select>
-    <br />
+    <div class="select">
+      <label class="sd-text-label" for="unit">Unit</label>
+      <!-- default is words -->
+      <select id="unit">
+        <option value="characters">Characters</option>
+        <option value="words" selected>Words</option>
+      </select>
+    </div>
 
     <!-- Input for target value -->
-    <label for="target">Target</label>&nbsp;
-    <input type="number" id="target" value="240" />
-    <br />
+    <TextField id="target" label="Target" type="number" value="240" min="0" />
 
     <!-- Style (min, max, goal) -->
-    <label for="style">Style</label>&nbsp;
-    <select id="style">
-      <option value="min">Min</option>
-      <option value="max">Max</option>
-      <option value="goal">Goal</option>
-    </select>
+    <div class="select">
+      <label class="sd-text-label" for="style">Style</label>
+      <select id="style">
+        <option value="min">Min</option>
+        <option value="max">Max</option>
+        <option value="goal">Goal</option>
+      </select>
+    </div>
   </fieldset>
 </Base>
+
+<style>
+  h1 {
+    margin: 0 0 var(--space-2);
+    font-weight: 600;
+  }
+  .lede {
+    margin: 0 0 var(--space-8);
+    color: var(--ink-muted);
+  }
+  /* numbers about writing are set in mono */
+  .count {
+    margin: var(--space-4) 0 var(--space-8);
+    font-family: var(--font-mono);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 500;
+  }
+  .targets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+    gap: var(--space-6);
+    margin: 0;
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    border: var(--stroke-hairline) solid var(--rule);
+    border-radius: var(--radius-md);
+    background: var(--paper-raised);
+  }
+  .targets legend {
+    padding: 0 var(--space-2);
+  }
+  .check {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .check input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: var(--marker-blue);
+  }
+  .select {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+  /* matches TextField's input */
+  select {
+    font-family: var(--font-prose);
+    font-size: 17px;
+    line-height: 28px;
+    color: var(--ink);
+    background: var(--paper-raised);
+    border: var(--stroke-hairline) solid var(--rule-strong);
+    border-radius: var(--radius-sm);
+    padding: 6px var(--space-3);
+  }
+  select:focus-visible,
+  .check input:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--focus);
+  }
+</style>
 
 <script>
   const querySelector = <T extends HTMLElement>(selector: string): T => {
@@ -71,14 +141,15 @@ import Base from "../../layouts/Base.astro";
     percent: number,
     style: "min" | "max" | "goal"
   ): string {
+    // Theme tokens, so the colours hold in Paper and Night shift.
     if (style === "min") {
-      return percent < 1 ? "red" : "green";
+      return percent < 1 ? "var(--red-pen)" : "var(--green-ink)";
     } else if (style === "max") {
-      return percent > 1 ? "red" : "green";
+      return percent > 1 ? "var(--red-pen)" : "var(--green-ink)";
     } else if (style === "goal") {
       let distance = Math.abs(percent - 1);
       distance = Math.min(distance, 0.2) / 0.2;
-      return `hsl(120, ${(1 - distance) * 100}%, 30%)`;
+      return `color-mix(in srgb, var(--green-ink) ${Math.round((1 - distance) * 100)}%, var(--ink-muted))`;
     } else {
       throw new Error(`Invalid style: ${style}`);
     }
