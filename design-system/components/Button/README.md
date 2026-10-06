@@ -5,6 +5,6 @@ Buttons start an action; one `primary` or `accent` per view.
 - **secondary** (outlined in `rule-strong`): alternatives — Export, Duplicate.
 - **quiet** (text; a yellow highlight on hover): low-stakes actions in dense places — Reply, Resolve, Cancel.
 
-Consumer provides: `children` (a verb in sentence case, two or three words), optional `variant`, `size` (`sm` in margin notes and toolbars, `lg` only for marketing), optional 18px Lucide `icon`, and any native button props.
+Consumer provides: `children` (a verb in sentence case, two or three words), optional `variant`, `size` (`sm` in margin notes and toolbars, `lg` only for marketing), optional 18px `icon`, and any native button props.
 
 Do: lead with the verb ("Send to editor"). Don't: put two accents side by side, use red for destructive actions (use secondary + a confirmation that names what will be lost), or write "Submit".

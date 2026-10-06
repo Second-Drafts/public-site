@@ -6,7 +6,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   variant?: "primary" | "accent" | "secondary" | "quiet";
   /** Default "md". */
   size?: "sm" | "md" | "lg";
-  /** A 18px icon node (Lucide), shown before the label. */
+  /** A 18px icon node, shown before the label. */
   icon?: React.ReactNode;
   children: React.ReactNode;
 }
