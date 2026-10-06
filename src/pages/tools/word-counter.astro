@@ -1,24 +1,107 @@
 ---
-
 import Base from "../../layouts/Base.astro";
-
 ---
 
 <Base title="Word Counter">
   <h1 style="text-align: center">Word Counter</h1>
-	<p label-for="input">Type or paste some text to quickly check its word count</p>
+  <p label-for="input">
+    Type or paste some text to quickly check its word or character count
+  </p>
   <textarea id="input" rows="10" style="width: 100%"></textarea>
-  <p><span id="count">0</span> words</p>
+  <p>
+    <span id="count">0</span><span
+      id="denominator-display"
+      style="display: none;">/<span id="target-display">0</span></span
+    >&nbsp;
+    <span id="unit-display">words</span>
+  </p>
+  <fieldset>
+    <legend>Targets</legend>
+    <!-- Show target toggle -->
+    <input type="checkbox" id="show-target" />
+    <label for="show-target">Show target</label>&nbsp;
+    <br />
+    <!-- Dropdown for unit (words, characters) -->
+    <label for="unit">Unit</label>&nbsp;
+    <!-- default is words -->
+    <select id="unit" value="words">
+      <option value="characters">Characters</option>
+      <option value="words">Words</option>
+    </select>
+    <br />
+
+    <!-- Input for target value -->
+    <label for="target">Target</label>&nbsp;
+    <input type="number" id="target" value="240" />
+    <br />
+
+    <!-- Style (min, max, goal) -->
+    <label for="style">Style</label>&nbsp;
+    <select id="style">
+      <option value="min">Min</option>
+      <option value="max">Max</option>
+      <option value="goal">Goal</option>
+    </select>
+  </fieldset>
 </Base>
 
 <script>
-  const input = document.querySelector<HTMLTextAreaElement>("#input");
-  const count = document.querySelector<HTMLElement>("#count");
+  const querySelector = <T extends HTMLElement>(selector: string): T => {
+    const element = document.querySelector<T>(selector);
+    if (!element) {
+      throw new Error(`Element with selector ${selector} not found`);
+    }
+    return element;
+  };
+  const input = querySelector<HTMLTextAreaElement>("#input");
+  const count = querySelector<HTMLElement>("#count");
+  const target = querySelector<HTMLInputElement>("#target");
+  const targetDisplay = querySelector<HTMLElement>("#target-display");
+  const denominatorDisplay = querySelector<HTMLElement>("#denominator-display");
+  const unit = querySelector<HTMLSelectElement>("#unit");
+  const unitDisplay = querySelector<HTMLElement>("#unit-display");
+  const style = querySelector<HTMLSelectElement>("#style");
+  const showTarget = querySelector<HTMLInputElement>("#show-target");
 
   const countWords = (text: string): number =>
     text.split(/\s+/).filter(Boolean).length;
 
-  input?.addEventListener("input", () => {
-    if (count) count.textContent = String(countWords(input.value));
-  });
-</script>	
+  const countCharacters = (text: string): number => text.length;
+  function percentToColor(
+    percent: number,
+    style: "min" | "max" | "goal"
+  ): string {
+    if (style === "min") {
+      return percent < 1 ? "red" : "green";
+    } else if (style === "max") {
+      return percent > 1 ? "red" : "green";
+    } else if (style === "goal") {
+      let distance = Math.abs(percent - 1);
+      distance = Math.min(distance, 0.2) / 0.2;
+      return `hsl(120, ${(1 - distance) * 100}%, 30%)`;
+    } else {
+      throw new Error(`Invalid style: ${style}`);
+    }
+  }
+  function updateDisplay() {
+    let countValue = 0;
+    if (unit.value === "words") countValue = countWords(input.value);
+    else if (unit.value === "characters")
+      countValue = countCharacters(input.value);
+    else throw new Error(`Invalid unit: ${unit.value}`);
+    unitDisplay.textContent = unit.value;
+    denominatorDisplay.style.display = showTarget.checked ? "inline" : "none";
+    targetDisplay.textContent = String(Number(target.value));
+    count.textContent = String(countValue);
+    count.style.color = percentToColor(
+      countValue / Number(target.value),
+      style.value as "min" | "max" | "goal"
+    );
+  }
+
+  input.addEventListener("input", updateDisplay);
+  target.addEventListener("change", updateDisplay);
+  unit.addEventListener("change", updateDisplay);
+  style.addEventListener("change", updateDisplay);
+  showTarget.addEventListener("change", updateDisplay);
+</script>
