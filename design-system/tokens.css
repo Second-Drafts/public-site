@@ -1,0 +1,201 @@
+/* The Department of Second Drafts — tokens.css, generated from tokens.json. Do not edit by hand; edit tokens.json and regenerate. */
+
+
+
+:root, [data-theme="light"] {
+  --paper: #fbf9f3;
+  --paper-raised: #ffffff;
+  --paper-sunken: #f3f0e6;
+  --rule: #e2ddcf;
+  --rule-strong: #8c877b;
+  --ink: #000000;
+  --ink-muted: #55514a;
+  --ink-inverse: #fbf9f3;
+  --marker-yellow: #fbeb4b;
+  --marker-pink: #f499bf;
+  --marker-blue: #306abb;
+  --marker-green: #7cc778;
+  --marker-orange: #fa862d;
+  --on-marker: #000000;
+  --on-blue: #ffffff;
+  --blue-ink: #2a5ba3;
+  --green-ink: #2e7d32;
+  --pink-ink: #b8326f;
+  --orange-ink: #a64b08;
+  --red-pen: #c22d22;
+  --focus: var(--marker-blue);
+  --selection: var(--marker-yellow);
+  --shadow-lift: 0 1px 0 rgba(0,0,0,0.04), 0 10px 24px -14px rgba(0,0,0,0.28);
+}
+
+[data-theme="dark"] {
+  --paper: #15140f;
+  --paper-raised: #211f19;
+  --paper-sunken: #0d0c09;
+  --rule: #34322a;
+  --rule-strong: #77736a;
+  --ink: #f4f1e8;
+  --ink-muted: #a9a496;
+  --ink-inverse: #15140f;
+  --marker-blue: #5b8fdb;
+  --on-marker: #000000;
+  --on-blue: #15140f;
+  --blue-ink: #7aa7ea;
+  --green-ink: #8fd48b;
+  --pink-ink: #f7a6c9;
+  --orange-ink: #fb9a4b;
+  --red-pen: #ff7a6b;
+  --focus: var(--marker-blue);
+  --selection: var(--marker-yellow);
+  --shadow-lift: 0 1px 0 rgba(0,0,0,0.4), 0 12px 28px -12px rgba(0,0,0,0.7);
+}
+
+[data-theme="highlighted"] {
+  --paper: #f499bf;
+  --paper-raised: #f8b6d1;
+  --paper-sunken: #ec84b0;
+  --rule: #d97ea4;
+  --rule-strong: #7a3555;
+  --ink: #000000;
+  --ink-muted: #3d1a2a;
+  --ink-inverse: #f8e9ef;
+  --marker-blue: #183563;
+  --on-marker: #000000;
+  --on-blue: #ffffff;
+  --blue-ink: #183563;
+  --green-ink: #14421a;
+  --pink-ink: #5c1233;
+  --orange-ink: #5a2700;
+  --red-pen: #661009;
+  --focus: var(--marker-blue);
+  --selection: var(--marker-yellow);
+  --shadow-lift: 0 1px 0 rgba(61,26,42,0.08), 0 10px 24px -14px rgba(61,26,42,0.4);
+}
+
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --stroke-hairline: 1px;
+  --stroke-pen: 2px;
+  --stroke-marker: 5px;
+  --font-display: "Josefin Sans", "Futura", "Century Gothic", sans-serif;
+  --font-prose: "Literata", "Iowan Old Style", Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+.sd-text-display {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 60px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.sd-text-headline {
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 44px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+.sd-text-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.sd-text-heading {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.sd-text-button {
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.sd-text-label {
+  font-family: var(--font-display);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sd-text-prose-lg {
+  font-family: var(--font-prose);
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.sd-text-prose {
+  font-family: var(--font-prose);
+  font-size: 17px;
+  line-height: 28px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.sd-text-prose-sm {
+  font-family: var(--font-prose);
+  font-size: 15px;
+  line-height: 24px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.sd-text-quote {
+  font-family: var(--font-prose);
+  font-size: 22px;
+  line-height: 32px;
+  font-weight: 400;
+  letter-spacing: 0;
+  font-style: italic;
+}
+
+.sd-text-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.sd-text-code {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+@font-face {
+  font-family: "Josefin Sans";
+  src: url("fonts/JosefinSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

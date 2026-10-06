@@ -1,0 +1,108 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+::selection { background: var(--selection); color: var(--on-marker); }
+
+/* ---------- Button ---------- */
+.sd-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  font-family: var(--font-display); font-size: 15px; line-height: 20px; font-weight: 600; letter-spacing: 0.04em;
+  padding: 10px var(--space-4) 8px; /* Josefin rides high: +2px on top */
+  border: var(--stroke-hairline) solid transparent; border-radius: var(--radius-md);
+  cursor: pointer; text-decoration: none; white-space: nowrap;
+  transition: background-color 120ms, opacity 120ms;
+}
+.sd-btn:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--focus); }
+.sd-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.sd-btn--sm { font-size: 13px; line-height: 16px; padding: 7px var(--space-3) 5px; }
+.sd-btn--lg { font-size: 17px; line-height: 24px; padding: 13px var(--space-6) 11px; }
+.sd-btn__icon { display: inline-flex; width: 18px; height: 18px; margin-top: -2px; }
+.sd-btn__icon svg { width: 100%; height: 100%; }
+
+.sd-btn--primary { background: var(--ink); color: var(--ink-inverse); }
+.sd-btn--accent { background: var(--marker-blue); color: var(--on-blue); }
+.sd-btn--primary:not(:disabled):hover { box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.14); }
+.sd-btn--primary:not(:disabled):hover:focus-visible { box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.14), 0 0 0 2px var(--paper), 0 0 0 4px var(--focus); }
+/* blue hover moves toward ink: darker in Paper, lighter in Night shift, so on-blue keeps ≥5:1 */
+.sd-btn--accent:not(:disabled):hover { box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--ink) 14%, transparent); }
+.sd-btn--accent:not(:disabled):hover:focus-visible { box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--ink) 14%, transparent), 0 0 0 2px var(--paper), 0 0 0 4px var(--focus); }
+.sd-btn--secondary { background: var(--paper-raised); color: var(--ink); border-color: var(--rule-strong); }
+.sd-btn--secondary:not(:disabled):hover { background: var(--paper-sunken); }
+.sd-btn--quiet { background: transparent; color: var(--ink); padding-left: var(--space-2); padding-right: var(--space-2); }
+.sd-btn--quiet:not(:disabled):hover .sd-btn__label { background: var(--marker-yellow); color: var(--on-marker); border-radius: var(--radius-sm); box-shadow: 0 -0.14em 0 3px var(--marker-yellow); } /* Josefin rides high: lift the highlight so caps and baseline sit centred */
+
+/* ---------- Mark ---------- */
+.sd-mark { position: relative; color: inherit; }
+.sd-mark--highlight {
+  background: var(--marker-yellow); color: var(--on-marker);
+  padding: 0 0.18em; margin: 0 -0.05em;
+  border-radius: 0.2em 0.45em 0.25em 0.5em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.sd-mark--underline, .sd-mark--circle, .sd-mark--strike { display: inline-block; text-decoration: none; }
+.sd-mark__svg { position: absolute; overflow: visible; pointer-events: none; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.sd-mark__svg path { vector-effect: non-scaling-stroke; }
+.sd-mark__svg--underline { left: -3%; width: 106%; top: calc(50% + 0.5em); height: 0.4em; stroke: var(--marker-green); stroke-width: var(--stroke-marker); }
+.sd-mark__svg--circle { left: -0.45em; top: calc(50% - 0.9em); width: calc(100% + 0.9em); height: 1.8em; stroke: var(--marker-pink); stroke-width: 3px; }
+.sd-mark--strike { color: var(--ink-muted); }
+.sd-mark__svg--strike { left: -2%; width: 104%; top: calc(50% - 0.15em); height: 0.3em; stroke: var(--red-pen); stroke-width: var(--stroke-pen); }
+.sd-mark__check { display: inline-block; width: 0.95em; height: 0.95em; margin-left: 0.2em; vertical-align: -0.05em; fill: none; stroke: var(--marker-orange); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
+a.sd-link, .sd-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--marker-green); text-decoration-thickness: 3px; text-underline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sd-mark__svg path, .sd-mark__check path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: sd-draw 240ms ease-out 80ms forwards; }
+}
+@keyframes sd-draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- StatusTag ---------- */
+.sd-tag {
+  display: inline-flex; align-items: center; gap: var(--space-1);
+  font-family: var(--font-display); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px var(--space-3) 3px; border-radius: var(--radius-pill); border: var(--stroke-hairline) solid transparent;
+  color: var(--on-marker); white-space: nowrap;
+}
+.sd-tag__glyph { width: 12px; height: 12px; margin-top: -2px; fill: none; stroke: currentColor; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.sd-tag--draft { background: var(--marker-yellow); }
+.sd-tag--review { background: var(--marker-pink); }
+.sd-tag--approved { background: var(--marker-orange); }
+.sd-tag--published { background: var(--ink); color: var(--ink-inverse); }
+.sd-tag--blocked { background: transparent; color: var(--red-pen); border-color: var(--red-pen); }
+
+/* ---------- TextField ---------- */
+.sd-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.sd-field__label {
+  font-family: var(--font-display); font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink);
+}
+.sd-field__input {
+  font-family: var(--font-prose); font-size: 17px; line-height: 28px; color: var(--ink);
+  background: var(--paper-raised); border: var(--stroke-hairline) solid var(--rule-strong); border-radius: var(--radius-sm);
+  padding: 6px var(--space-3); width: 100%; box-sizing: border-box; resize: vertical;
+}
+.sd-field__input::placeholder { color: var(--ink-muted); opacity: 1; font-style: italic; }
+.sd-field__input:focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 1px var(--focus); }
+.sd-field__input:disabled { opacity: 0.4; }
+.sd-field__msg { margin: calc(-1 * var(--space-1)) 0 0; font-family: var(--font-prose); font-size: 15px; line-height: 20px; color: var(--ink-muted); } /* hugs the input: closer than the label above it */
+.sd-field--error .sd-field__input { border-color: var(--red-pen); }
+.sd-field--error .sd-field__input:focus { box-shadow: 0 0 0 1px var(--red-pen); }
+.sd-field__msg--error { color: var(--red-pen); }
+
+/* ---------- MarginNote ---------- */
+.sd-note {
+  background: var(--paper-raised); border: var(--stroke-hairline) solid var(--rule); border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4) var(--space-4); color: var(--ink); max-width: 340px; box-sizing: border-box;
+}
+.sd-note--resolved { opacity: 0.6; }
+.sd-note__head { display: flex; align-items: center; gap: var(--space-2); min-height: 24px; }
+.sd-note__nib { width: 18px; height: 8px; border-radius: var(--radius-pill); flex: none; }
+.sd-note__nib--yellow { background: var(--marker-yellow); }
+.sd-note__nib--pink { background: var(--marker-pink); }
+.sd-note__nib--blue { background: var(--marker-blue); }
+.sd-note__nib--green { background: var(--marker-green); }
+.sd-note__nib--orange { background: var(--marker-orange); }
+.sd-note__author { font-family: var(--font-display); font-size: 15px; line-height: 20px; font-weight: 600; padding-top: 2px; }
+.sd-note__agent { font-family: var(--font-mono); font-size: 11px; line-height: 14px; font-weight: 500; letter-spacing: 0.06em; color: var(--ink-muted); border: var(--stroke-hairline) solid var(--rule-strong); border-radius: var(--radius-sm); padding: 1px 4px; }
+.sd-note__time { margin-left: auto; font-family: var(--font-mono); font-size: 12px; line-height: 16px; font-weight: 500; color: var(--ink-muted); }
+.sd-note__quote { margin: var(--space-2) 0 0; font-family: var(--font-prose); font-size: 15px; line-height: 24px; }
+.sd-note__body { margin-top: var(--space-2); font-family: var(--font-prose); font-size: 15px; line-height: 24px; }
+.sd-note__body p { margin: 0 0 var(--space-2); }
+.sd-note__body p:last-child { margin-bottom: 0; }
+.sd-note__actions { display: flex; gap: var(--space-1); margin: var(--space-3) 0 0 calc(-1 * var(--space-2)); }
