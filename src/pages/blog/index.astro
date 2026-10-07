@@ -1,0 +1,45 @@
+---
+import Link from "../../components/Link.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import Base from "../../layouts/Base.astro";
+import { formatDate, getPublishedPosts } from "../../lib/blog";
+
+const posts = await getPublishedPosts();
+---
+
+<Base title="Blog">
+	<PageHeader title="Blog">
+		Thoughts on writing, editing, and storytelling, and the current state of the Department.
+	</PageHeader>
+
+	<ul class="posts">
+		{
+			posts.map((post) => (
+				<li>
+					<Link href={`/blog/${post.id}`} class="sd-text-heading">
+						{post.data.title}
+					</Link>
+					<p class="meta">{formatDate(post.data.date)}</p>
+					<p>{post.data.description}</p>
+				</li>
+			))
+		}
+	</ul>
+</Base>
+
+<style>
+	.posts {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.posts p {
+		margin: var(--space-2) 0 0;
+	}
+	.posts .meta {
+		color: var(--ink-muted);
+	}
+</style>

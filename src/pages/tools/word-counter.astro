@@ -1,13 +1,13 @@
 ---
+import PageHeader from "../../components/PageHeader.astro";
 import TextField from "../../components/TextField.astro";
 import Base from "../../layouts/Base.astro";
 ---
 
 <Base title="Word Counter">
-  <h1 class="sd-text-headline">Word Counter</h1>
-  <p class="lede">
+  <PageHeader title="Word Counter" compact>
     Type or paste some text to quickly check its word or character count
-  </p>
+  </PageHeader>
   <TextField id="input" label="Your text" multiline rows={10} />
   <p class="count">
     <span id="count">0</span><span
@@ -49,14 +49,6 @@ import Base from "../../layouts/Base.astro";
 </Base>
 
 <style>
-  h1 {
-    margin: 0 0 var(--space-2);
-    font-weight: 600;
-  }
-  .lede {
-    margin: 0 0 var(--space-8);
-    color: var(--ink-muted);
-  }
   /* numbers about writing are set in mono */
   .count {
     margin: var(--space-4) 0 var(--space-8);

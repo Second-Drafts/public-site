@@ -1,5 +1,6 @@
 ---
 import Link from "../components/Link.astro";
+import PageHeader from "../components/PageHeader.astro";
 import Base from "../layouts/Base.astro";
 
 const tools = {
@@ -11,8 +12,7 @@ const tools = {
 ---
 
 <Base title="Tools">
-	<h1 class="sd-text-headline">Tools</h1>
-	<p class="lede">Our collection of free writing tools</p>
+	<PageHeader title="Tools">Our collection of free writing tools</PageHeader>
 
 	<ul class="tools">
 		{
@@ -29,16 +29,6 @@ const tools = {
 </Base>
 
 <style>
-	h1 {
-		margin: 0 0 var(--space-2);
-		font-weight: 600;
-	}
-	.lede {
-		margin: 0 0 var(--space-12);
-		font-size: 20px;
-		line-height: 32px;
-		color: var(--ink-muted);
-	}
 	.tools {
 		display: flex;
 		flex-direction: column;

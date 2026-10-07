@@ -1,0 +1,51 @@
+---
+/*
+ * PageHeader — the page title and an optional lede beneath it.
+ *
+ *   <PageHeader title="Tools">Our collection of free writing tools</PageHeader>
+ *
+ * `compact` is for pages where the content starts right below (a tool's own UI): it keeps
+ * the lede at body size and tightens the gap.
+ */
+interface Props {
+	title: string;
+	compact?: boolean;
+}
+
+const { title, compact = false } = Astro.props;
+const hasLede = Astro.slots.has("default");
+---
+
+<header class:list={["page-header", { compact }]}>
+	<h1 class="sd-text-headline">{title}</h1>
+	{
+		hasLede && (
+			<p class="lede">
+				<slot />
+			</p>
+		)
+	}
+</header>
+
+<style>
+	.page-header {
+		margin: 0 0 var(--space-12);
+	}
+	.page-header.compact {
+		margin-bottom: var(--space-8);
+	}
+	h1 {
+		margin: 0 0 var(--space-2);
+		font-weight: 600;
+	}
+	.lede {
+		margin: 0;
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+	}
+	.compact .lede {
+		font-size: inherit;
+		line-height: inherit;
+	}
+</style>
