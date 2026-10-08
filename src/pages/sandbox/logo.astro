@@ -7,11 +7,12 @@ import ThemePanel from "./_components/ThemePanel.astro";
 import { THEMES } from "./_components/themes";
 ---
 
-<SandboxLayout title="Logo" description="The lockup, with its clear space built in.">
+<SandboxLayout title="Logo" description="The lockup, with its clear space built in, and the one-line header wordmark.">
 	<Guidelines source="DESIGN.md → Logo">
 		<ul>
+			<li>Headers: <code>&lt;Logo variant="header" /&gt;</code>, the one-line wordmark at 32px tall (24px minimum).</li>
 			<li><code>logo.svg</code> on Paper and on the Highlighted band. <code>logo-white.svg</code> on Night shift.</li>
-			<li>Minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.</li>
+			<li>Lockup minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.</li>
 			<li>Never recolour the markers, re-letter the name, or animate the logo's strokes.</li>
 			<li>Open item: the pink circle disappears on the Highlighted band; a band-specific lockup is still to be drawn.</li>
 		</ul>
@@ -22,6 +23,18 @@ import { THEMES } from "./_components/themes";
 			THEMES.map((theme) => (
 				<ThemePanel theme={theme}>
 					<Logo class="sb-outline" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Header wordmark" description='variant="header" — 24px floor, 32px default, 40px.'>
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme}>
+					<Logo variant="header" height={24} />
+					<Logo variant="header" />
+					<Logo variant="header" height={40} />
 				</ThemePanel>
 			))
 		}

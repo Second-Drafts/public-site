@@ -12,7 +12,7 @@ The rules live in [`../DESIGN.md`](../DESIGN.md). This folder holds the files th
 | `components/<Name>/README.md` | Usage guidelines per component. |
 | `fonts/` | `JosefinSans-Regular.ttf`. Literata and IBM Plex Mono load from Google Fonts for now. |
 
-Logos are in `public/img/` (`logo.svg`, `logo-white.svg`).
+Logos are in `public/img/`: the lockup (`logo.svg`, `logo-white.svg`) and the header wordmark (`sd-word-single_line-marked.svg`, `sd-word-single_line-marked-night.svg`).
 
 ## In this site
 

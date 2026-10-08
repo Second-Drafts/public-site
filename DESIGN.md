@@ -94,8 +94,9 @@ Markers draw on: a stroke animates its dash from 0 to full over 240ms ease-out, 
 
 ## Logo
 
-- `logo.svg` on Paper and on the Highlighted band. `logo-white.svg` (ink lightened, markers unchanged) on Night shift.
-- Minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.
+- **Headers:** `sd-word-single_line-marked.svg` (Night shift: `sd-word-single_line-marked-night.svg`) at 32px tall, 24px minimum — `<Logo variant="header" />`. It keeps two of the logo's gestures, the pink loop and the green underline, so the brand reads at nav size without the full lockup's weight.
+- **Full lockup:** `logo.svg` on Paper and on the Highlighted band; `logo-white.svg` (ink lightened, markers unchanged) on Night shift — `<Logo />`. For footers, covers and anywhere the logo is the subject. Minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.
+- **Mark:** `mark.svg` (in the design system's assets) for favicons, avatars and app icons — places the name can't fit.
 - Never recolour the markers, re-letter the name, or animate the logo's strokes.
 
 ## Iconography

@@ -1,36 +1,60 @@
 ---
 /*
- * Logo — the Department's lockup, with its clear space built in.
+ * Logo — the Department's lockup, with its clear space built in, or the one-line header wordmark.
  * Rules: DESIGN.md → Logo.
  *
- *   <Logo />            240px wide
+ *   <Logo />                        full lockup, 240px wide
  *   <Logo width={320} />
+ *   <Logo variant="header" />       one-line wordmark for site headers, 32px tall
+ *   <Logo variant="header" height={28} />
  *
- * logo.svg on Paper and the Highlighted band, logo-white.svg on Night shift. Both images are in the
- * page and CSS shows the one that matches the nearest [data-theme]. Never recolour or animate it.
+ * Lockup: logo.svg on Paper and the Highlighted band, logo-white.svg on Night shift.
+ * Header: sd-word-single_line-marked.svg / sd-word-single_line-marked-night.svg, same theme rules.
+ * Both images are in the page and CSS shows the one that matches the nearest [data-theme].
+ * Never recolour or animate it.
  */
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends Omit<HTMLAttributes<"span">, "style"> {
-	/** Width of the artwork in px. Never below 160. */
+	/** "lockup" (default): the full stacked logo. "header": the one-line wordmark for site headers. */
+	variant?: "lockup" | "header";
+	/** Lockup only: width of the artwork in px. Never below 160. */
 	width?: number;
+	/** Header only: height of the wordmark in px. Default 32, never below 24. */
+	height?: number;
 	alt?: string;
 }
 
-const MIN_WIDTH = 160;
-const ASPECT = 332 / 639; // the SVGs' viewBox
-// Clear space all round = height of the "D" in DEPARTMENT: 48 of the logo's 639 units.
-const CLEAR_SPACE = 48 / 639;
+const {
+	variant = "lockup",
+	width: requestedWidth = 240,
+	height: requestedHeight = 32,
+	alt = "The Department of Second Drafts",
+	class: className,
+	...rest
+} = Astro.props;
 
-const { width: requested = 240, alt = "The Department of Second Drafts", class: className, ...rest } = Astro.props;
-const width = Math.max(MIN_WIDTH, requested);
-const height = Math.round(width * ASPECT);
-const clearSpace = Math.round(width * CLEAR_SPACE);
+let width: number, height: number, clearSpace: number, paperSrc: string, nightSrc: string;
+if (variant === "header") {
+	// one-line wordmark, viewBox 570 × 48; spacing comes from the header around it
+	height = Math.max(24, requestedHeight);
+	width = Math.round(height * (570 / 48));
+	clearSpace = 0;
+	paperSrc = "/img/sd-word-single_line-marked.svg";
+	nightSrc = "/img/sd-word-single_line-marked-night.svg";
+} else {
+	// stacked lockup, viewBox 639 × 332; clear space all round = height of the "D" in DEPARTMENT (48 of 639 units)
+	width = Math.max(160, requestedWidth);
+	height = Math.round(width * (332 / 639));
+	clearSpace = Math.round(width * (48 / 639));
+	paperSrc = "/img/logo.svg";
+	nightSrc = "/img/logo-white.svg";
+}
 ---
 
-<span {...rest} class:list={["sd-logo", className]} style={`padding: ${clearSpace}px`}>
-	<img class="sd-logo__img sd-logo__img--paper" src="/img/logo.svg" width={width} height={height} alt={alt} />
-	<img class="sd-logo__img sd-logo__img--night" src="/img/logo-white.svg" width={width} height={height} alt={alt} />
+<span {...rest} class:list={["sd-logo", `sd-logo--${variant}`, className]} style={`padding: ${clearSpace}px`}>
+	<img class="sd-logo__img sd-logo__img--paper" src={paperSrc} width={width} height={height} alt={alt} />
+	<img class="sd-logo__img sd-logo__img--night" src={nightSrc} width={width} height={height} alt={alt} />
 </span>
 
 <style>
@@ -42,8 +66,10 @@ const clearSpace = Math.round(width * CLEAR_SPACE);
 	.sd-logo__img {
 		display: block;
 		max-width: 100%;
-		min-width: 160px;
 		height: auto;
+	}
+	.sd-logo--lockup .sd-logo__img {
+		min-width: 160px;
 	}
 	.sd-logo__img--night {
 		display: none;
