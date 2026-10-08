@@ -1,0 +1,42 @@
+---
+import Header from "../../components/Header.astro";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+---
+
+<SandboxLayout title="Header" description="The site header: the one-line wordmark linking home, and the main navigation.">
+	<Guidelines source="DESIGN.md → Logo">
+		<ul>
+			<li>Every page gets it through <code>Base.astro</code>. The wordmark is <code>&lt;Logo variant="header" /&gt;</code> at 32px.</li>
+			<li>The current section's link gets <code>aria-current="page"</code> and the <code>marker-green</code> underline; other links underline on hover.</li>
+			<li>
+				A page that already shows the full lockup drops the wordmark: <code>&lt;Base headerLogo={"{false}"}&gt;</code>.
+				The home page does this.
+			</li>
+			<li>Narrow the window: under 40rem the links wrap below the wordmark and the padding tightens.</li>
+		</ul>
+	</Guidelines>
+
+	<Specimen title="In each theme" description="Tools is the current page. Hover or tab through the links." min="40rem">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<Header current="/tools" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="Without the wordmark" description="logo={false}: the nav sits on the right." min="40rem">
+		{
+			THEMES.filter((theme) => theme !== "highlighted").map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<Header logo={false} current="/" />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

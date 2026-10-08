@@ -1,11 +1,14 @@
 ---
 import DesignSystemHead from "../components/DesignSystemHead.astro";
+import Header from "../components/Header.astro";
 
 interface Props {
 	title?: string;
+	/** Show the wordmark in the header. Turn off on pages that already show the full lockup. */
+	headerLogo?: boolean;
 }
 
-const { title } = Astro.props;
+const { title, headerLogo = true } = Astro.props;
 const siteName = "The Department of Second Drafts";
 const fullTitle = title ? `${siteName}: ${title}` : siteName;
 ---
@@ -21,6 +24,7 @@ const fullTitle = title ? `${siteName}: ${title}` : siteName;
 		<DesignSystemHead />
 	</head>
 	<body>
+		<Header logo={headerLogo} />
 		<main class="page">
 			<slot />
 		</main>

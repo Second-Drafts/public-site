@@ -1,0 +1,117 @@
+---
+/*
+ * Header — the site header: the one-line wordmark linking home, and the main navigation.
+ * Rules: DESIGN.md → Logo (header wordmark).
+ *
+ *   <Header />
+ *   <Header logo={false} />        nav only, for a page that already shows the full lockup
+ *
+ * The link for the current section gets aria-current and the marker-green underline.
+ */
+import Logo from "./Logo.astro";
+
+interface Props {
+	/** Show the wordmark. Default true. */
+	logo?: boolean;
+	/** Path to treat as the current page. Defaults to the page's own URL. */
+	current?: string;
+}
+
+const { logo = true, current = Astro.url.pathname } = Astro.props;
+
+const NAV = [
+	{ href: "/tools", label: "Tools" },
+	{ href: "/about-us", label: "About Us" },
+];
+
+const path = current.replace(/\/$/, "");
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="sd-header">
+	{
+		logo && (
+			<a class="sd-header__home" href="/">
+				<Logo variant="header" />
+			</a>
+		)
+	}
+	<nav class="sd-header__nav" aria-label="Main">
+		<ul>
+			{
+				NAV.map((item) => (
+					<li>
+						<a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+							{item.label}
+						</a>
+					</li>
+				))
+			}
+		</ul>
+	</nav>
+</header>
+
+<style>
+	.sd-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4) var(--space-8);
+		padding: var(--space-6) var(--space-8);
+		border-bottom: var(--stroke-hairline) solid var(--rule);
+		background: var(--paper);
+	}
+	/* always on the right, with or without the wordmark and when the links wrap below it */
+	.sd-header__nav {
+		margin-left: auto;
+	}
+	.sd-header__home {
+		display: block;
+		border-radius: var(--radius-sm);
+	}
+	.sd-header__nav ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.sd-header__nav a {
+		font-family: var(--font-display);
+		font-size: 17px;
+		line-height: 24px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: var(--ink);
+		text-decoration: none;
+		text-decoration-thickness: 3px;
+		text-underline-offset: 6px;
+	}
+	.sd-header__nav a:hover,
+	.sd-header__nav a[aria-current="page"] {
+		text-decoration-line: underline;
+		text-decoration-color: var(--marker-green);
+	}
+	.sd-header__home:focus-visible,
+	.sd-header__nav a:focus-visible {
+		outline: none;
+		border-radius: var(--radius-sm);
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+	/* Green would sit on pink; in the band the underline goes ink, as Link does. */
+	:global([data-theme="highlighted"]) .sd-header__nav a {
+		text-decoration-color: var(--ink);
+	}
+	@media (max-width: 40rem) {
+		.sd-header {
+			padding: var(--space-4);
+		}
+		.sd-header__nav ul {
+			gap: var(--space-2) var(--space-6);
+		}
+	}
+</style>
