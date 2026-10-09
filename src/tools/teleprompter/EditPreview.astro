@@ -1,0 +1,75 @@
+---
+/*
+ * EditPreview: the Edit page's preview band. It shows the script through the same PromptStage the Prompt
+ * view uses, at actual size (the real font size in px, the column as a share of the band, the real
+ * colours, guide, alignment, mirror and flip), so what you see is what you will read.
+ * It doesn't play; wheel or touch scrolls it by hand. Behaviour: edit-preview.ts.
+ *
+ *   <EditPreview />
+ *
+ * Height: --tp-preview-h, set by the page; the workspace below takes whatever the first screen has left.
+ */
+import PromptStage from "./PromptStage.astro";
+---
+
+<section class="tpv" aria-label="Preview" data-tp-preview>
+	<!-- The words are already in the script box, so a screen reader skips this copy. -->
+	<div class="tpv__stage" aria-hidden="true">
+		<PromptStage />
+	</div>
+	<p class="tpv__caption sd-text-meta">
+		<span>Preview at actual size</span>
+		<span class="tpv__flag" data-tpv="mirror" hidden>Mirrored</span>
+		<span class="tpv__flag" data-tpv="flip" hidden>Flipped</span>
+	</p>
+</section>
+
+<style>
+	.tpv {
+		position: relative;
+		block-size: var(--tp-preview-h, clamp(16rem, 46dvh, 40rem));
+		min-inline-size: 0;
+		border-block: var(--stroke-hairline) solid var(--rule-strong);
+		overflow: clip;
+	}
+	.tpv__stage {
+		position: absolute;
+		inset: 0;
+	}
+	.tpv__stage > :global(*) {
+		inline-size: 100%;
+		block-size: 100%;
+	}
+	/* The Prompt view traps scrolling; here it must not, or the page can't be scrolled with the pointer over the band. */
+	.tpv :global([data-tpst="scroller"]) {
+		overscroll-behavior: auto;
+	}
+	/*
+	 * A paper chip, not prompter colours: it has to read over any theme, and it marks the band as
+	 * chrome around a preview, not something to type into. It sits outside the stage, so mirror
+	 * and flip never reverse it.
+	 */
+	.tpv__caption {
+		position: absolute;
+		inset-block-end: var(--space-3);
+		inset-inline-start: var(--space-3);
+		z-index: 1;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-1) var(--space-3);
+		max-inline-size: calc(100% - 2 * var(--space-3));
+		margin: 0;
+		padding: var(--space-1) var(--space-3);
+		color: var(--ink-muted);
+		background: var(--paper);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-pill);
+		pointer-events: none;
+	}
+	.tpv__flag {
+		color: var(--ink);
+	}
+	.tpv__flag[hidden] {
+		display: none;
+	}
+</style>

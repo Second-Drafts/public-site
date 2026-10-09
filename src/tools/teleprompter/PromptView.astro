@@ -1,0 +1,709 @@
+---
+/*
+ * PromptView: the full-viewport reading surface. Hidden until the store's view becomes "prompt";
+ * prompt-view.ts owns all behaviour. Everything here is bare on purpose: theme colours only,
+ * no logo, chrome that gets out of the way while the text moves.
+ *
+ * Layers, bottom to top:
+ *   PromptStage   the script, guide, mirror and flip (shared with the Edit preview; see stage.ts)
+ *   .tpp-countdown, .tpp-hint, .tpp-chrome   never transformed, so they always read the right way
+ *   .tpp-drawer   every setting, in the site's own Paper or Night shift (whichever suits the prompter
+ *                 background), so it reads well whatever the theme, mirror or flip
+ *
+ * Styles are global (prefixed tpp-) so prompt-view.ts can set state on any part.
+ */
+import { shortcutsFor, TOUCH_HINT } from "./lib/keyboard";
+import { LIMITS } from "./lib/settings";
+import PromptStage from "./PromptStage.astro";
+import SettingsPanel from "./SettingsPanel.astro";
+---
+
+<div
+	class="tpp"
+	data-tp-prompt
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="tpp-title"
+	tabindex="-1"
+	data-state="paused"
+	data-chrome="shown"
+	hidden
+>
+	<h2 id="tpp-title" class="sd-visually-hidden">Teleprompter</h2>
+
+	<PromptStage />
+
+	<div class="tpp-countdown" aria-live="polite">
+		<span class="tpp-count" data-tpp="count" hidden></span>
+	</div>
+
+	<div class="tpp-chrome" data-tpp="chrome">
+		<section class="tpp-hint" data-tpp="hint" aria-label="How to use the prompter" hidden>
+			<div data-tpp="hint-keys">
+				<h3 class="tpp-hint-title">Shortcuts</h3>
+				<dl class="tpp-keys">
+					{
+						shortcutsFor().map((s) => (
+							<div data-shortcut={s.id}>
+								<dt>
+									<kbd>{s.keys}</kbd>
+								</dt>
+								<dd data-shortcut-label>{s.label}</dd>
+							</div>
+						))
+					}
+				</dl>
+				<p class="tpp-hint-note">
+					Tap or click the text to play or pause. Scroll any time to move, and playback carries on from there.
+				</p>
+				<p class="tpp-hint-note" data-tpp="fs-note" hidden>
+					Full screen isn't available in this browser, so the prompter fills the window instead.
+				</p>
+			</div>
+			<p class="tpp-hint-touch" data-tpp="hint-touch" hidden>{TOUCH_HINT}</p>
+			<button type="button" class="tpp-textbtn" data-tpp="hint-dismiss">Dismiss</button>
+		</section>
+		<div class="tpp-toolbar" role="group" aria-label="Prompter controls">
+			<button type="button" class="tpp-btn tpp-play" data-tpp="play">
+				<svg class="tpp-icon tpp-icon-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"></path></svg>
+				<svg class="tpp-icon tpp-icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5.5v13M15 5.5v13"></path></svg>
+				<span class="tpp-blabel" data-tpp="play-label">Play</span>
+			</button>
+
+			<div class="tpp-group" role="group" aria-labelledby="tpp-speed-label">
+				<span class="tpp-glabel" id="tpp-speed-label">Speed</span>
+				<span class="tpp-value" data-tpp="speed-value" aria-hidden="true"></span>
+				<button type="button" class="tpp-btn" data-tpp="slower">
+					<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path></svg>
+					<span class="sd-visually-hidden">Slower</span>
+				</button>
+				<input
+					type="range"
+					class="tpp-range"
+					data-tpp="speed"
+					min={LIMITS.speed.min}
+					max={LIMITS.speed.max}
+					step={LIMITS.speed.step}
+					aria-label="Speed"
+				/>
+				<button type="button" class="tpp-btn" data-tpp="faster">
+					<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+					<span class="sd-visually-hidden">Faster</span>
+				</button>
+			</div>
+
+			<div class="tpp-group" role="group" aria-labelledby="tpp-size-label">
+				<span class="tpp-glabel" id="tpp-size-label">Size</span>
+				<button type="button" class="tpp-btn" data-tpp="smaller">
+					<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 18l4.5-11 4.5 11M5.1 14h5.8M15 12.5h6"></path></svg>
+					<span class="sd-visually-hidden">Smaller text</span>
+				</button>
+				<button type="button" class="tpp-btn" data-tpp="larger">
+					<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 19l5.5-14 5.5 14M4.5 14.5h7M18 9.5v6M15 12.5h6"></path></svg>
+					<span class="sd-visually-hidden">Larger text</span>
+				</button>
+			</div>
+
+			<button type="button" class="tpp-btn" data-tpp="top">
+				<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h14M12 20V9.5M7 14.5l5-5 5 5"></path></svg>
+				<span class="tpp-blabel">Back to top</span>
+			</button>
+
+			<p class="tpp-time">
+				<span><span data-tpp="elapsed">0:00</span>{" "}<span class="tpp-time-word">elapsed</span></span>
+				<span class="tpp-time-sep" aria-hidden="true">&middot;</span>
+				<span class="tpp-time-left"><span data-tpp="remaining">0:00</span>{" "}left</span>
+			</p>
+
+			<button type="button" class="tpp-btn" data-tpp="mirror" aria-pressed="false">
+				<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v2.5M12 8.5v2.5M12 14v2.5M12 19.5V21M9 7.5L4 17h5zM15 7.5l5 9.5h-5z"></path></svg>
+				<span class="tpp-blabel">Mirror</span>
+			</button>
+
+			<button
+				type="button"
+				class="tpp-btn"
+				data-tpp="settings"
+				aria-expanded="false"
+				aria-controls="tpp-drawer"
+				aria-keyshortcuts="S"
+			>
+				<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8M16 7h4M14 4.5v5M4 17h3M11 17h9M9 14.5v5"></path></svg>
+				<span class="tpp-blabel">Settings</span>
+			</button>
+
+			<button type="button" class="tpp-btn" data-tpp="fullscreen" aria-pressed="false">
+				<svg class="tpp-icon tpp-icon-fs-enter" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"></path></svg>
+				<svg class="tpp-icon tpp-icon-fs-exit" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M20 9h-5V4M15 20v-5h5M4 15h5v5"></path></svg>
+				<span class="tpp-blabel">Full screen</span>
+			</button>
+
+			<button type="button" class="tpp-btn" data-tpp="exit">
+				<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+				<span class="tpp-blabel">Exit</span>
+			</button>
+		</div>
+	</div>
+
+	<div
+		class="tpp-drawer"
+		id="tpp-drawer"
+		data-tpp="drawer"
+		data-theme="dark"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="tpp-drawer-title"
+		tabindex="-1"
+		hidden
+	>
+		<header class="tpp-drawer-head">
+			<h3 id="tpp-drawer-title" class="tpp-drawer-title sd-text-title">Settings</h3>
+			<button type="button" class="tpp-drawer-close" data-tpp="drawer-close">
+				<svg class="tpp-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+				<span class="sd-visually-hidden">Close settings</span>
+			</button>
+		</header>
+		<div class="tpp-drawer-body">
+			<SettingsPanel variant="drawer" />
+		</div>
+	</div>
+
+	<div class="sd-visually-hidden" aria-live="polite" data-tpp="status"></div>
+</div>
+
+<style is:global>
+	/* Page behind stays put while the prompter is open. */
+	:root:has(.tpp:not([hidden])) {
+		overflow: hidden;
+	}
+
+	.tpp {
+		/* Theme colours for the chrome, set by prompt-view.ts. The stage sets its own (see PromptStage). */
+		--tp-fg: oklch(0.88 0.18 95);
+		--tp-bg: oklch(0 0 none);
+		--tpp-hit: 2.5rem;
+		--tpp-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+
+		/* Chrome: neutral, translucent, derived from the theme so it fits every one. */
+		--tpp-chrome-bg: color-mix(in oklch, color-mix(in oklch, var(--tp-bg) 93%, var(--tp-fg)) 94%, transparent);
+		--tpp-chrome-fg: color-mix(in oklch, var(--tp-fg) 96%, var(--tp-bg));
+		--tpp-chrome-muted: color-mix(in oklch, var(--tp-fg) 88%, var(--tp-bg));
+		--tpp-chrome-line: color-mix(in oklch, var(--tp-fg) 22%, transparent);
+		--tpp-chrome-hover: color-mix(in oklch, var(--tp-fg) 10%, transparent);
+		--tpp-chrome-pressed: color-mix(in oklch, var(--tp-fg) 12%, transparent);
+
+		position: fixed;
+		inset: 0;
+		z-index: 1000;
+		overflow: clip;
+		background: var(--tp-bg);
+		color: var(--tp-fg);
+		color-scheme: dark;
+		font-family: system-ui, sans-serif;
+	}
+
+	@media (pointer: coarse) {
+		.tpp {
+			--tpp-hit: 2.75rem;
+		}
+	}
+
+	/* The dialog itself takes focus on open; a ring around the whole screen would only distract. */
+	.tpp:focus-visible {
+		outline: 2px solid transparent;
+	}
+
+	/* The prompter's own controls ring in the theme's text colour. The drawer keeps the site's focus style. */
+	.tpp-chrome :focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
+	}
+
+	.tpp[data-chrome="hidden"] {
+		cursor: none;
+	}
+
+	/* ---- Countdown ---- */
+
+	.tpp-countdown {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		pointer-events: none;
+	}
+
+	.tpp-count {
+		display: grid;
+		place-items: center;
+		inline-size: 1.5em;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: var(--tpp-chrome-bg);
+		border: 1px solid var(--tpp-chrome-line);
+		color: var(--tp-fg);
+		font-size: clamp(5rem, 30vmin, 14rem);
+		font-weight: 600;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.tpp-count[hidden] {
+		display: none;
+	}
+
+	/* ---- First-use hint ---- */
+
+	.tpp-hint {
+		box-sizing: border-box;
+		inline-size: min(100%, 22rem);
+		padding: 1rem 1.25rem;
+		pointer-events: auto;
+		border: 1px solid var(--tpp-chrome-line);
+		border-radius: 0.75rem;
+		background: var(--tpp-chrome-bg);
+		color: var(--tpp-chrome-fg);
+		font-size: 0.9375rem;
+		line-height: 1.4;
+	}
+
+	.tpp-hint[hidden] {
+		display: none;
+	}
+
+	.tpp-hint-title {
+		margin: 0 0 0.5rem;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.tpp-keys {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.25rem 1rem;
+		margin: 0;
+	}
+
+	.tpp-keys > div {
+		display: contents;
+	}
+
+	.tpp-keys > div[hidden] {
+		display: none;
+	}
+
+	.tpp-keys dt,
+	.tpp-keys dd {
+		margin: 0;
+	}
+
+	.tpp-keys kbd {
+		font: inherit;
+		font-variant-numeric: tabular-nums;
+		color: var(--tpp-chrome-fg);
+		white-space: nowrap;
+	}
+
+	.tpp-keys dd {
+		color: var(--tpp-chrome-muted);
+	}
+
+	.tpp-hint-note {
+		margin: 0.75rem 0 0;
+		color: var(--tpp-chrome-muted);
+	}
+
+	/* Touch devices: one short line and the button side by side, small enough to stay clear of the read line. */
+	.tpp-hint:not([hidden]):has(> .tpp-hint-touch:not([hidden])) {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		inline-size: min(100%, 24rem);
+		padding: 0.625rem 0.75rem;
+		font-size: 0.875rem;
+		line-height: 1.35;
+	}
+
+	.tpp-hint-touch {
+		flex: 1;
+		margin: 0;
+		color: var(--tpp-chrome-fg);
+		text-wrap: pretty;
+	}
+
+	.tpp-hint-touch + .tpp-textbtn {
+		flex: none;
+		margin-block-start: 0;
+	}
+
+	.tpp-hint-note[hidden] {
+		display: none;
+	}
+
+	.tpp-textbtn {
+		margin-block-start: 0.75rem;
+		min-block-size: var(--tpp-hit);
+		padding: 0 1rem;
+		border: 1px solid var(--tpp-chrome-line);
+		border-radius: 0.5rem;
+		background: transparent;
+		color: var(--tpp-chrome-fg);
+		font: inherit;
+		cursor: pointer;
+	}
+
+	/* ---- Toolbar ---- */
+
+	.tpp-chrome {
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 0.75rem;
+		padding-block-end: max(0.75rem, env(safe-area-inset-bottom, 0px));
+		container-type: inline-size;
+		pointer-events: none;
+	}
+
+	.tpp-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 0.25rem 0.5rem;
+		max-inline-size: 100%;
+		padding: 0.375rem 0.5rem;
+		border: 1px solid var(--tpp-chrome-line);
+		border-radius: 0.75rem;
+		background: var(--tpp-chrome-bg);
+		color: var(--tpp-chrome-fg);
+		font-size: 0.875rem;
+		pointer-events: auto;
+	}
+
+	.tpp[data-chrome="hidden"] .tpp-toolbar,
+	.tpp[data-chrome="hidden"] .tpp-hint {
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.tpp-toolbar,
+		.tpp-hint {
+			transition: opacity 120ms var(--tpp-ease-out);
+		}
+	}
+
+	/* Each group is its own hairline capsule, so the speed number can't be read as part of Size. */
+	.tpp-group {
+		display: flex;
+		align-items: center;
+		gap: 0.125rem;
+		padding-inline: 0.25rem;
+		border: 1px solid var(--tpp-chrome-line);
+		border-radius: 0.625rem;
+	}
+
+	.tpp-glabel {
+		margin-inline: 0.25rem 0.125rem;
+		color: var(--tpp-chrome-muted);
+	}
+
+	.tpp-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.375rem;
+		min-inline-size: var(--tpp-hit);
+		min-block-size: var(--tpp-hit);
+		padding: 0 0.5rem;
+		border: 0;
+		border-radius: 0.5rem;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.tpp-btn:is([aria-pressed="true"], [aria-expanded="true"]) {
+		background: var(--tpp-chrome-pressed);
+	}
+
+	.tpp-btn[aria-disabled="true"] {
+		opacity: 0.4;
+		cursor: default;
+	}
+
+	.tpp-btn[hidden] {
+		display: none;
+	}
+
+	.tpp-btn:active:not([aria-disabled="true"]),
+	.tpp-textbtn:active {
+		scale: 0.96;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.tpp-btn:hover:not([aria-disabled="true"]),
+		.tpp-textbtn:hover {
+			background: var(--tpp-chrome-hover);
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.tpp-btn,
+		.tpp-textbtn {
+			transition: scale 120ms var(--tpp-ease-out);
+		}
+	}
+
+	.tpp-icon {
+		flex: none;
+		inline-size: 1.25rem;
+		block-size: 1.25rem;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.75;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+
+	.tpp-icon-pause,
+	.tpp:is([data-state="playing"], [data-state="counting"]) .tpp-icon-play {
+		display: none;
+	}
+
+	.tpp:is([data-state="playing"], [data-state="counting"]) .tpp-icon-pause {
+		display: block;
+	}
+
+	.tpp-icon-fs-exit,
+	.tpp-btn[aria-pressed="true"] .tpp-icon-fs-enter {
+		display: none;
+	}
+
+	.tpp-btn[aria-pressed="true"] .tpp-icon-fs-exit {
+		display: block;
+	}
+
+	/*
+	 * Text that gives way when the bar is short of room but stays the accessible name: the
+	 * .sd-visually-hidden declarations, which a container query can't apply as a class.
+	 * Button labels show only on a wide bar.
+	 */
+	@container (inline-size <= 72rem) {
+		.tpp-blabel {
+			position: absolute;
+			inline-size: 1px;
+			block-size: 1px;
+			margin: -1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+	}
+
+	/* On a phone the group labels go too, and the bar reads "0:19 · 1:12 left". */
+	@container (inline-size < 40rem) {
+		:is(.tpp-glabel, .tpp-time-word) {
+			position: absolute;
+			inline-size: 1px;
+			block-size: 1px;
+			margin: -1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+	}
+
+	/* "Play" and "Pause" take the same room, so the bar doesn't shift when playback toggles. */
+	@container (inline-size > 72rem) {
+		.tpp-play .tpp-blabel {
+			min-inline-size: 5ch;
+			text-align: start;
+		}
+	}
+
+	.tpp-range {
+		inline-size: clamp(5rem, 12vw, 8rem);
+		min-block-size: var(--tpp-hit);
+		margin: 0;
+		accent-color: var(--tp-fg);
+		cursor: pointer;
+	}
+
+	/* Sits right after the Speed label (or first in the group when the label is hidden). */
+	.tpp-value {
+		min-inline-size: 2ch;
+		margin-inline-end: 0.25rem;
+		text-align: center;
+		font-variant-numeric: tabular-nums;
+		font-weight: 600;
+	}
+
+	.tpp-time {
+		display: flex;
+		align-items: baseline;
+		gap: 0.375rem;
+		margin: 0;
+		padding-inline: 0.25rem;
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
+	}
+
+	.tpp-time-sep,
+	.tpp-time-left {
+		color: var(--tpp-chrome-muted);
+	}
+
+	/* ---- Settings drawer ---- */
+
+	/*
+	 * Site tokens, not prompter colours: prompt-view.ts sets data-theme to Paper or Night shift to suit
+	 * the prompter background, and the settings components render as they do on the page.
+	 * An inline-end side sheet; a bottom sheet on narrow screens. The middle scrolls, the header stays.
+	 */
+	.tpp {
+		--tpp-drawer-w: min(24rem, 100%);
+	}
+
+	.tpp-drawer {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-end: 0;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+		inline-size: var(--tpp-drawer-w);
+		border-inline-start: var(--stroke-hairline) solid var(--rule);
+		background: var(--paper);
+		box-shadow: var(--shadow-lift);
+		color: var(--ink);
+		font-family: var(--font-prose);
+		cursor: auto;
+	}
+
+	.tpp-drawer[hidden] {
+		display: none;
+	}
+
+	.tpp-drawer[data-theme="light"] {
+		color-scheme: light;
+	}
+
+	.tpp-drawer[data-theme="dark"] {
+		color-scheme: dark;
+	}
+
+	/* The sheet takes focus on open so its name is read out; a ring round all of it would only distract. */
+	.tpp-drawer:focus-visible {
+		outline: 2px solid transparent;
+	}
+
+	.tpp-drawer-head {
+		flex: none;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4);
+		padding-block: max(var(--space-3), env(safe-area-inset-top, 0px)) var(--space-3);
+		padding-inline: var(--space-6) var(--space-3);
+	}
+
+	.tpp-drawer-title {
+		margin: 0;
+	}
+
+	.tpp-drawer-close {
+		display: inline-grid;
+		place-items: center;
+		inline-size: 2.75rem;
+		block-size: 2.75rem;
+		padding: 0;
+		border: 0;
+		border-radius: var(--radius-md);
+		background: transparent;
+		color: var(--ink);
+		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.tpp-drawer-close:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+
+	.tpp-drawer-close:active {
+		scale: 0.96;
+	}
+
+	@media (hover: hover) and (pointer: fine) {
+		.tpp-drawer-close:hover {
+			background: var(--marker-yellow);
+			color: var(--on-marker);
+		}
+	}
+
+	.tpp-drawer-body {
+		flex: 1;
+		min-block-size: 0;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scrollbar-gutter: stable;
+		/* The panel's first group draws its own top rule, which divides it from the header. */
+		padding-block: 0 calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+		padding-inline: var(--space-6);
+	}
+
+	/* While the drawer is open the toolbar centres in the space left beside it, so it stays in view. */
+	@media (width >= 40rem) {
+		.tpp[data-drawer="open"] .tpp-chrome {
+			inset-inline-end: var(--tpp-drawer-w);
+		}
+	}
+
+	@media (width < 40rem) {
+		.tpp-drawer {
+			inset-block-start: auto;
+			inset-inline: 0;
+			inline-size: auto;
+			/* Up to 70% of the screen, but stop short of the read line so the line being tuned stays in view. */
+			max-block-size: clamp(40dvh, (1 - var(--tpp-guide-pos, 0.33)) * 100dvh - var(--tpp-line, 3rem) / 2 - 0.5rem, 70dvh);
+			border-inline-start: 0;
+			border-block-start: var(--stroke-hairline) solid var(--rule);
+			border-start-start-radius: var(--radius-lg);
+			border-start-end-radius: var(--radius-lg);
+		}
+
+		.tpp-drawer-head {
+			padding-block-start: var(--space-3);
+		}
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		.tpp-drawer {
+			transition:
+				opacity 120ms var(--tpp-ease-out),
+				display 120ms allow-discrete;
+		}
+
+		.tpp-drawer[hidden] {
+			opacity: 0;
+		}
+
+		@starting-style {
+			.tpp-drawer:not([hidden]) {
+				opacity: 0;
+			}
+		}
+
+		.tpp-drawer-close {
+			transition: scale 120ms var(--tpp-ease-out);
+		}
+	}
+</style>

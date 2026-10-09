@@ -1,0 +1,188 @@
+---
+/*
+ * EditView: the script textarea, its word count and read time, and the three actions
+ * (Start prompting, Copy share link, Clear script). Behaviour: edit-view.ts.
+ *
+ * Sits in the page's tool, a container named tp-work. Wide, the page gives this view the workspace row's
+ * height and the script box takes whatever the label, stats and actions leave; narrow, the box sizes to
+ * its text (up to a cap) and the view flows with the page.
+ */
+import Button from "../../components/Button.astro";
+---
+
+<div class="tpe" data-tp-edit>
+	<div class="tpe__field">
+		<label class="tpe__label sd-text-label" for="tpe-script">Your script</label>
+		<textarea
+			id="tpe-script"
+			class="tpe__script"
+			data-tpe="script"
+			rows="16"
+			spellcheck="true"
+			autocomplete="off"
+			autocapitalize="sentences"
+			aria-describedby="tpe-stats"
+			placeholder="Paste or type your script here."></textarea>
+		<p id="tpe-stats" class="tpe__stats sd-text-meta" data-tpe="stats">&nbsp;</p>
+	</div>
+
+	<div class="tpe__actions">
+		<Button variant="accent" size="lg" data-tpe="start" disabled>Start prompting</Button>
+		<Button variant="secondary" data-tpe="share">Copy share link</Button>
+		<Button variant="quiet" data-tpe="clear">Clear script</Button>
+	</div>
+
+	<div class="tpe__feedback">
+		<p class="tpe__status" role="status" aria-live="polite" data-tpe="status"></p>
+		<div class="tpe__fallback" data-tpe="fallback" hidden>
+			<label class="tpe__fallback-label" for="tpe-link">Copy this link:</label>
+			<input id="tpe-link" class="tpe__link" type="text" readonly data-tpe="link" />
+		</div>
+	</div>
+
+	<p class="tpe__privacy">Saved in this browser only. We never see your script.</p>
+</div>
+
+<style>
+	.tpe {
+		/* Stacked (narrow): the tallest the script box may grow, so Start prompting stays near the fold. */
+		--tpe-max: clamp(12rem, 50dvh, 30rem);
+		display: grid;
+		gap: var(--space-4);
+		min-inline-size: 0;
+	}
+	.tpe__field {
+		display: grid;
+		gap: var(--space-2);
+	}
+	.tpe__label {
+		color: var(--ink);
+	}
+	.tpe__script {
+		box-sizing: border-box;
+		inline-size: 100%;
+		min-block-size: min(clamp(11lh, 52dvh, 16lh), var(--tpe-max));
+		max-block-size: var(--tpe-max);
+		margin: 0;
+		padding: var(--space-3) var(--space-4);
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		resize: vertical;
+		field-sizing: content;
+	}
+	/* Side by side: the script box fills the column and scrolls inside itself. */
+	@container tp-work (min-width: 55rem) {
+		.tpe {
+			block-size: 100%;
+			min-block-size: 0;
+			grid-template-rows: minmax(0, 1fr) auto auto auto;
+		}
+		.tpe__field {
+			min-block-size: 0;
+			grid-template-rows: auto minmax(0, 1fr) auto;
+		}
+		.tpe__script {
+			field-sizing: fixed;
+			block-size: 100%;
+			min-block-size: 4rem;
+			max-block-size: none;
+			resize: none;
+		}
+	}
+	/* On a phone, keep Start prompting near the fold: the box scrolls inside itself past about half the screen. */
+	@media (max-width: 30rem) {
+		.tpe__script {
+			min-block-size: min(9lh, 45dvh);
+			max-block-size: 45dvh;
+		}
+	}
+	.tpe__script::placeholder {
+		color: var(--ink-muted);
+		opacity: 1;
+		font-style: italic;
+	}
+	.tpe__script:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 1px;
+		border-color: var(--focus);
+	}
+	.tpe__stats {
+		margin: 0;
+		color: var(--ink-muted);
+		font-variant-numeric: tabular-nums;
+	}
+
+	.tpe__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3);
+	}
+	/* Start prompting is the one move forward: on a phone it takes the full row. */
+	@media (max-width: 30rem) {
+		.tpe__actions :global([data-tpe="start"]) {
+			flex: 1 1 100%;
+		}
+	}
+
+	.tpe__feedback {
+		display: grid;
+		gap: var(--space-2);
+	}
+	/* Empty, the live region takes no room (it stays in the layout so announcements still work). */
+	.tpe__feedback:not(:has(.tpe__status:not(:empty), .tpe__fallback:not([hidden]))) {
+		margin-block-start: calc(-1 * var(--space-4));
+	}
+	.tpe__status {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+	}
+	.tpe__status[data-tone="warning"] {
+		padding-inline-start: var(--space-3);
+		border-inline-start: var(--stroke-marker) solid var(--marker-orange);
+	}
+	.tpe__fallback {
+		display: grid;
+		gap: var(--space-1);
+	}
+	.tpe__fallback[hidden] {
+		display: none;
+	}
+	.tpe__fallback-label {
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	.tpe__link {
+		box-sizing: border-box;
+		inline-size: 100%;
+		padding: 6px var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--ink);
+		background: var(--paper-sunken);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+	}
+	.tpe__link:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 1px;
+	}
+
+	.tpe__privacy {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+</style>

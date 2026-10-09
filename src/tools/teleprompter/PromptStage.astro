@@ -1,0 +1,185 @@
+---
+/*
+ * PromptStage: the script drawn exactly as it will be read. stage.ts (createStage) fills it and
+ * applies every look-and-layout setting; hosts never touch its insides.
+ *
+ * It sizes itself to its container, not the window: it fills the box its host gives it, and it is a
+ * size container, so the read line and the top/bottom padding are fractions of the stage's own
+ * height. The Prompt view hosts it full-screen; the Edit view's preview hosts it in a smaller box.
+ *
+ * The column sits at --tp-colpos across the stage (0 left, 0.5 centre, 1 right); the arrows follow it.
+ * Mirror and flip transform only .tpst-area (the guide and the scrolling text). Hosts put their
+ * overlays (toolbar, countdown, menus) outside the stage so those always read the right way round.
+ *
+ * Paragraphs are created at runtime, so their rules are :global() under the scoped .tpst-text.
+ */
+---
+
+<div class="tpst" data-tp-stage data-align="left" data-guide="band">
+	<div class="tpst-area">
+		<div class="tpst-guide" aria-hidden="true">
+			<div class="tpst-band"></div>
+			<div class="tpst-arrow tpst-arrow-start"></div>
+			<div class="tpst-arrow tpst-arrow-end"></div>
+		</div>
+		<div class="tpst-scroller" data-tpst="scroller" tabindex="-1">
+			<div class="tpst-track">
+				<div class="tpst-text" data-tpst="text"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.tpst {
+		/* Set from settings by stage.ts. Defaults keep the markup sane before it runs. */
+		--tp-fg: oklch(0.88 0.18 95);
+		--tp-bg: oklch(0 0 none);
+		--tp-guide: oklch(1 0 none);
+		--tp-font: system-ui, sans-serif;
+		--tp-weight: 400;
+		--tp-size: 56px;
+		--tp-lh: 1.5;
+		--tp-col: 70%;
+		--tp-colpos: 0.5;
+		--tp-guide-pos: 0.33;
+		--tp-guide-opacity: 0.2;
+		--tp-sx: 1;
+		--tp-sy: 1;
+
+		--tp-line: calc(var(--tp-size) * var(--tp-lh));
+		--tpst-arrow: clamp(0.75rem, calc(var(--tp-size) * 0.35), 1.5rem);
+		/* Edge margin; never less than an arrow and its gap, so arrows fit even when the column is flush to a side. */
+		--tpst-gutter: max(clamp(1.25rem, 4cqi, 3rem), var(--tpst-arrow) + 0.5rem);
+		--tpst-colw: min(var(--tp-col), 100% - 2 * var(--tpst-gutter));
+		/*
+		 * Where the column's start edge sits. --tp-colpos slides it between the two gutters:
+		 * 0 flush left, 0.5 centred, 1 flush right. Percentages resolve against the stage's width
+		 * wherever this is used, so it holds on resize with no measuring.
+		 */
+		--tpst-colx: calc(var(--tpst-gutter) + (100% - var(--tpst-colw) - 2 * var(--tpst-gutter)) * var(--tp-colpos));
+
+		position: relative;
+		display: block;
+		inline-size: 100%;
+		block-size: 100%;
+		/* cqi / cqb below are the stage's own size, wherever it is placed. */
+		container-type: size;
+		overflow: clip;
+		background: var(--tp-bg);
+		color: var(--tp-fg);
+	}
+
+	.tpst-area {
+		position: absolute;
+		inset: 0;
+		scale: var(--tp-sx) var(--tp-sy);
+	}
+
+	.tpst-scroller {
+		position: absolute;
+		inset: 0;
+		/* hidden, not clip: a script scrolls this element. */
+		overflow-x: hidden;
+		overflow-y: auto;
+		/* Scripted scrollTop writes must land instantly, whatever the page sets. */
+		scroll-behavior: auto;
+		overscroll-behavior: contain;
+		scrollbar-width: none;
+		touch-action: pan-y pinch-zoom;
+		user-select: none;
+		-webkit-user-select: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.tpst-scroller::-webkit-scrollbar {
+		display: none;
+	}
+
+	.tpst-scroller:focus-visible {
+		outline: 2px solid transparent;
+	}
+
+	/*
+	 * Padding puts the first line on the read line at scrollTop 0 and lets the last line reach it.
+	 * The track is never transformed, so the sub-pixel transform on .tpst-text can't change the
+	 * scrollable height.
+	 */
+	.tpst-track {
+		padding-block-start: max(0px, var(--tp-guide-pos) * 100cqb - var(--tp-line) / 2);
+		padding-block-end: max(0px, (1 - var(--tp-guide-pos)) * 100cqb - var(--tp-line) / 2);
+	}
+
+	.tpst-text {
+		position: relative;
+		inline-size: var(--tpst-colw);
+		margin-inline-start: var(--tpst-colx);
+		font-family: var(--tp-font);
+		font-weight: var(--tp-weight);
+		font-size: var(--tp-size);
+		line-height: var(--tp-lh);
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+		will-change: transform;
+	}
+
+	.tpst[data-align="center"] .tpst-text {
+		text-align: center;
+	}
+
+	.tpst-text :global(.tpst-para) {
+		margin: 0;
+		margin-block-end: calc(var(--tp-line) * 0.75);
+	}
+
+	.tpst-text :global(.tpst-para:last-child) {
+		margin-block-end: 0;
+	}
+
+	.tpst-text :global(.tpst-empty) {
+		color: color-mix(in oklch, var(--tp-fg) 60%, var(--tp-bg));
+	}
+
+	/* ---- Reading guide ---- */
+
+	.tpst-guide {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+
+	.tpst-band,
+	.tpst-arrow {
+		position: absolute;
+		display: none;
+		background: var(--tp-guide);
+	}
+
+	.tpst-band {
+		inset-inline: 0;
+		inset-block-start: calc(var(--tp-guide-pos) * 100cqb - var(--tp-line) / 2);
+		block-size: var(--tp-line);
+		opacity: var(--tp-guide-opacity);
+	}
+
+	.tpst-arrow {
+		inset-block-start: calc(var(--tp-guide-pos) * 100cqb - var(--tpst-arrow) / 2);
+		inline-size: var(--tpst-arrow);
+		block-size: var(--tpst-arrow);
+	}
+
+	.tpst-arrow-start {
+		inset-inline-start: max(0.125rem, var(--tpst-colx) - var(--tpst-arrow) - 0.375rem);
+		clip-path: polygon(0 0, 100% 50%, 0 100%);
+	}
+
+	.tpst-arrow-end {
+		inset-inline-end: max(0.125rem, 100% - var(--tpst-colx) - var(--tpst-colw) - var(--tpst-arrow) - 0.375rem);
+		clip-path: polygon(100% 0, 0 50%, 100% 100%);
+	}
+
+	.tpst[data-guide="band"] .tpst-band,
+	.tpst[data-guide="arrows"] .tpst-arrow {
+		display: block;
+	}
+</style>

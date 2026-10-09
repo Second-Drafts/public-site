@@ -4,37 +4,55 @@ import Header from "../components/Header.astro";
 
 interface Props {
 	title?: string;
+	/** Replaces the whole <title>, for pages whose search title should lead with the page, not the site. */
+	seoTitle?: string;
+	/** Meta description. */
+	description?: string;
 	/** Show the wordmark in the header. Turn off on pages that already show the full lockup. */
 	headerLogo?: boolean;
+	/** Drop the manuscript measure on <main>, for tools that lay out their own width. */
+	wide?: boolean;
+	/** Extend under notches and home indicators (viewport-fit=cover). The body then pads itself clear of the side insets; a full-bleed element can still draw under them. */
+	edgeToEdge?: boolean;
 }
 
-const { title, headerLogo = true } = Astro.props;
+const { title, seoTitle, description, headerLogo = true, wide = false, edgeToEdge = false } = Astro.props;
 const siteName = "The Department of Second Drafts";
-const fullTitle = title ? `${siteName}: ${title}` : siteName;
+const fullTitle = seoTitle ?? (title ? `${siteName}: ${title}` : siteName);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="viewport" content={`width=device-width, initial-scale=1.0${edgeToEdge ? ", viewport-fit=cover" : ""}`} />
 		<meta name="color-scheme" content="light dark" />
 		<title>{fullTitle}</title>
+		{description && <meta name="description" content={description} />}
 		<!-- No data-theme here: the reader's system setting picks Paper or Night shift (see DesignSystemHead). -->
 		<DesignSystemHead />
+		<slot name="head" />
 	</head>
-	<body>
+	<body class:list={{ "edge-to-edge": edgeToEdge }}>
 		<Header logo={headerLogo} />
-		<main class="page">
+		<main class:list={["page", { wide }]}>
 			<slot />
 		</main>
 	</body>
 </html>
 
 <style>
+	/* viewport-fit=cover lets the page draw under a notch; this keeps its content out of it. */
+	.edge-to-edge {
+		padding-inline: env(safe-area-inset-left, 0px) env(safe-area-inset-right, 0px);
+	}
 	.page {
 		max-width: 34em;
 		margin: 0 auto;
 		padding: var(--space-16) var(--space-6);
+	}
+	.page.wide {
+		max-width: none;
+		padding: 0;
 	}
 </style>

@@ -1,0 +1,53 @@
+---
+/*
+ * SettingsWarning: a line that is empty until there is something to say, then shows a red-pen rule and icon
+ * beside the text. One component for every warning in the panel (the low-contrast colours, the guide band).
+ * settings-panel.ts fills it with renderWarning(el, text | null): the last child is the text.
+ */
+interface Props {
+	class?: string;
+	[attr: `data-${string}`]: string | undefined;
+}
+const { class: className, ...rest } = Astro.props;
+---
+
+<p {...rest} class:list={["tpw", className]} aria-live="polite">
+	<svg class="tpw__icon" viewBox="0 0 16 16" aria-hidden="true">
+		<path d="M8 1.8l6.6 11.4H1.4zM8 6.2v3.4M8 11v.1"></path>
+	</svg>
+	<span></span>
+</p>
+
+<style>
+	.tpw {
+		grid-column: 1 / -1;
+		display: flex;
+		gap: var(--space-2);
+		align-items: flex-start;
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.tpw__icon {
+		display: none;
+		flex: none;
+		inline-size: 1em;
+		block-size: 1lh;
+		fill: none;
+		stroke: var(--red-pen);
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.tpw[data-tone="low"] {
+		padding-inline-start: var(--space-3);
+		color: var(--ink);
+		border-inline-start: 3px solid var(--red-pen);
+	}
+	.tpw[data-tone="low"] .tpw__icon {
+		display: block;
+	}
+</style>

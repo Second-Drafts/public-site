@@ -1,0 +1,126 @@
+---
+import HighlightedBand from "../../components/HighlightedBand.astro";
+import Link from "../../components/Link.astro";
+import Mark from "../../components/Mark.astro";
+import { faq } from "./faq";
+---
+
+<div class="tp-seo">
+	<article class="tp-seo__measure">
+		<section aria-labelledby="tp-how">
+			<h2 id="tp-how" class="sd-text-title">How to use this teleprompter</h2>
+			<ol>
+				<li>Paste or type your script into the box. It saves in your browser as you go, and there is a short sample if you want to try it first.</li>
+				<li>Choose a font, a colour theme and a text size. A narrow column keeps your eyes close to the camera.</li>
+				<li>Press Start prompting, then press Play or Space. The Countdown 3-2-1 setting is on to begin with, so you get a count before the text starts to scroll.</li>
+				<li>Change the speed while it runs with the left and right arrows. Press Space to pause. On a touch screen, tap the text.</li>
+				<li>Press Esc to go back to your script.</li>
+			</ol>
+		</section>
+
+		<section aria-labelledby="tp-tips">
+			<h2 id="tp-tips" class="sd-text-title">Tips for reading from a teleprompter naturally</h2>
+			<ul>
+				<li>Read the script aloud once before you start, and mark where you breathe. Add a blank line there, so each paragraph holds one thought.</li>
+				<li>Write for the ear. Short sentences, contractions and plain words sound like you. Anything that trips your tongue on the first read will trip it on camera.</li>
+				<li>Start slower than feels natural, then nudge the speed up until you stop waiting for the words.</li>
+				<li>Make the text larger than you think you need. If you lean in to read, your head moves and your eyes show it.</li>
+				<li>Look up at the end of sentences, where a person would. Reading every word at the same pace is what sounds like reading.</li>
+				<li>Keep the line you are reading near the top of the screen, and press the up and down arrow keys (or Page Up and Page Down) to jump a paragraph if you lose your place.</li>
+			</ul>
+		</section>
+
+		<section aria-labelledby="tp-camera">
+			<h2 id="tp-camera" class="sd-text-title">Using it with a webcam or a glass rig</h2>
+			<p>
+				Use the Position slider under Reading guide in Settings to move the guide, so the line you are reading sits <Mark>as close to the camera as you can</Mark>. Put the browser window directly under your webcam, and keep the column narrow so your eyes move from side to side as little as possible. Under Style, the guide can be a band or a pair of arrows.
+			</p>
+			<p>
+				If you use a beam-splitter glass rig, switch on Mirror horizontally in Settings, or press M while you prompt, so the text reads correctly in the glass. Flip vertically is there too, for rigs that need it. Mirroring only changes the prompter view; your controls stay readable. Press F for fullscreen once the screen is in place.
+			</p>
+		</section>
+
+		<section aria-labelledby="tp-access">
+			<h2 id="tp-access" class="sd-text-title">Accessibility</h2>
+			<p>
+				A prompter has to be readable at arm's length and in poor light. Hyperlegible is set in Atkinson Hyperlegible, a typeface designed to make letters easy to tell apart, which helps readers with low vision. Switch on bold if thin strokes disappear for you.
+			</p>
+			<p>
+				The High contrast theme forces bold white text on black. If you choose your own colours, we warn you when the contrast falls below the WCAG AA level of 4.5 to 1. Size, line spacing and column width are all adjustable, and every control works from the keyboard.
+			</p>
+		</section>
+
+		<section aria-labelledby="tp-faq">
+			<h2 id="tp-faq" class="sd-text-title">Questions</h2>
+			{
+				faq.map((item) => (
+					<div class="tp-seo__qa">
+						<h3 class="sd-text-heading">{item.question}</h3>
+						<p>{item.answer}</p>
+					</div>
+				))
+			}
+		</section>
+	</article>
+
+	<HighlightedBand as="aside" aria-labelledby="tp-more">
+		<div class="tp-seo__measure">
+			<h2 id="tp-more" class="sd-text-title">A tool from the Department</h2>
+			<p>
+				We make tools for writers and storytellers. See the rest on the{" "}
+				<Link href="/tools">tools page</Link>.
+			</p>
+		</div>
+	</HighlightedBand>
+</div>
+
+<style>
+	.tp-seo__measure {
+		max-width: 34em;
+		margin-inline: auto;
+	}
+	article.tp-seo__measure {
+		padding: var(--space-12) var(--space-6) var(--space-16);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-12);
+	}
+	.tp-seo section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.tp-seo h2,
+	.tp-seo h3,
+	.tp-seo p,
+	.tp-seo ol,
+	.tp-seo ul {
+		margin: 0;
+	}
+	.tp-seo h2 {
+		text-wrap: balance;
+	}
+	.tp-seo p,
+	.tp-seo li {
+		text-wrap: pretty;
+	}
+	.tp-seo ol,
+	.tp-seo ul {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding-inline-start: 1.5em;
+	}
+	.tp-seo__qa {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	.tp-seo__qa + .tp-seo__qa {
+		padding-block-start: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+	.tp-seo h3 {
+		text-wrap: balance;
+	}
+</style>

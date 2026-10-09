@@ -10,8 +10,11 @@
 import type { HTMLAttributes } from "astro/types";
 
 interface Common {
-	/** primary = ink fill · accent = marker-blue, the one move forward · secondary = outlined · quiet = text only. */
-	variant?: "primary" | "accent" | "secondary" | "quiet";
+	/**
+	 * primary = ink fill · accent = marker-blue, the one move forward · secondary = outlined · quiet = text only ·
+	 * danger = red-pen fill, for a confirm that removes something (red pen means wrong or removed).
+	 */
+	variant?: "primary" | "accent" | "secondary" | "quiet" | "danger";
 	/** sm in margin notes and toolbars, lg only for marketing. */
 	size?: "sm" | "md" | "lg";
 }
@@ -66,6 +69,25 @@ const attrs = Tag === "button" ? { type: "button", ...rest } : rest;
 		opacity: 0.4;
 		cursor: not-allowed;
 	}
+	/* Press feedback: a small squeeze, for everyone but people who ask for less motion. */
+	@media (prefers-reduced-motion: no-preference) {
+		.sd-btn {
+			transition:
+				transform 160ms var(--ease-out, ease-out),
+				background-color 120ms,
+				opacity 120ms;
+		}
+		.sd-btn:not(:disabled):active {
+			transform: scale(0.97);
+		}
+	}
+	/* Touch: every button is at least 44px tall. */
+	@media (pointer: coarse) {
+		.sd-btn {
+			box-sizing: border-box;
+			min-block-size: 44px;
+		}
+	}
 	.sd-btn--sm {
 		font-size: 13px;
 		line-height: 16px;
@@ -95,10 +117,16 @@ const attrs = Tag === "button" ? { type: "button", ...rest } : rest;
 		background: var(--marker-blue);
 		color: var(--on-blue);
 	}
-	.sd-btn--primary:not(:disabled):hover {
+	.sd-btn--danger {
+		background: var(--red-pen);
+		color: var(--ink-inverse);
+	}
+	.sd-btn--primary:not(:disabled):hover,
+	.sd-btn--danger:not(:disabled):hover {
 		box-shadow: inset 0 0 0 999px rgba(0, 0, 0, 0.14);
 	}
-	.sd-btn--primary:not(:disabled):hover:focus-visible {
+	.sd-btn--primary:not(:disabled):hover:focus-visible,
+	.sd-btn--danger:not(:disabled):hover:focus-visible {
 		box-shadow:
 			inset 0 0 0 999px rgba(0, 0, 0, 0.14),
 			0 0 0 2px var(--paper),

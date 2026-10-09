@@ -1,0 +1,166 @@
+---
+/*
+ * FakeDoors: demand tests for features we haven't built. Each button opens one dialog that asks
+ * whether the reader would use it. Nothing here works yet, and the copy says so.
+ * Behaviour: fake-doors.ts. Email capture stays off until EMAIL_CAPTURE_ENABLED is true (lib/interest.ts).
+ */
+import Button from "../../components/Button.astro";
+import TextField from "../../components/TextField.astro";
+import Dialog from "./Dialog.astro";
+import { EMAIL_CAPTURE_ENABLED } from "./lib/interest";
+
+const emailCapture = EMAIL_CAPTURE_ENABLED;
+
+const doors = [
+	{ feature: "voice_scroll", name: "Voice scroll", subtitle: "Scrolls as you speak" },
+	{ feature: "record_video", name: "Record video", subtitle: "Record yourself while you read" },
+	{ feature: "phone_remote", name: "Use phone as remote", subtitle: "Control the prompter from your phone" },
+] as const;
+---
+
+<section class="fd" aria-labelledby="fd-label" data-fake-doors>
+	<h2 id="fd-label" class="fd__label sd-text-label">Coming soon</h2>
+	<ul class="fd__list">
+		{
+			doors.map((door) => (
+				<li>
+					<button type="button" class="fd__door" data-fake-door={door.feature} aria-haspopup="dialog">
+						<span class="fd__head">
+							<span class="fd__name sd-text-button">{door.name}</span>
+							<span class="fd__tag">Soon</span>
+						</span>
+						<span class="fd__sub">{door.subtitle}</span>
+					</button>
+				</li>
+			))
+		}
+	</ul>
+
+	<Dialog aria-labelledby="fd-dialog-title" data-fake-door-dialog width="28rem">
+		<div class="fd__body" data-fake-door-ask>
+			<h3 id="fd-dialog-title" class="tpd__title sd-text-title">Coming soon.</h3>
+			<p class="tpd__text">
+				<span data-fake-door-name>This feature</span> isn't built yet. Would you use it?
+			</p>
+			{
+				emailCapture && (
+					<TextField
+						label="Email me when it's ready"
+						name="email"
+						type="email"
+						autocomplete="email"
+						hint="Optional. We'll only email about this."
+					/>
+				)
+			}
+			<div class="tpd__actions">
+				<Button variant="primary" data-answer="yes">Yes, I want this</Button>
+				<Button variant="secondary" data-answer="no">Not really</Button>
+			</div>
+		</div>
+		<div class="fd__body" data-fake-door-done hidden>
+			<p class="tpd__text">Noted. Thanks for telling us.</p>
+			<div class="tpd__actions">
+				<Button variant="secondary" data-close>Close</Button>
+			</div>
+		</div>
+	</Dialog>
+</section>
+
+<script>
+	import "./fake-doors";
+</script>
+
+<style>
+	/* After the workspace, quiet: a rule, a small label, three outlined doors. Same measure as the workspace. */
+	.fd {
+		inline-size: min(100% - 2 * var(--space-6), var(--tp-measure, 80rem));
+		margin-inline: auto;
+		margin-block-start: var(--space-8);
+		padding-block-start: var(--space-6);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+	.fd__label {
+		margin: 0 0 var(--space-4);
+		color: var(--ink-muted);
+	}
+	.fd__list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+		gap: var(--space-3);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.fd__door {
+		display: grid;
+		gap: var(--space-1);
+		align-content: start;
+		block-size: 100%;
+		box-sizing: border-box;
+		margin: 0;
+		padding: var(--space-3) var(--space-4);
+		font: inherit;
+		color: var(--ink);
+		text-align: start;
+		background: transparent;
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+		cursor: pointer;
+	}
+	.fd__door:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.fd__door:active {
+		transform: scale(0.98);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.fd__door:hover {
+			background: var(--paper-sunken);
+			border-color: var(--rule-strong);
+		}
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.fd__door {
+			transition:
+				transform 160ms var(--ease-out, ease-out),
+				background-color 120ms,
+				border-color 120ms;
+		}
+	}
+	.fd__head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-2);
+	}
+	/* Josefin rides high: 2px more top padding than bottom */
+	.fd__tag {
+		font-family: var(--font-display);
+		font-size: 11px;
+		line-height: 14px;
+		font-weight: 600;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--ink-muted);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-pill);
+		padding: 3px var(--space-2) 1px;
+		white-space: nowrap;
+	}
+	.fd__sub {
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--ink-muted);
+	}
+
+	.fd__body {
+		display: grid;
+		gap: var(--space-4);
+	}
+	.fd__body[hidden] {
+		display: none;
+	}
+</style>

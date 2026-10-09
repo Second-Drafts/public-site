@@ -1,0 +1,89 @@
+---
+/*
+ * Dialog: the one native modal <dialog> the teleprompter's dialogs share (ConfirmDialog, FakeDoors).
+ * It draws the box, the backdrop, the fade and the padded panel, and shares the prose classes the content uses.
+ * Behaviour (backdrop click, close) is wireDialog in lib/dialog.ts.
+ *
+ *   <Dialog aria-labelledby="x-title" data-x-dialog width="28rem">
+ *     <h3 id="x-title" class="tpd__title sd-text-title">…</h3>
+ *     <p class="tpd__text">…</p>
+ *     <div class="tpd__actions"><Button>…</Button></div>
+ *   </Dialog>
+ *
+ * Put it at body level, never inside an element that goes inert: a modal dialog inside an inert
+ * subtree can't be used.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"dialog"> {
+	/** The dialog's inline size, as a CSS length. It never exceeds the viewport less the gutters. */
+	width?: string;
+}
+
+const { width = "26rem", class: className, style, ...rest } = Astro.props;
+---
+
+<dialog {...rest} class:list={["tpd", className]} style={`--tpd-width: ${width}; ${style ?? ""}`}>
+	<div class="tpd__panel">
+		<slot />
+	</div>
+</dialog>
+
+<style>
+	.tpd {
+		inline-size: min(var(--tpd-width), 100% - 2 * var(--space-6));
+		padding: 0;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-lift);
+		opacity: 0;
+	}
+	.tpd[open] {
+		opacity: 1;
+	}
+	.tpd::backdrop {
+		background: oklch(0% 0 none / 0.4);
+		opacity: 0;
+	}
+	.tpd[open]::backdrop {
+		opacity: 1;
+	}
+	@starting-style {
+		.tpd[open],
+		.tpd[open]::backdrop {
+			opacity: 0;
+		}
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.tpd,
+		.tpd::backdrop {
+			transition:
+				opacity 200ms var(--ease-out, ease-out),
+				display 200ms allow-discrete,
+				overlay 200ms allow-discrete;
+		}
+	}
+	.tpd__panel {
+		display: grid;
+		gap: var(--space-4);
+		padding: var(--space-6);
+	}
+
+	/* What goes inside: a title, prose, and a row of buttons. */
+	:global(.tpd__title) {
+		margin: 0;
+	}
+	:global(.tpd__text) {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+	}
+	:global(.tpd__actions) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+</style>
