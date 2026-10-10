@@ -111,9 +111,7 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 	function renderGuideColor(settings: Settings) {
 		const { guideColor } = settings;
 		const isOwn = guideColor !== "auto" && !PRESET_GUIDE_COLORS.includes(guideColor);
-		// The Theme swatch shows what "auto" would give right now, so it follows theme changes.
 		guideThemeDot.style.setProperty("--swc", resolveTheme({ ...settings, guideColor: "auto" }).guide);
-		// The picker remembers its last colour when another swatch is chosen; first time, it starts from the theme's.
 		if (guideColor !== "auto") {
 			if (guidePicker.value !== guideColor) guidePicker.value = guideColor;
 			pickerSeeded = true;
@@ -122,7 +120,6 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 			pickerSeeded = true;
 		}
 		guideCustom.toggleAttribute("data-selected", isOwn);
-		// Unchosen, Custom stays an empty ring; chosen, it shows its colour.
 		if (isOwn) guideCustom.style.setProperty("--swc", guidePicker.value);
 		else guideCustom.style.removeProperty("--swc");
 		const off = settings.guide === "off";
@@ -178,7 +175,6 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 			const key = target.dataset.setting as NumericSetting;
 			store.set({ settings: { [key]: Number(target.value) } });
 		} else if (target.type === "color" && target.hasAttribute("data-guide-custom")) {
-			// Picking a colour selects Custom: the colour is the setting.
 			store.set({ settings: { guideColor: target.value as Settings["guideColor"] } });
 		} else if (target.type === "color") {
 			const key = target.dataset.custom as keyof CustomColors;
@@ -202,7 +198,6 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 			confirmLabel: "Reset settings",
 			cancelLabel: "Keep them",
 		});
-		// Not a choice the reader made: analytics doesn't count it.
 		if (confirmed) store.set({ settings: defaultSettingsForViewport() }, "system");
 	});
 
@@ -211,7 +206,6 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 	});
 	render();
 
-	// Picker labels need only a few glyphs of each font, fetched once the Font group is on screen.
 	if ("IntersectionObserver" in window) {
 		const seen = new IntersectionObserver((entries) => {
 			if (!entries.some((entry) => entry.isIntersecting)) return;

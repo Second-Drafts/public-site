@@ -18,7 +18,6 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 declare global {
 	interface Window {
-		/** Dev only: every dispatched event, for browser-automation QA. */
 		__tpEvents?: { event: string; props: EventProps }[];
 	}
 }
@@ -58,7 +57,6 @@ const SEARCH_HOSTS: RegExp[] = [
 	/(^|\.)kagi\.com$/,
 ];
 
-/** Hostname only; "" when there is no referrer or it isn't a valid URL. */
 export function hostnameOf(url: string): string {
 	try {
 		return new URL(url).hostname.toLowerCase();
@@ -67,7 +65,6 @@ export function hostnameOf(url: string): string {
 	}
 }
 
-/** share_link if the URL carries a share hash; organic for search-engine referrers; direct with none; else referral. */
 export function landingSource(referrer: string, hash: string): LandingSource {
 	if (hasShareParam(hash)) return "share_link";
 	const host = hostnameOf(referrer);
@@ -77,7 +74,6 @@ export function landingSource(referrer: string, hash: string): LandingSource {
 	return "referral";
 }
 
-/** Whole days since the previous visit, or null for a first visit or a reload within the same session. */
 export function recordVisit(now: number = Date.now()): number | null {
 	if (read(KEYS.visitRecorded, session)) return null;
 	write(KEYS.visitRecorded, "1", session);
@@ -94,7 +90,6 @@ export function trackPageView({ referrer, hash }: { referrer: string; hash: stri
 	if (days !== null) track("tp_return_visit", { days_since_last: days });
 }
 
-/** Keeps string/number/boolean values; drops everything else, and any string over 64 chars. */
 function sanitize(props: object): EventProps {
 	const out: EventProps = {};
 	for (const [key, value] of Object.entries(props)) {
@@ -119,7 +114,6 @@ function context(): SessionContext {
 	return { session_id: getSessionId(), device_type: deviceType() };
 }
 
-/** The one boundary around provider code: a provider that throws is skipped and never breaks the tool. */
 function guarded<T>(providerName: string, action: string, run: () => T): T | undefined {
 	try {
 		return run();
@@ -150,7 +144,6 @@ function startProvider(name: string, options: ProviderOptions): AnalyticsProvide
 	});
 }
 
-/** Call once on page load. Safe to call twice. */
 export function initAnalytics(): void {
 	if (initialized) return;
 	initialized = true;

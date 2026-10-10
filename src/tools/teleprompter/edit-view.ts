@@ -5,7 +5,6 @@ import { countWords, formatReadTime, readTimeSeconds } from "./lib/timing";
 
 export interface EditHooks {
 	onScriptInput(source: "paste" | "typed"): void;
-	/** A share link was copied, or shown for manual copy. */
 	onShareCopied(tooLong: boolean): void;
 }
 
@@ -19,13 +18,10 @@ function statsText(script: string): string {
 	return `${count} · ${time} to read`;
 }
 
-/** How long a notice stays before it clears by itself. */
 const NOTICE_MS = 10_000;
-/** How long Copy share link reads "Link copied" after a copy. */
 const COPIED_MS = 2_000;
 
 export interface EditView {
-	/** Shows a message in the live status line until the next script edit or about ten seconds. */
 	showNotice(message: string): void;
 }
 
@@ -34,7 +30,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 	const part = <T extends HTMLElement = HTMLElement>(name: string) => required<T>(root, `[data-tpe="${name}"]`);
 	const textarea = part<HTMLTextAreaElement>("script");
 	const stats = part("stats");
-	// Start prompting and Copy share link float in the preview band, outside this view's root.
 	const start = required<HTMLButtonElement>(document, '[data-tpe="start"]');
 	const share = required<HTMLButtonElement>(document, '[data-tpe="share"]');
 	const shareLabel = required(share, '[data-tpe="share-label"]');
@@ -51,7 +46,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 	function clearFeedback() {
 		clearTimeout(noticeTimer);
 		noticeShown = false;
-		// Runs on every keystroke, so write only when there is something to clear.
 		if (status.textContent !== "") status.textContent = "";
 		if (status.hasAttribute("data-tone")) status.removeAttribute("data-tone");
 		if (!fallback.hidden) {
@@ -99,8 +93,7 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 		textarea.focus();
 	});
 
-	// lz-string only matters once someone shares, so it stays off the first load: fetched when the
-	// page is idle, so a click only awaits an already-settled import and the copy keeps its user gesture.
+	// Preloaded when idle, so the click awaits a settled import and the clipboard write keeps its user gesture.
 	let shareModule: Promise<typeof import("./lib/share")> | undefined;
 	const loadShare = () => (shareModule ??= import("./lib/share"));
 	(window.requestIdleCallback ?? ((callback: () => void) => setTimeout(callback, 1000)))(() => void loadShare());
@@ -116,7 +109,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 			await navigator.clipboard.writeText(url);
 			copied = true;
 		} catch {
-			// Blocked or unsupported: show the link so it can be copied by hand.
 		}
 
 		const warning = tooLong
@@ -124,7 +116,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 			: "";
 		if (copied) {
 			status.textContent = `Link copied. Anyone with it can open your script and settings.${warning}`;
-			// The status line sits below the band; the button itself confirms where the eye already is.
 			clearTimeout(copiedTimer);
 			shareLabel.textContent = "Link copied";
 			copiedTimer = setTimeout(() => (shareLabel.textContent = shareText), COPIED_MS);
@@ -142,7 +133,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 	store.subscribe((state, previous) => {
 		const scriptChanged = state.script !== previous.script;
 		const settingsChanged = state.settings !== previous.settings;
-		// A notice is about the page, not the share link, so only a script edit clears it early.
 		if (scriptChanged || (settingsChanged && !noticeShown)) clearFeedback();
 		if (scriptChanged) render();
 	});

@@ -1,14 +1,6 @@
-/*
- * Share-link hash parsing without the lz-string decoder, so code that only recognises a link stays light.
- */
-
-/** Hash key: the link looks like /tools/teleprompter#s=<compressed>. */
 export const SHARE_HASH_KEY = "s";
 
-/**
- * Find a param in a hash like "#a=1&s=xyz". Split by hand: URLSearchParams would turn the "+" in
- * lz-string's URI-safe alphabet into a space.
- */
+// Not URLSearchParams: it would turn the "+" in lz-string's alphabet into a space.
 export function findHashParam(hash: string, key: string): string | null {
 	const body = hash.startsWith("#") ? hash.slice(1) : hash;
 	for (const part of body.split("&")) {
@@ -18,5 +10,4 @@ export function findHashParam(hash: string, key: string): string | null {
 	return null;
 }
 
-/** True when the hash carries a share payload (valid or not). */
 export const hasShareParam = (hash: string) => findHashParam(hash, SHARE_HASH_KEY) !== null;

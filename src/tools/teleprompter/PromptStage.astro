@@ -15,7 +15,6 @@
 
 <style>
 	.tpst {
-		/* Overwritten from settings at runtime; these defaults keep the stage readable before then. */
 		--tp-fg: oklch(0.88 0.18 95);
 		--tp-bg: oklch(0 0 none);
 		--tp-guide: oklch(1 0 none);
@@ -32,24 +31,21 @@
 
 		--tp-line: calc(var(--tp-size) * var(--tp-lh));
 		--tpst-arrow: clamp(0.75rem, calc(var(--tp-size) * 0.35), 1.5rem);
-		/* Edge margin, never less than an arrow and its gap, so arrows fit when the column is flush to an edge. */
 		--tpst-gutter: max(clamp(1.25rem, 4cqi, 3rem), var(--tpst-arrow) + 0.5rem);
 		--tpst-colw: min(var(--tp-col), 100% - 2 * var(--tpst-gutter));
-		/* --tp-colpos: 0 flush left, 0.5 centred, 1 flush right. Percentages resolve against the stage, so no measuring on resize. */
 		--tpst-colx: calc(var(--tpst-gutter) + (100% - var(--tpst-colw) - 2 * var(--tpst-gutter)) * var(--tp-colpos));
 
 		position: relative;
 		display: block;
 		inline-size: 100%;
 		block-size: 100%;
-		/* Size container: cqi and cqb here mean this stage's own box, wherever it sits. */
 		container-type: size;
 		overflow: clip;
 		background: var(--tp-bg);
 		color: var(--tp-fg);
 	}
 
-	/* Mirror and flip transform only this. Overlays live outside the stage so they always read the right way round. */
+	/* Mirror and flip transform only this; overlays stay outside the stage. */
 	.tpst-area {
 		position: absolute;
 		inset: 0;
@@ -80,7 +76,7 @@
 		outline: 2px solid transparent;
 	}
 
-	/* Padding puts line one on the read line at scrollTop 0. The track is never transformed, so the text's sub-pixel transform can't change scroll height. */
+	/* Never transformed, so the text's sub-pixel transform can't change the scroll height. */
 	.tpst-track {
 		padding-block-start: max(0px, var(--tp-guide-pos) * 100cqb - var(--tp-line) / 2);
 		padding-block-end: max(0px, (1 - var(--tp-guide-pos)) * 100cqb - var(--tp-line) / 2);
@@ -103,7 +99,6 @@
 		text-align: center;
 	}
 
-	/* Paragraphs are created at runtime, so their rules must be global. */
 	.tpst-text :global(.tpst-para) {
 		margin: 0;
 		margin-block-end: calc(var(--tp-line) * 0.75);

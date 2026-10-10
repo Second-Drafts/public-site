@@ -47,7 +47,6 @@ function mount(): void {
 		dialog.showModal();
 	}
 
-	/** Blocks an answer only when an email is typed and it is not a valid address. */
 	function emailProblem(): boolean {
 		if (!EMAIL_CAPTURE_ENABLED || !emailInput || emailInput.value.trim() === "") return false;
 		if (emailInput.checkValidity()) return false;

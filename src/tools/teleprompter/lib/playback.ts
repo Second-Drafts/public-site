@@ -10,11 +10,8 @@ export interface PlaybackOptions {
 	countdownEnabled(): boolean;
 	announce(message: string): void;
 	onStateChange(state: PlayState): void;
-	/** Seconds left to count down, or null once the countdown is over or stopped. */
 	onCountdown(secondsLeft: number | null): void;
-	/** Every 250 ms while playing, and whenever the elapsed time stops or goes back to zero. */
 	onClockTick(): void;
-	/** The reader started scrolling from paused (after any countdown). Not called by `restore`. */
 	onPlay(): void;
 	onReachedEnd(): void;
 }
@@ -22,18 +19,10 @@ export interface PlaybackOptions {
 export interface Playback {
 	state(): PlayState;
 	elapsedMs(): number;
-	/** Play (counting down first, if that's on), pause, or stop a running countdown. */
 	toggle(): void;
-	/**
-	 * Undo a toggle. A double tap uses this so it only moves the read line: restoring "paused" leaves
-	 * no countdown running, and restoring "playing" resumes at once, without a countdown (the reader
-	 * was mid-sentence). It is not a play.
-	 */
 	restore(state: PlayState): void;
 	backToTop(): void;
-	/** The engine scrolled to the end and stopped itself. */
 	reachedEnd(): void;
-	/** Stop everything without announcing it, and zero the clock. */
 	stop(): void;
 }
 
@@ -83,7 +72,6 @@ export function createPlayback(options: PlaybackOptions): Playback {
 			announce("This is the end of the script. Press Home to go back to the top.");
 			return;
 		}
-		// Every start from paused counts down, not just the first, so the reader can settle each time.
 		if (options.countdownEnabled()) startCountdown();
 		else startPlaying({ countsAsPlay: true });
 	}

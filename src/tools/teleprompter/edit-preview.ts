@@ -4,10 +4,8 @@ import type { Settings } from "./lib/settings";
 import type { Store } from "./lib/store";
 import { createStage } from "./stage";
 
-/** Typing settles for this long before the stage redraws the script. */
 const TYPING_SETTLE_MS = 150;
 const EMPTY_TEXT = "Your script will appear here.";
-/** Settings the preview doesn't draw: they only matter while prompting. */
 const NOT_DRAWN: readonly (keyof Settings)[] = ["speed", "countdown", "arrowKeys"];
 
 function drawnSettingsChanged(next: Settings, previous: Settings): boolean {
@@ -16,7 +14,6 @@ function drawnSettingsChanged(next: Settings, previous: Settings): boolean {
 
 export function mountEditPreview(store: Store): void {
 	const root = required(document, "[data-tp-preview]");
-	// The Start and share buttons sit beside the stage, so they take its colours from the root.
 	const stage = createStage(required(root, "[data-tp-stage]"), { emptyMessage: EMPTY_TEXT, themeTarget: root });
 	const mirrorFlag = required(root, '[data-tpv="mirror"]');
 	const flipFlag = required(root, '[data-tpv="flip"]');
@@ -29,7 +26,6 @@ export function mountEditPreview(store: Store): void {
 
 	function renderSettings() {
 		const { settings, view } = store.get();
-		// The band is hidden while prompting (the Prompt view has its own stage): draw it when it returns.
 		if (view === "prompt") {
 			settingsStaleWhileHidden = true;
 			return;

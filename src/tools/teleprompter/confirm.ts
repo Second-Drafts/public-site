@@ -6,7 +6,6 @@ export interface ConfirmOptions {
 	body?: string;
 	confirmLabel: string;
 	cancelLabel?: string;
-	/** Style the confirm button as destructive. */
 	destructive?: boolean;
 }
 
@@ -38,7 +37,6 @@ function mount(): Parts {
 	};
 	confirmButton.addEventListener("click", () => answer(true));
 	cancelButton.addEventListener("click", () => answer(false));
-	// Esc or a backdrop click closes without an answer: that is a no.
 	wireDialog(dialog, { onClose: () => answer(false) });
 
 	return (parts = {
@@ -52,12 +50,10 @@ function mount(): Parts {
 	});
 }
 
-/** Resolves true on confirm; false on cancel, Esc or a backdrop click. */
 export function askConfirm(options: ConfirmOptions): Promise<boolean> {
 	const ui = mount();
 	const { dialog } = ui;
 
-	// A second question while one is open cancels the first, and takes over the open dialog.
 	settle?.(false);
 
 	ui.title.textContent = options.title;
@@ -71,7 +67,6 @@ export function askConfirm(options: ConfirmOptions): Promise<boolean> {
 	return new Promise<boolean>((resolve) => {
 		settle = resolve;
 		if (!dialog.open) dialog.showModal();
-		// A destructive question starts on the safe answer.
 		(destructive ? ui.cancelButton : ui.confirmButton).focus();
 	});
 }

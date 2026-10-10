@@ -1,9 +1,3 @@
-/*
- * Settings changed here go through store.set, so they persist, and are drawn when they come back
- * through the subscription, the same as changes made in the settings panel.
- *
- * The script is untrusted (it can arrive in a share link), so it is only ever set with textContent.
- */
 import { inertOutside, required } from "./lib/dom";
 import { createScrollEngine } from "./lib/engine";
 import type { ScrollEngine } from "./lib/engine";
@@ -34,23 +28,16 @@ import { createRelayout } from "./prompt-relayout";
 import { createStage } from "./stage";
 
 export interface PromptHooks {
-	/**
-	 * Each time the reader starts scrolling from paused (after any countdown). Not when a double tap
-	 * puts back the playback its first tap paused: that is a seek, not a play.
-	 */
 	onPlay(): void;
-	/** Auto-paused because the end was reached. */
 	onReachedEnd(): void;
 }
 
 declare global {
 	interface Window {
-		/** Dev only: the live engine, for browser-automation checks. */
 		__tpPrompt?: { engine: ScrollEngine; root: HTMLElement };
 	}
 }
 
-/** Text size buttons move in bigger steps than the settings slider; 24–120 px in 24 presses. */
 const FONT_STEP = LIMITS.fontSize.step * 2;
 
 const LAYOUT_KEYS = ["font", "bold", "theme", "fontSize", "lineHeight", "columnWidth", "align", "guidePosition"] as const;
@@ -59,7 +46,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 	const root = required(document, "[data-tp-prompt]");
 	const part = <T extends HTMLElement = HTMLElement>(name: string) => required<T>(root, `[data-tpp="${name}"]`);
 
-	// The chrome takes the theme's colours from the root.
 	const stage = createStage(required(root, "[data-tp-stage]"), {
 		emptyMessage: "There's no script yet. Press Escape and paste one in.",
 		themeTarget: root,
@@ -121,11 +107,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 	const relayout = createRelayout(engine, scroller, text, renderTimes);
 	const hint = createShortcutHint(part("hint"), root);
 	const chromeAutoHide = createChromeAutoHide(root, chrome, () => open && engine.playing && !drawer.isOpen());
-	/*
-	 * While the drawer is open, playback carries on (so speed and size can be tuned while reading), the
-	 * toolbar stays up and the prompt shortcuts are off so keys work on the form. A tap outside it
-	 * closes it without toggling playback: the inert stage never sees the tap.
-	 */
 	const drawer = createSettingsDrawer({
 		host: root,
 		drawer: drawerPanel,
@@ -137,12 +118,9 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 
 	function renderSettings(current: Settings, previous: Settings | null) {
 		relayout.afterFontLoads(stage.apply(current));
-		// Native controls (the speed slider) take the theme's lightness.
 		const siteTheme = siteThemeFor(resolveTheme(current).background);
 		root.style.colorScheme = siteTheme;
-		// The drawer uses the site's tokens: Paper over a light prompter, Night shift over a dark one.
 		if (drawerPanel.dataset.theme !== siteTheme) drawerPanel.dataset.theme = siteTheme;
-		// The bottom sheet stops short of the read line.
 		root.style.setProperty("--tpp-guide-pos", String(current.guidePosition));
 		root.style.setProperty("--tpp-line", `${current.fontSize * current.lineHeight}px`);
 
@@ -189,7 +167,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 		status.textContent = message;
 	}
 
-	/** Space, the Play button, a tap on the text and a clicker all come here. */
 	function togglePlay() {
 		if (playback.state() === "paused") hint.dismiss();
 		playback.toggle();
@@ -247,8 +224,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 		}
 	}
 
-	// Every tap toggles at once (no waiting to see if a second tap follows). A double tap undoes the
-	// first tap's toggle instead of toggling again, and moves the read line to the tapped paragraph.
 	let stateBeforeTap: PlayState = "paused";
 	listenForTaps(scroller, {
 		ignorePress: () => engine.recentlyScrolledByUser(),
@@ -263,7 +238,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 		},
 	});
 
-	// While paused the remaining time follows hand scrolls and jumps; while playing the clock tick keeps it.
 	scroller.addEventListener(
 		"scroll",
 		() => {
@@ -292,7 +266,6 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 		stage.render(script);
 		root.hidden = false;
 		renderSettings(current, null);
-		// Measure now, not next frame: the view was hidden, and the times need the scroll range.
 		relayout.now();
 		engine.scrollTo(0, true);
 		renderTimes();

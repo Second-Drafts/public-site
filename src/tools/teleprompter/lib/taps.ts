@@ -1,7 +1,6 @@
 export const TAP_MAX_MOVE_PX = 10;
 export const TAP_MAX_MS = 500;
 
-/** A pointer gesture short and still enough to count as a tap (play/pause), not a drag or scroll. */
 export function isTap(dx: number, dy: number, durationMs: number): boolean {
 	return Math.hypot(dx, dy) < TAP_MAX_MOVE_PX && durationMs >= 0 && durationMs <= TAP_MAX_MS;
 }
@@ -29,14 +28,11 @@ export interface PointerSample {
 
 export interface Press extends PointerSample {
 	target: EventTarget | null;
-	/** An ignored press can't become a tap. */
 	ignored: boolean;
 }
 
 export interface TapHandlers {
-	/** Every single tap, at once, including the first tap of a double tap. */
 	onTap(): void;
-	/** The second tap of a double tap, in place of its onTap. `target` is where it pressed. */
 	onDoubleTap(target: EventTarget | null): void;
 }
 
@@ -46,7 +42,6 @@ export interface TapRecognizer {
 	cancel(): void;
 }
 
-/** A drag, a scroll or a slow press is not a tap. A double tap resets, so a third tap is a single one. */
 export function createTapRecognizer(handlers: TapHandlers): TapRecognizer {
 	let current: Press | null = null;
 	let lastTap: PointerSample | null = null;
@@ -77,11 +72,9 @@ export function createTapRecognizer(handlers: TapHandlers): TapRecognizer {
 }
 
 export interface TapListenerOptions extends TapHandlers {
-	/** Checked at pointerdown; true makes that press ignored. */
 	ignorePress(): boolean;
 }
 
-/** Primary-button taps on `element`. */
 export function listenForTaps(element: HTMLElement, options: TapListenerOptions): void {
 	const recognizer = createTapRecognizer(options);
 	const sample = (event: PointerEvent): PointerSample => ({

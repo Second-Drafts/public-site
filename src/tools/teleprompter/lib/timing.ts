@@ -1,14 +1,11 @@
 import type { WordBucket } from "./analytics/events";
 
-/** Baseline speaking pace for the read-time estimate. */
 export const WORDS_PER_MINUTE = 150;
 
-/** Whitespace-separated words. */
 export function countWords(text: string): number {
 	return text.split(/\s+/).filter(Boolean).length;
 }
 
-/** Analytics bucket: 0–50, 51–200, 201–600, 600+. */
 export function wordBucket(words: number): WordBucket {
 	if (words <= 50) return "0-50";
 	if (words <= 200) return "51-200";
@@ -20,14 +17,12 @@ export function readTimeSeconds(words: number, wpm: number = WORDS_PER_MINUTE): 
 	return (words / wpm) * 60;
 }
 
-/** Seconds to scroll the remaining distance at the current speed. Infinity when speed is 0 or less. */
 export function remainingSeconds(remainingPx: number, pxPerSecond: number): number {
 	if (pxPerSecond <= 0) return Infinity;
 	if (remainingPx <= 0) return 0;
 	return remainingPx / pxPerSecond;
 }
 
-/** "0:42", "12:05", "1:02:09". Rounds down to whole seconds; Infinity or NaN → "–:––". */
 export function formatClock(seconds: number): string {
 	if (!Number.isFinite(seconds)) return "–:––";
 	const total = Math.max(0, Math.floor(seconds));
@@ -38,7 +33,6 @@ export function formatClock(seconds: number): string {
 	return `${minutes}:${secs}`;
 }
 
-/** Human read-time for Edit view: "Under a minute", "About 1 min", "About 7 min", "About 1 hr 5 min". */
 export function formatReadTime(seconds: number): string {
 	// Written as !(>= 60) so NaN also reads as "Under a minute".
 	if (!(seconds >= 60)) return "Under a minute";

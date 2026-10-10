@@ -95,12 +95,10 @@ const appJsonLd = {
 </Base>
 
 <style>
-	/* Wide: the preview keeps its height and the workspace takes the rest of the first screen, never under 20rem. */
 	.tp-tool {
 		container: tp-work / inline-size;
 		--tp-preview-h: clamp(12rem, 40dvh, 20rem);
 		--tp-measure: 80rem;
-		/* No auto margins, so a flex column can still stretch the content. */
 		--tp-pad-inline: max(var(--space-6), (100% - var(--tp-measure)) / 2);
 		padding-block-end: var(--space-12);
 	}
@@ -129,7 +127,7 @@ const appJsonLd = {
 			flex-direction: column;
 			min-block-size: clamp(34rem, 88dvh, 72rem);
 		}
-		/* contain: size, so the settings' full height doesn't stretch the row. */
+		/* So the settings' full height doesn't stretch the row. */
 		.tp-workspace {
 			display: grid;
 			grid-template-rows: minmax(0, 1fr);
@@ -142,10 +140,6 @@ const appJsonLd = {
 			grid-template-rows: minmax(0, 1fr);
 			align-items: stretch;
 		}
-		/*
-		 * Padding leaves room for focus rings the scroll area would clip. Edges fade only where there is
-		 * more to scroll to; without scroll timelines the panel just scrolls.
-		 */
 		.tp-settings {
 			--fade-start: 0px;
 			--fade-end: 0px;

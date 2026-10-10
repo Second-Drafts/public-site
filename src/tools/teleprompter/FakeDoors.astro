@@ -1,5 +1,4 @@
 ---
-/* Fake doors: buttons for unbuilt features that measure interest. None of them work yet. */
 import Button from "../../components/Button.astro";
 import TextField from "../../components/TextField.astro";
 import Dialog from "./Dialog.astro";
@@ -68,7 +67,6 @@ const doors = [
 </script>
 
 <style>
-	/* Same measure as the workspace (--tp-measure). */
 	.fd {
 		inline-size: min(100% - 2 * var(--space-6), var(--tp-measure, 80rem));
 		margin-inline: auto;
@@ -134,7 +132,7 @@ const doors = [
 		justify-content: space-between;
 		gap: var(--space-2);
 	}
-	/* Josefin sits high in its line box, so it gets 2px extra top padding. */
+	/* Josefin rides high */
 	.fd__tag {
 		font-family: var(--font-display);
 		font-size: 11px;

@@ -1,4 +1,3 @@
-/** Shown on a first visit, so the tool can be tried in one click. */
 export const SAMPLE_SCRIPT = `This is a sample script, so you can see how the teleprompter works before you paste your own.
 
 Press play, or tap the words, and the text starts to move. Keep your eyes on the highlighted band. It sits near the top of the screen, close to your camera, so you look at your audience while you read.

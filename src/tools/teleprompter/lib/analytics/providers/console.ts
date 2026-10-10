@@ -1,6 +1,5 @@
 import type { AnalyticsProvider } from "../events";
 
-/** Dev logger: one collapsed group per event, `[tp] tp_play` with the props table inside. */
 export function createConsoleProvider(): AnalyticsProvider {
 	return {
 		name: "console",

@@ -1,17 +1,14 @@
 export interface SettingsDrawer {
 	isOpen(): boolean;
-	/** Focus goes to `focusTo` afterwards (by default the toggle button); null leaves focus alone. */
 	close(focusTo?: HTMLElement | null): void;
 	toggle(): void;
 }
 
 export interface SettingsDrawerOptions {
-	/** Gets `data-drawer="open"`. A press inside it but outside the drawer closes the drawer. */
 	host: HTMLElement;
 	drawer: HTMLElement;
 	toggleButton: HTMLButtonElement;
 	closeButton: HTMLButtonElement;
-	/** Inert while the drawer is open, so focus stays in it and a press outside it reaches nothing else. */
 	background: HTMLElement[];
 	onOpenChange(): void;
 }

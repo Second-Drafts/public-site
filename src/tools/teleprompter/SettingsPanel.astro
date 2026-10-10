@@ -203,7 +203,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		margin: 0;
 	}
 
-	/* Focus that scrolls into view (a scroll area around the panel, or the page) keeps a little air around it. */
 	.tps :global(:is(input, button)) {
 		scroll-margin-block: var(--space-6);
 	}
@@ -302,7 +301,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		line-height: 18px;
 		color: var(--ink-muted);
 	}
-	/* The chosen card also shows a tick, so the choice isn't carried by colour alone. */
 	.card :global(.card__tick) {
 		--tick-size: 16px;
 		z-index: 2;
@@ -312,7 +310,7 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 	.card:has(:checked) :global(.card__tick) {
 		opacity: 1;
 	}
-	/* The selected frame is an overlay because an inset shadow would sit under the full-width swatch. */
+	/* An overlay: an inset shadow would sit under the full-bleed swatch. */
 	.card--theme {
 		--theme-pad-x: var(--space-3);
 		--theme-pad-y: var(--space-2);
@@ -428,7 +426,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		margin-inline-start: calc(-1 * var(--space-2));
 	}
 
-	/* Colours stay tokens, so the drawer follows the data-theme of whatever holds it. */
 	.tps[data-variant="drawer"] {
 		gap: var(--space-4);
 	}

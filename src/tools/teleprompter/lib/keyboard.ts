@@ -1,8 +1,3 @@
-/*
- * Prompt view keyboard shortcuts. Pure: the view decides what each action does.
- * Shortcuts with Ctrl, Meta or Alt are left to the browser (Cmd+R, Ctrl+F, Alt+← and so on).
- * While the settings drawer is open the view suspends all of these except Esc, which closes the drawer.
- */
 import type { ArrowKeyLayout } from "./settings";
 
 export type PromptAction =
@@ -24,7 +19,6 @@ export interface KeyLike {
 	altKey?: boolean;
 }
 
-/** Keys that mean the same in either arrow layout. PageUp / PageDown (clickers) always jump paragraphs. */
 const KEYMAP: Record<string, PromptAction> = {
 	" ": "toggle",
 	PageUp: "previousParagraph",
@@ -42,7 +36,6 @@ const KEYMAP: Record<string, PromptAction> = {
 type ArrowPair = readonly [PromptAction, PromptAction];
 const PREVIOUS_NEXT: ArrowPair = ["previousParagraph", "nextParagraph"];
 
-/** What each axis does per Settings.arrowKeys, as [↑ or ←, ↓ or →]. Up and right are faster. */
 const ARROWS: Record<ArrowKeyLayout, { vertical: ArrowPair; horizontal: ArrowPair }> = {
 	paragraphs: { vertical: PREVIOUS_NEXT, horizontal: ["speedDown", "speedUp"] },
 	speed: { vertical: ["speedUp", "speedDown"], horizontal: PREVIOUS_NEXT },
@@ -62,7 +55,6 @@ export function actionForKey(event: KeyLike, layout: ArrowKeyLayout = "paragraph
 	return KEYMAP[event.key] ?? null;
 }
 
-/** Holding a key down repeats these; the rest act once per press so a held Space doesn't flicker. */
 const REPEATABLE: ReadonlySet<PromptAction> = new Set([
 	"speedUp",
 	"speedDown",
@@ -73,7 +65,6 @@ const REPEATABLE: ReadonlySet<PromptAction> = new Set([
 export const isRepeatable = (action: PromptAction) => REPEATABLE.has(action);
 
 export interface Shortcut {
-	/** Stable across layouts, so the hint card can relabel its rows in place. */
 	id: "toggle" | "vertical" | "horizontal" | "top" | "fullscreen" | "mirror" | "settings" | "exit";
 	keys: string;
 	label: string;
@@ -81,7 +72,6 @@ export interface Shortcut {
 
 const PARAGRAPH_LABEL = "Previous or next paragraph";
 
-/** For the first-use hint card, in display order. The arrow rows follow the arrow-key layout. */
 export function shortcutsFor(layout: ArrowKeyLayout = "paragraphs"): readonly Shortcut[] {
 	const speedOnVertical = layout === "speed";
 	return [
@@ -96,13 +86,8 @@ export function shortcutsFor(layout: ArrowKeyLayout = "paragraphs"): readonly Sh
 	];
 }
 
-/** First-use hint for touch-only devices, in place of the keyboard list. One line per gesture. */
 export const TOUCH_HINT = "Tap the words to play or pause. Drag to move. Double-tap a paragraph to jump to it.";
 
-/**
- * True only when there is no fine pointer at all. "any-pointer" rather than "pointer", so an iPad
- * with a trackpad counts as not touch-only.
- */
 export function isTouchOnly(matches: (query: string) => boolean): boolean {
 	return matches("(pointer: coarse)") && !matches("(any-pointer: fine)");
 }

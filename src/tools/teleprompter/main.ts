@@ -15,7 +15,6 @@ import { trackUsage, type UsageHooks } from "./usage-tracking";
 
 declare global {
 	interface Window {
-		/** Dev only: the live store, for browser-automation QA. */
 		__tpStore?: Store;
 	}
 }
@@ -26,7 +25,7 @@ trackPageView({ referrer: document.referrer, hash: location.hash });
 const savedScript = read(KEYS.script);
 const savedSettings = readJSON(KEYS.settings);
 const store = createStore({
-	// A first visit gets the sample; an empty saved script means the user cleared it, so keep it empty.
+	// Only a first visit gets the sample: an empty saved script was cleared on purpose.
 	script: savedScript ?? SAMPLE_SCRIPT,
 	settings: savedSettings === undefined ? defaultSettingsForViewport() : validateSettings(savedSettings),
 	view: "edit",
@@ -42,7 +41,6 @@ document.querySelectorAll<HTMLElement>("[data-tp-settings]").forEach((root) => m
 mountEditPreview(store);
 
 openShareLink(store, usage, showNotice);
-// A share link pasted into a tab that is already on this page only changes the hash.
 addEventListener("hashchange", () => openShareLink(store, usage, showNotice));
 
 function persistChanges(store: Store) {
@@ -62,7 +60,7 @@ async function openShareLink(store: Store, usage: UsageHooks, showNotice: (messa
 	if (!hasShareParam(location.hash)) return;
 	const { decodeShareHash } = await import("./lib/share");
 	const shared = decodeShareHash(location.hash);
-	// Strip the hash first, so a reload doesn't ask again and the script isn't left in the address bar.
+	// Before the confirm, so a reload doesn't ask again.
 	history.replaceState(null, "", location.pathname + location.search);
 	if (store.get().view === "prompt") store.set({ view: "edit" });
 	if (!shared) {

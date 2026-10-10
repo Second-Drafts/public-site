@@ -48,7 +48,6 @@ import PromptStage from "./PromptStage.astro";
 	.tpv :global([data-tpst="scroller"]) {
 		overscroll-behavior: auto;
 	}
-	/* Paper chip, not prompter colours, so it reads over any theme. Outside the stage, so mirror and flip never reverse it. */
 	.tpv__caption {
 		position: absolute;
 		inset-block-start: var(--space-3);
@@ -66,7 +65,6 @@ import PromptStage from "./PromptStage.astro";
 		border-radius: var(--radius-sm);
 		pointer-events: none;
 	}
-	/* In the prompter's colours, so they match the Prompt view that Start opens. */
 	.tpv__actions {
 		position: absolute;
 		inset-block-end: var(--space-4);

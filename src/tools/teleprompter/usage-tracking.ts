@@ -7,9 +7,7 @@ import type { Store } from "./lib/store";
 import { countWords, wordBucket } from "./lib/timing";
 
 const SCRIPT_SETTLE_MS = 2000;
-/** A setting has to rest this long before its change is reported, so a colour or slider drag is one event. */
 const SETTING_SETTLE_MS = 1000;
-/** The "real interest" threshold. */
 const ENGAGED_WORDS = 200;
 const ENGAGED_MS = 60_000;
 const ENGAGED_CHECK_MS = 5000;
@@ -41,7 +39,6 @@ export function trackUsage(store: Store): UsageHooks {
 }
 
 function trackSettingChanges(store: Store): void {
-	// Only the reader's own choices count: share links and Reset are "system" changes.
 	const pending = new Map<TrackedSetting, Settings[TrackedSetting]>();
 	const report = debounce(() => {
 		for (const [setting, value] of pending) {
@@ -79,7 +76,6 @@ function trackScriptEntry(store: Store, currentWordBucket: () => WordBucket) {
 	return {
 		report,
 		input(source: "paste" | "typed") {
-			// Pasting a script is a stronger signal than typing, so a paste in the settle window wins.
 			if (source === "paste" || !pendingSource) pendingSource = source;
 			settle();
 		},

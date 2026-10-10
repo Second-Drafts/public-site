@@ -164,13 +164,11 @@ import SettingsPanel from "./SettingsPanel.astro";
 	}
 
 	.tpp {
-		/* Chrome colours follow the theme at runtime. The stage sets its own. */
 		--tp-fg: oklch(0.88 0.18 95);
 		--tp-bg: oklch(0 0 none);
 		--tpp-hit: 2.5rem;
 		--tpp-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
-		/* Derived from the theme, so the translucent chrome fits every one. */
 		--tpp-chrome-bg: color-mix(in oklch, color-mix(in oklch, var(--tp-bg) 93%, var(--tp-fg)) 94%, transparent);
 		--tpp-chrome-fg: color-mix(in oklch, var(--tp-fg) 96%, var(--tp-bg));
 		--tpp-chrome-muted: color-mix(in oklch, var(--tp-fg) 88%, var(--tp-bg));
@@ -194,12 +192,11 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* The dialog takes focus on open; a ring around the whole screen would only distract. */
+	/* Focused on open; a ring round the whole screen would only distract. */
 	.tpp:focus-visible {
 		outline: 2px solid transparent;
 	}
 
-	/* Rings in the theme's text colour. The drawer keeps the site's focus style. */
 	.tpp-chrome :focus-visible {
 		outline: 2px solid currentColor;
 		outline-offset: 2px;
@@ -230,7 +227,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		font-weight: 600;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
-		/* Josefin sits high in its line box, so the digits get extra top padding to centre them. */
+		/* Josefin rides high */
 		padding-block-start: 0.08em;
 	}
 
@@ -245,7 +242,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		pointer-events: auto;
 		border: 1px solid var(--tpp-chrome-line);
 		border-radius: 0.75rem;
-		/* Opaque: the script runs behind the hint, so translucency would show its text. */
 		background: color-mix(in oklch, var(--tp-bg) 93%, var(--tp-fg));
 		color: var(--tpp-chrome-fg);
 		font-family: var(--font-prose);
@@ -303,7 +299,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color: var(--tpp-chrome-muted);
 	}
 
-	/* Touch: the hint shrinks to one line beside its button, so it stays clear of the read line. */
 	.tpp-hint:not([hidden]):has(> .tpp-hint-touch:not([hidden])) {
 		display: flex;
 		align-items: center;
@@ -372,7 +367,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		background: var(--tpp-chrome-bg);
 		color: var(--tpp-chrome-fg);
 		font-size: 0.875rem;
-		/* Semibold: lighter Josefin goes spindly at toolbar size. */
 		font-weight: 600;
 		pointer-events: auto;
 	}
@@ -390,7 +384,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* Each group is its own capsule, so the speed value doesn't read as part of Size. */
 	.tpp-group {
 		display: flex;
 		align-items: center;
@@ -440,7 +433,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		display: none;
 	}
 
-	/* Filled in the text colour, matching Start prompting on the Edit page. */
 	.tpp-play {
 		background: var(--tp-fg);
 		color: var(--tp-bg);
@@ -508,10 +500,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		display: block;
 	}
 
-	/*
-	 * Labels give way on a short bar by visually hiding inline, since a container query can't apply
-	 * the sd-visually-hidden class. 80rem is the narrowest bar that fits every label; keep in step with the Play rule below.
-	 */
+	/* 80rem fits every label; keep in step with the Play rule below. */
 	@container (inline-size <= 80rem) {
 		.tpp-blabel {
 			position: absolute;
@@ -536,7 +525,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* Play and Pause share a width, so the bar doesn't shift when playback toggles. */
 	@container (inline-size > 80rem) {
 		.tpp-play .tpp-blabel {
 			min-inline-size: 5ch;
@@ -544,7 +532,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* Phone: two rows, with Exit ending the second edge to edge. */
 	@container (inline-size < 40rem) {
 		.tpp-toolbar {
 			padding-inline: 0.25rem;
@@ -603,7 +590,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color: var(--tpp-chrome-muted);
 	}
 
-	/* Site tokens, not prompter colours, so the drawer reads well whatever the theme, mirror or flip. */
 	.tpp {
 		--tpp-drawer-w: min(24rem, 100%);
 	}
@@ -637,7 +623,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color-scheme: dark;
 	}
 
-	/* The sheet takes focus on open so its name is read out; a ring around it would only distract. */
+	/* Focused on open so its name is read out; a ring would only distract. */
 	.tpp-drawer:focus-visible {
 		outline: 2px solid transparent;
 	}
@@ -692,12 +678,10 @@ import SettingsPanel from "./SettingsPanel.astro";
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
-		/* No top padding: the panel's first group draws the rule under the header. */
 		padding-block: 0 calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
 		padding-inline: var(--space-6);
 	}
 
-	/* Shift the toolbar clear of the open drawer, so it stays in view. */
 	@media (width >= 40rem) {
 		.tpp[data-drawer="open"] .tpp-chrome {
 			inset-inline-end: var(--tpp-drawer-w);
@@ -709,7 +693,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 			inset-block-start: auto;
 			inset-inline: 0;
 			inline-size: auto;
-			/* Stops short of the read line so the line being tuned stays in view. */
 			max-block-size: clamp(40dvh, (1 - var(--tpp-guide-pos, 0.33)) * 100dvh - var(--tpp-line, 3rem) / 2 - 0.5rem, 70dvh);
 			border-inline-start: 0;
 			border-block-start: var(--stroke-hairline) solid var(--rule);

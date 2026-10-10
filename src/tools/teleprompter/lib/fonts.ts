@@ -1,19 +1,11 @@
-/*
- * Curated fonts, all SIL OFL from Google Fonts. Only the chosen font loads in full.
- * Picker previews load just the label glyphs under "tp-preview-*" names, so a subset face never
- * stands in for the full font in the Prompt view.
- */
 import type { FontId } from "./settings";
 
 export interface FontOption {
 	id: FontId;
 	label: string;
-	/** One-line reason, shown under the label. */
 	note: string;
-	/** CSS family name as Google Fonts serves it. */
 	family: string;
 	fallback: string;
-	/** Weights for the regular / bold toggle. */
 	weights: { regular: number; bold: number };
 }
 
@@ -80,10 +72,6 @@ export const fontWeight = (id: FontId, bold: boolean) => FONTS[id].weights[bold 
 
 const requested = new Set<FontId>();
 
-/**
- * Safe to call repeatedly. Resolves once the requested weight is ready or after a timeout, so a slow
- * network never hangs the caller (display=swap covers the gap).
- */
 export function loadFont(id: FontId, bold = false): Promise<void> {
 	const font = FONTS[id];
 	if (!requested.has(id)) {
@@ -104,10 +92,7 @@ export function loadFont(id: FontId, bold = false): Promise<void> {
 
 let previewsRequested = false;
 
-/**
- * Subset glyphs for the picker labels only. Families are renamed to "tp-preview-<id>" so subset faces
- * stay out of the real ones. Fails quietly to the fallback stacks.
- */
+// Renamed to "tp-preview-<id>" so these subset faces never stand in for the full fonts.
 export async function loadFontPreviews(): Promise<void> {
 	if (previewsRequested) return;
 	previewsRequested = true;
@@ -126,6 +111,5 @@ export async function loadFontPreviews(): Promise<void> {
 		style.textContent = css;
 		document.head.append(style);
 	} catch {
-		// offline or blocked: fallback stacks are fine
 	}
 }

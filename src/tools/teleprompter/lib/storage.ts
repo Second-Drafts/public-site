@@ -25,11 +25,9 @@ export function write(key: string, value: string, area: StorageArea = local): vo
 	try {
 		area().setItem(key, value);
 	} catch {
-		// blocked or full: the value just won't survive a reload
 	}
 }
 
-/** Parsed JSON, or undefined when missing or unparsable. Validate the result before trusting it. */
 export function readJSON(key: string): unknown {
 	const raw = read(key);
 	if (raw === null) return undefined;

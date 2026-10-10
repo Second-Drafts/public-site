@@ -7,10 +7,6 @@ declare global {
 	}
 }
 
-/**
- * Google Analytics 4. Not enabled by default; see config.ts for the env vars.
- * Page views are sent by our own tp_page_view event, hence send_page_view: false.
- */
 export function createGtagProvider(measurementId: string): AnalyticsProvider {
 	return {
 		name: "gtag",

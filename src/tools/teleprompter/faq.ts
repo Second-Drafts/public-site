@@ -1,4 +1,3 @@
-/** FAQ for the teleprompter page. Feeds both the visible HTML and the FAQPage JSON-LD, so they cannot drift apart. */
 export interface FaqItem {
 	question: string;
 	answer: string;

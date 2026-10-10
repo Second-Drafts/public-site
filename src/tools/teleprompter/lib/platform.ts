@@ -1,10 +1,3 @@
-/*
- * Browser features the Prompt view leans on, each feature-detected and failing silently.
- * Fullscreen uses the webkit prefix on older Safari (iPadOS before 16.4). iPhone Safari has no
- * element fullscreen; there the full-viewport overlay is the fallback and the button is hidden.
- * The browser drops the wake lock whenever the page is hidden, so it is requested again on return.
- */
-
 type WebkitDocument = Document & {
 	webkitFullscreenEnabled?: boolean;
 	webkitFullscreenElement?: Element | null;
@@ -32,7 +25,6 @@ async function enterFullscreen(element: HTMLElement): Promise<void> {
 		if (el.requestFullscreen) await el.requestFullscreen({ navigationUI: "hide" });
 		else await el.webkitRequestFullscreen?.();
 	} catch {
-		// Refused (no user gesture, permissions policy, iframe): stay in the overlay.
 	}
 }
 
@@ -42,7 +34,6 @@ export async function exitFullscreen(): Promise<void> {
 		if (document.exitFullscreen) await document.exitFullscreen();
 		else await doc().webkitExitFullscreen?.();
 	} catch {
-		// Already left, or the browser refused: nothing to do.
 	}
 }
 
@@ -60,7 +51,6 @@ export function onFullscreenChange(callback: () => void): () => void {
 }
 
 export interface WakeLock {
-	/** Hold the screen awake until release(). Safe to call repeatedly. */
 	acquire(): void;
 	release(): void;
 }
@@ -86,7 +76,6 @@ export function createWakeLock(): WakeLock {
 				if (sentinel === lock) sentinel = null;
 			});
 		} catch {
-			// Denied (battery saver, permissions policy) or unsupported: the screen may sleep.
 		} finally {
 			pending = false;
 		}

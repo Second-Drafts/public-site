@@ -1,4 +1,3 @@
-/** Trailing-edge debounce with a flush, so a pending save can be written on pagehide. */
 export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number) {
 	let timer: ReturnType<typeof setTimeout> | undefined;
 	let pending: A | undefined;

@@ -4,14 +4,11 @@ import type { ArrowKeyLayout } from "./lib/settings";
 import { KEYS, read, write } from "./lib/storage";
 
 export interface ShortcutHint {
-	/** Show the card, unless the reader dismissed it on an earlier visit. */
 	show(options: { canFullscreen: boolean }): void;
 	dismiss(): void;
-	/** The arrow rows follow the arrow-key layout. They are rendered with the default. */
 	relabel(layout: ArrowKeyLayout): void;
 }
 
-/** `focusAfterDismiss` takes focus if it was inside the card when it closed. */
 export function createShortcutHint(hint: HTMLElement, focusAfterDismiss: HTMLElement): ShortcutHint {
 	const part = (name: string) => required(hint, `[data-tpp="${name}"]`);
 	const keyList = part("hint-keys");
@@ -22,7 +19,6 @@ export function createShortcutHint(hint: HTMLElement, focusAfterDismiss: HTMLEle
 	function show({ canFullscreen }: { canFullscreen: boolean }) {
 		fullscreenNote.hidden = canFullscreen;
 		if (fullscreenRow) fullscreenRow.hidden = !canFullscreen;
-		// Phones and tablets without a fine pointer get the short gesture hint, not the key list.
 		const touchOnly = isTouchOnly((query) => window.matchMedia(query).matches);
 		keyList.hidden = touchOnly;
 		touchHint.hidden = !touchOnly;

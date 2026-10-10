@@ -32,7 +32,6 @@ import Button from "../../components/Button.astro";
 
 <style>
 	.tpe {
-		/* Stacked: caps the script box so the settings stay a short scroll away. */
 		--tpe-max: clamp(12rem, 50dvh, 30rem);
 		display: grid;
 		gap: var(--space-4);
@@ -80,7 +79,6 @@ import Button from "../../components/Button.astro";
 			resize: none;
 		}
 	}
-	/* Phone: the box scrolls past 45dvh, so it can't swallow the page. */
 	@media (max-width: 30rem) {
 		.tpe__script {
 			min-block-size: min(9lh, 45dvh);
@@ -109,7 +107,6 @@ import Button from "../../components/Button.astro";
 		color: var(--ink-muted);
 		font-variant-numeric: tabular-nums;
 	}
-	/* Cancels the quiet button's padding so its text lines up with the column edge. */
 	.tpe__meta :global(.sd-btn) {
 		margin-inline-end: calc(-1 * var(--space-2));
 	}

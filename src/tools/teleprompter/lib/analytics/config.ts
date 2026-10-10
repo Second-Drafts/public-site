@@ -1,11 +1,3 @@
-/*
- * Which analytics providers are on. Pure, so it can be tested without a build.
- *
- *   PUBLIC_ANALYTICS_PROVIDER=gtag PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX   (comma-separate for several)
- *
- * Unset: ["console"] in dev, [] (nothing loads, nothing is sent) in production. "none" forces off.
- */
-
 export interface AnalyticsEnv {
 	DEV?: boolean;
 	PUBLIC_ANALYTICS_PROVIDER?: string;
@@ -13,7 +5,6 @@ export interface AnalyticsEnv {
 }
 
 export interface AnalyticsConfig {
-	/** Provider names to activate, de-duplicated; each is a key of the registry in providers/index.ts. */
 	providers: string[];
 	gaMeasurementId: string;
 }
@@ -47,7 +38,6 @@ export function resolveProviders(env: AnalyticsEnv): AnalyticsConfig {
 	return { providers, gaMeasurementId };
 }
 
-/** Reads the build-time env. Static property access so the bundler can inline the values. */
 export function readConfig(): AnalyticsConfig {
 	return resolveProviders({
 		DEV: import.meta.env.DEV,

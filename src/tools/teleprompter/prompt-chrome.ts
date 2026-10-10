@@ -1,15 +1,11 @@
 const HIDE_AFTER_MS = 2500;
-/** Smaller pointer moves don't wake the toolbar (some browsers send stray moves on scroll). */
 const WAKE_DISTANCE_PX = 3;
 
 export interface ChromeAutoHide {
-	/** Show the toolbar now, and fade it after a quiet spell if `canHide` allows. */
 	show(): void;
-	/** Show the toolbar and forget any pending fade. */
 	reset(): void;
 }
 
-/** Presses on `root`, mouse moves over it and focus in `chrome` wake the toolbar. */
 export function createChromeAutoHide(root: HTMLElement, chrome: HTMLElement, canHide: () => boolean): ChromeAutoHide {
 	let hideTimer: ReturnType<typeof setTimeout> | undefined;
 	let lastPointer = { x: 0, y: 0 };
