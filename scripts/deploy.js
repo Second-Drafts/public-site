@@ -4,6 +4,7 @@ ghPages.publish(
 	"dist",
 	{
 		message: "Deploy",
+		dotfiles: true,
 	},
 	(err) => {
 		if (err) {
