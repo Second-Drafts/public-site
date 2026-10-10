@@ -1,0 +1,468 @@
+---
+import Button from "../../components/Button.astro";
+import { uniqueId } from "../../lib/uniqueId";
+import { FONTS, previewStack } from "./lib/fonts";
+import { LIMITS } from "./lib/settings";
+import { THEMES } from "./lib/themes";
+import SettingsControl from "./SettingsControl.astro";
+import SettingsTick from "./SettingsTick.astro";
+import SettingsWarning from "./SettingsWarning.astro";
+
+interface Props {
+	variant?: "page" | "drawer";
+}
+const { variant = "page" } = Astro.props;
+const drawer = variant === "drawer";
+const pid = uniqueId("tps");
+const fonts = Object.values(FONTS);
+const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
+---
+
+<form
+	class="tps"
+	data-variant={variant}
+	aria-labelledby={drawer ? undefined : `${pid}-title`}
+	aria-label={drawer ? "Settings" : undefined}
+	data-tp-settings
+	novalidate
+>
+	{!drawer && <h2 id={`${pid}-title`} class="tps__title sd-text-title">Settings</h2>}
+
+	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Theme</legend>
+		<div class="tps__body">
+			<div class="tps__cards tps__cards--themes">
+				{
+					themes.map((theme) => (
+						<label
+							class="card card--theme"
+							style={`--sw-bg: ${theme.colors.background}; --sw-fg: ${theme.colors.text}; --sw-guide: ${theme.colors.guide}`}
+						>
+							<input class="card__input" type="radio" name={`${pid}-theme`} value={theme.id} data-setting="theme" />
+							<span class="swatch" aria-hidden="true">
+								<span class="swatch__aa" data-bold={theme.bold ? "" : undefined}>
+									Aa
+								</span>
+								<span class="swatch__bar" />
+							</span>
+							<span class="card__label">{theme.label}</span>
+							<SettingsTick class="card__tick" />
+						</label>
+					))
+				}
+				<label class="card card--theme" data-tps="custom-card">
+					<input class="card__input" type="radio" name={`${pid}-theme`} value="custom" data-setting="theme" />
+					<span class="swatch" aria-hidden="true">
+						<span class="swatch__aa">Aa</span>
+						<span class="swatch__bar" />
+					</span>
+					<span class="card__label">Custom</span>
+					<span class="card__note">Your own colours</span>
+					<SettingsTick class="card__tick" />
+				</label>
+			</div>
+
+			<div class="tps__custom" data-tps="custom" hidden>
+				<div class="tps__pickers">
+					<label class="picker">
+						<span class="picker__label">Text</span>
+						<input class="picker__input" type="color" data-custom="text" />
+						<span class="picker__hex sd-text-meta" data-hex="text"></span>
+					</label>
+					<label class="picker">
+						<span class="picker__label">Background</span>
+						<input class="picker__input" type="color" data-custom="background" />
+						<span class="picker__hex sd-text-meta" data-hex="background"></span>
+					</label>
+				</div>
+				<SettingsWarning data-tps="contrast" />
+			</div>
+		</div>
+	</fieldset>
+
+	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Font</legend>
+		<div class="tps__body">
+			<div class="tps__cards tps__cards--fonts" data-tps="fonts">
+				{
+					fonts.map((font) => (
+						<label class="card">
+							<input class="card__input" type="radio" name={`${pid}-font`} value={font.id} data-setting="font" />
+							<span class="card__name" style={`font-family: ${previewStack(font.id)}`}>
+								{font.label}
+							</span>
+							<span class="card__note">{font.note}</span>
+							<SettingsTick class="card__tick" />
+						</label>
+					))
+				}
+			</div>
+			<SettingsControl
+				kind="toggle"
+				setting="bold"
+				label="Bold"
+				hint="Heavier strokes. Easier to read from a distance."
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Layout</legend>
+		<div class="tps__body">
+			<SettingsControl kind="range" setting="fontSize" label="Text size" {...LIMITS.fontSize} />
+			<SettingsControl kind="range" setting="lineHeight" label="Line spacing" {...LIMITS.lineHeight} />
+			<SettingsControl
+				kind="range"
+				setting="columnWidth"
+				label="Column width"
+				hint="A narrow column keeps your eyes near the camera."
+				{...LIMITS.columnWidth}
+			/>
+			<SettingsControl
+				kind="range"
+				setting="columnPosition"
+				label="Horizontal position"
+				hint="Line the text up under your camera."
+				{...LIMITS.columnPosition}
+			/>
+			<SettingsControl
+				kind="segmented"
+				setting="align"
+				label="Alignment"
+				options={[
+					{ value: "left", label: "Left" },
+					{ value: "center", label: "Center" },
+				]}
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Reading guide</legend>
+		<div class="tps__body">
+			<SettingsControl
+				kind="segmented"
+				setting="guide"
+				label="Style"
+				options={[
+					{ value: "band", label: "Band" },
+					{ value: "arrows", label: "Arrows" },
+					{ value: "off", label: "Off" },
+				]}
+			/>
+			<SettingsControl kind="swatches" setting="guideColor" label="Colour" />
+			<SettingsControl
+				kind="range"
+				setting="guidePosition"
+				label="Position"
+				hint="Put it near your camera."
+				{...LIMITS.guidePosition}
+			/>
+			<SettingsControl kind="range" setting="guideOpacity" label="Band opacity" warn {...LIMITS.guideOpacity} />
+		</div>
+	</fieldset>
+
+	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Playback</legend>
+		<div class="tps__body">
+			<SettingsControl
+				kind="range"
+				setting="speed"
+				label={drawer ? "Speed" : "Start speed"}
+				hint={drawer ? undefined : "You can change it while you prompt."}
+				{...LIMITS.speed}
+			/>
+			<SettingsControl kind="toggle" setting="countdown" label="Countdown 3-2-1" hint="Counts down each time you press play." />
+			<SettingsControl kind="toggle" setting="mirror" label="Mirror horizontally" hint="For beam-splitter glass." />
+			<SettingsControl kind="toggle" setting="flip" label="Flip vertically" />
+			<SettingsControl
+				kind="segmented"
+				setting="arrowKeys"
+				label="Arrow keys"
+				hint="Match the prompter you're used to. Page Up and Page Down always jump paragraphs."
+				options={[
+					{ value: "paragraphs", label: "↑↓ paragraphs" },
+					{ value: "speed", label: "↑↓ speed" },
+				]}
+			/>
+		</div>
+	</fieldset>
+
+	<div class="tps__reset">
+		<Button variant="quiet" data-tps="reset">Reset to defaults</Button>
+	</div>
+</form>
+
+<style>
+	.tps {
+		display: grid;
+		gap: var(--space-6);
+		min-inline-size: 0;
+	}
+	.tps__title {
+		margin: 0;
+	}
+
+	.tps :global(:is(input, button)) {
+		scroll-margin-block: var(--space-6);
+	}
+
+	.tps__group {
+		min-inline-size: 0;
+		margin: 0;
+		padding: var(--space-6) 0 0;
+		border: 0;
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+	.tps__legend {
+		float: inline-start;
+		inline-size: 100%;
+		padding: 0;
+		margin-block-end: var(--space-3);
+		color: var(--ink);
+	}
+	.tps__body {
+		clear: both;
+		display: grid;
+		gap: var(--space-4);
+		min-inline-size: 0;
+	}
+
+	.tps__cards {
+		display: grid;
+		gap: var(--space-2);
+	}
+	.tps__cards--fonts {
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+	}
+	.tps__cards--themes {
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 6rem), 1fr));
+	}
+	.card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		box-sizing: border-box;
+		padding: var(--space-3);
+		min-inline-size: 0;
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-md);
+		cursor: pointer;
+	}
+	.card__input {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.card:has(:checked) {
+		background: var(--paper-sunken);
+		border-color: var(--marker-blue);
+	}
+	.card:has(:focus-visible) {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.card:active {
+		transform: scale(0.98);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.card:not(:has(:checked)):hover {
+			background: var(--paper-sunken);
+		}
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.card {
+			transition:
+				transform 160ms var(--ease-out, ease-out),
+				background-color 120ms,
+				border-color 120ms;
+		}
+	}
+	.card__name {
+		font-size: 22px;
+		line-height: 30px;
+		color: var(--ink);
+	}
+	.card__label {
+		font-family: var(--font-display);
+		font-size: 14px;
+		line-height: 20px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: var(--ink);
+	}
+	.card__note {
+		font-family: var(--font-prose);
+		font-size: 13px;
+		line-height: 18px;
+		color: var(--ink-muted);
+	}
+	.card :global(.card__tick) {
+		--tick-size: 16px;
+		z-index: 2;
+		inset-block-start: var(--space-2);
+		inset-inline-end: var(--space-2);
+	}
+	.card:has(:checked) :global(.card__tick) {
+		opacity: 1;
+	}
+	/* An overlay: an inset shadow would sit under the full-bleed swatch. */
+	.card--theme {
+		--theme-pad-x: var(--space-3);
+		--theme-pad-y: var(--space-2);
+		gap: 0;
+		padding: 0;
+		overflow: clip;
+	}
+	.card--theme:has(:checked)::after {
+		content: "";
+		position: absolute;
+		inset: calc(-1 * var(--stroke-hairline));
+		z-index: 1;
+		border: 2px solid var(--marker-blue);
+		border-radius: inherit;
+		pointer-events: none;
+	}
+	.card--theme .card__label,
+	.card--theme .card__note {
+		padding-inline: var(--theme-pad-x);
+	}
+	.card--theme .card__label {
+		padding-block: var(--theme-pad-y);
+	}
+	.card--theme .card__label:has(+ .card__note) {
+		padding-block-end: 0;
+	}
+	.card--theme .card__note {
+		padding-block: 0 var(--theme-pad-y);
+	}
+	.swatch {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-block-size: 3.5rem;
+		overflow: clip;
+		color: var(--sw-fg, #fff);
+		background: var(--sw-bg, #000);
+		border-block-end: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	.swatch__aa {
+		font-family: var(--font-prose);
+		font-size: 24px;
+		line-height: 1;
+		font-weight: 400;
+	}
+	.swatch__aa[data-bold] {
+		font-weight: 800;
+	}
+	.swatch__bar {
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 0;
+		block-size: 5px;
+		background: var(--sw-guide, #fff);
+	}
+
+	.tps__custom {
+		display: grid;
+		gap: var(--space-3);
+		padding: var(--space-4);
+		background: var(--paper-sunken);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+	}
+	.tps__custom[hidden] {
+		display: none;
+	}
+	.tps__pickers {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
+		gap: var(--space-3);
+	}
+	.picker {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: var(--space-1) var(--space-2);
+		align-items: center;
+	}
+	.picker__label {
+		grid-column: 1 / -1;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	.picker__input {
+		inline-size: 3rem;
+		block-size: 2.5rem;
+		padding: 2px;
+		box-sizing: border-box;
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+	}
+	@media (pointer: coarse) {
+		.picker__input {
+			block-size: 44px;
+		}
+	}
+	.picker__input:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.picker__hex {
+		color: var(--ink-muted);
+		text-transform: uppercase;
+	}
+	.tps__reset {
+		padding-block-start: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+	.tps__reset :global(.sd-btn) {
+		margin-inline-start: calc(-1 * var(--space-2));
+	}
+
+	.tps[data-variant="drawer"] {
+		gap: var(--space-4);
+	}
+	.tps[data-variant="drawer"] .tps__group {
+		padding-block-start: var(--space-4);
+	}
+	.tps[data-variant="drawer"] .tps__legend {
+		margin-block-end: var(--space-2);
+	}
+	.tps[data-variant="drawer"] .tps__body {
+		gap: var(--space-3);
+	}
+	.tps[data-variant="drawer"] .tps__cards--fonts {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.tps[data-variant="drawer"] .tps__cards--themes {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.tps[data-variant="drawer"] .card {
+		padding: var(--space-2) var(--space-3);
+	}
+	.tps[data-variant="drawer"] .card--theme {
+		--theme-pad-x: var(--space-2);
+		--theme-pad-y: var(--space-1);
+		padding: 0;
+	}
+	.tps[data-variant="drawer"] .card__name {
+		font-size: 18px;
+		line-height: 24px;
+	}
+	.tps[data-variant="drawer"] .tps__cards--fonts .card__note {
+		display: none;
+	}
+	.tps[data-variant="drawer"] .swatch {
+		min-block-size: 2.5rem;
+	}
+	.tps[data-variant="drawer"] .tps__reset {
+		padding-block-start: var(--space-3);
+	}
+</style>

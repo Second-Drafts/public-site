@@ -1,0 +1,22 @@
+---
+import Button from "../../components/Button.astro";
+import Dialog from "./Dialog.astro";
+---
+
+<Dialog aria-labelledby="tpc-title" aria-describedby="tpc-body" data-tp-confirm>
+	<h3 id="tpc-title" class="tpd__title sd-text-title" data-tpc="title"></h3>
+	<p id="tpc-body" class="tpd__text tpc__body" data-tpc="body"></p>
+	<div class="tpd__actions tpc__actions">
+		<Button variant="secondary" data-tpc="cancel">Cancel</Button>
+		<Button variant="primary" data-tpc="confirm">Confirm</Button>
+	</div>
+</Dialog>
+
+<style>
+	.tpc__body:empty {
+		display: none;
+	}
+	.tpc__actions {
+		justify-content: flex-end;
+	}
+</style>

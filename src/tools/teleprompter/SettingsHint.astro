@@ -1,0 +1,18 @@
+---
+interface Props {
+	id?: string;
+}
+const { id } = Astro.props;
+---
+
+<p class="ctl__hint" {id}><slot /></p>
+
+<style is:global>
+	.ctl__hint {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 14px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+</style>

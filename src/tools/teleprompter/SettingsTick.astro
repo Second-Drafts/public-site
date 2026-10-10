@@ -1,0 +1,28 @@
+---
+interface Props {
+	class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg class:list={["tp-tick", className]} viewBox="0 0 16 16" aria-hidden="true">
+	<path d="M3 8.5l3.2 3L13 4.5"></path>
+</svg>
+
+<style is:global>
+	.tp-tick {
+		position: absolute;
+		inline-size: var(--tick-size, 14px);
+		block-size: var(--tick-size, 14px);
+		padding: 2px;
+		box-sizing: border-box;
+		fill: none;
+		stroke: var(--on-blue);
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		background: var(--marker-blue);
+		border-radius: var(--radius-pill);
+		opacity: 0;
+	}
+</style>

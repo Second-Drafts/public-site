@@ -1,0 +1,74 @@
+---
+/* Render at body level: a modal inside an inert subtree can't be used. */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"dialog"> {
+	width?: string;
+}
+
+const { width = "26rem", class: className, style, ...rest } = Astro.props;
+---
+
+<dialog {...rest} class:list={["tpd", className]} style={`--tpd-width: ${width}; ${style ?? ""}`}>
+	<div class="tpd__panel">
+		<slot />
+	</div>
+</dialog>
+
+<style>
+	.tpd {
+		inline-size: min(var(--tpd-width), 100% - 2 * var(--space-6));
+		padding: 0;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-lg);
+		box-shadow: var(--shadow-lift);
+		opacity: 0;
+	}
+	.tpd[open] {
+		opacity: 1;
+	}
+	.tpd::backdrop {
+		background: oklch(0% 0 none / 0.4);
+		opacity: 0;
+	}
+	.tpd[open]::backdrop {
+		opacity: 1;
+	}
+	@starting-style {
+		.tpd[open],
+		.tpd[open]::backdrop {
+			opacity: 0;
+		}
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.tpd,
+		.tpd::backdrop {
+			transition:
+				opacity 200ms var(--ease-out, ease-out),
+				display 200ms allow-discrete,
+				overlay 200ms allow-discrete;
+		}
+	}
+	.tpd__panel {
+		display: grid;
+		gap: var(--space-4);
+		padding: var(--space-6);
+	}
+
+	:global(.tpd__title) {
+		margin: 0;
+	}
+	:global(.tpd__text) {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+	}
+	:global(.tpd__actions) {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+</style>

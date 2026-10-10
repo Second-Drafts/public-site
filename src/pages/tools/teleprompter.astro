@@ -1,0 +1,192 @@
+---
+import Base from "../../layouts/Base.astro";
+import ConfirmDialog from "../../tools/teleprompter/ConfirmDialog.astro";
+import EditPreview from "../../tools/teleprompter/EditPreview.astro";
+import EditView from "../../tools/teleprompter/EditView.astro";
+import FakeDoors from "../../tools/teleprompter/FakeDoors.astro";
+import PromptView from "../../tools/teleprompter/PromptView.astro";
+import SeoContent from "../../tools/teleprompter/SeoContent.astro";
+import SettingsPanel from "../../tools/teleprompter/SettingsPanel.astro";
+import { faq } from "../../tools/teleprompter/faq";
+
+const pageTitle = "Free Teleprompter: No Sign-Up, No Time Limits";
+const pageDescription =
+	"A free online teleprompter with no sign-up and no time limits. Choose legible fonts and colour themes, mirror for glass rigs, and use it on any device.";
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL("/img/og/teleprompter.png", Astro.site).href;
+const ogImageAlt = "Yellow teleprompter text on black, with the caption Free teleprompter, no sign-up.";
+
+const faqJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: faq.map((item) => ({
+		"@type": "Question",
+		name: item.question,
+		acceptedAnswer: { "@type": "Answer", text: item.answer },
+	})),
+};
+
+const appJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: "Free online teleprompter",
+	url: canonical,
+	description: pageDescription,
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "Requires a modern browser with JavaScript enabled.",
+	isAccessibleForFree: true,
+	offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+	publisher: { "@type": "Organization", name: "The Department of Second Drafts", url: Astro.site?.href },
+};
+---
+
+<Base
+	title="Teleprompter"
+	seoTitle={pageTitle}
+	description={pageDescription}
+	wide
+	edgeToEdge
+>
+	<Fragment slot="head">
+		<link rel="canonical" href={canonical} />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="The Department of Second Drafts" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={pageDescription} />
+		<meta property="og:url" content={canonical} />
+		<meta property="og:image" content={ogImage} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content={ogImageAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={pageTitle} />
+		<meta name="twitter:description" content={pageDescription} />
+		<meta name="twitter:image" content={ogImage} />
+		<meta name="twitter:image:alt" content={ogImageAlt} />
+		<script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />
+		<script type="application/ld+json" set:html={JSON.stringify(appJsonLd)} />
+	</Fragment>
+
+	<section class="tp-tool" aria-labelledby="tp-title">
+		<div class="tp-screen">
+			<header class="tp-intro">
+				<h1 id="tp-title" class="sd-text-title">Free teleprompter</h1>
+			</header>
+			<EditPreview />
+			<div class="tp-workspace">
+				<div class="tp-grid">
+					<EditView />
+					<div class="tp-settings">
+						<SettingsPanel />
+					</div>
+				</div>
+			</div>
+		</div>
+		<FakeDoors />
+	</section>
+
+	<PromptView />
+
+	<SeoContent />
+
+	<!-- Outside the tool: the Prompt view makes the tool inert, and Reset can ask from its drawer. -->
+	<ConfirmDialog />
+</Base>
+
+<style>
+	.tp-tool {
+		container: tp-work / inline-size;
+		--tp-preview-h: clamp(12rem, 40dvh, 20rem);
+		--tp-measure: 80rem;
+		--tp-pad-inline: max(var(--space-6), (100% - var(--tp-measure)) / 2);
+		padding-block-end: var(--space-12);
+	}
+	@media (min-width: 40rem) {
+		.tp-tool {
+			--tp-preview-h: clamp(16rem, 46dvh, 40rem);
+		}
+	}
+	.tp-intro {
+		padding: var(--space-2) var(--tp-pad-inline);
+	}
+	.tp-intro h1 {
+		margin: 0;
+	}
+		.tp-workspace {
+		padding: var(--space-4) var(--tp-pad-inline);
+	}
+	.tp-grid {
+		display: grid;
+		gap: var(--space-8);
+		align-items: start;
+	}
+	@container tp-work (min-width: 55rem) {
+		.tp-screen {
+			display: flex;
+			flex-direction: column;
+			min-block-size: clamp(34rem, 88dvh, 72rem);
+		}
+		/* So the settings' full height doesn't stretch the row. */
+		.tp-workspace {
+			display: grid;
+			grid-template-rows: minmax(0, 1fr);
+			flex: 1 1 0;
+			min-block-size: 20rem;
+			contain: size;
+		}
+		.tp-grid {
+			grid-template-columns: minmax(0, 1.4fr) minmax(22rem, 1fr);
+			grid-template-rows: minmax(0, 1fr);
+			align-items: stretch;
+		}
+		.tp-settings {
+			--fade-start: 0px;
+			--fade-end: 0px;
+			min-block-size: 0;
+			padding: var(--space-1) var(--space-3) var(--space-1) var(--space-4);
+			overflow-y: auto;
+			overscroll-behavior: contain;
+			scrollbar-gutter: stable;
+			border-inline-start: var(--stroke-hairline) solid var(--rule);
+			animation: tp-edges linear;
+			animation-timeline: scroll(self block);
+			mask-image: linear-gradient(
+				to bottom,
+				transparent,
+				#000 var(--fade-start),
+				#000 calc(100% - var(--fade-end)),
+				transparent
+			);
+		}
+	}
+	@property --fade-start {
+		syntax: "<length>";
+		inherits: false;
+		initial-value: 0px;
+	}
+	@property --fade-end {
+		syntax: "<length>";
+		inherits: false;
+		initial-value: 0px;
+	}
+	@keyframes tp-edges {
+		from {
+			--fade-start: 0px;
+			--fade-end: 1.5rem;
+		}
+		10%,
+		90% {
+			--fade-start: 1.5rem;
+			--fade-end: 1.5rem;
+		}
+		to {
+			--fade-start: 1.5rem;
+			--fade-end: 0px;
+		}
+	}
+</style>
+
+<script>
+	import "../../tools/teleprompter/main";
+</script>

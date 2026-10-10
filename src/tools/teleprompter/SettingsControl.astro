@@ -1,0 +1,442 @@
+---
+import { uniqueId } from "../../lib/uniqueId";
+import { GUIDE_COLORS } from "./lib/themes";
+import SettingsHint from "./SettingsHint.astro";
+import SettingsTick from "./SettingsTick.astro";
+import SettingsWarning from "./SettingsWarning.astro";
+
+interface Option {
+	value: string;
+	label: string;
+}
+
+interface Props {
+	kind: "range" | "toggle" | "segmented" | "swatches";
+	setting: string;
+	label: string;
+	hint?: string;
+	min?: number;
+	max?: number;
+	step?: number;
+	warn?: boolean;
+	options?: Option[];
+}
+
+const { kind, setting, label, hint, min, max, step, warn, options = [] } = Astro.props;
+const id = uniqueId(`tps-${setting}`);
+const hintId = hint ? `${id}-hint` : undefined;
+---
+
+{
+	kind === "range" && (
+		<div class="ctl ctl--range" data-ctl={setting}>
+			<label class="ctl__label" for={id}>
+				{label}
+			</label>
+			<output class="ctl__out sd-text-meta" for={id} aria-live="off" data-out={setting} />
+			<input
+				class="ctl__range"
+				type="range"
+				id={id}
+				min={min}
+				max={max}
+				step={step}
+				data-setting={setting}
+				aria-describedby={hintId}
+			/>
+			{hint && (
+				<SettingsHint id={hintId}>
+					{hint}
+				</SettingsHint>
+			)}
+			{warn && <SettingsWarning data-warn={setting} />}
+		</div>
+	)
+}
+
+{
+	kind === "toggle" && (
+		<div class="ctl ctl--toggle" data-ctl={setting}>
+			<input class="ctl__check" type="checkbox" id={id} data-setting={setting} aria-describedby={hintId} />
+			<label class="ctl__label" for={id}>
+				{label}
+			</label>
+			{hint && (
+				<SettingsHint id={hintId}>
+					{hint}
+				</SettingsHint>
+			)}
+		</div>
+	)
+}
+
+{
+	kind === "segmented" && (
+		<div class="ctl ctl--seg" data-ctl={setting} role="radiogroup" aria-labelledby={`${id}-label`}>
+			<span class="ctl__label" id={`${id}-label`}>
+				{label}
+			</span>
+			<div class="seg">
+				{options.map((option) => (
+					<label class="seg__opt">
+						<input
+							class="seg__input"
+							type="radio"
+							name={id}
+							value={option.value}
+							data-setting={setting}
+						/>
+						<span class="seg__text">{option.label}</span>
+					</label>
+				))}
+			</div>
+			{hint && <SettingsHint id={hintId}>{hint}</SettingsHint>}
+		</div>
+	)
+}
+
+{
+	kind === "swatches" && (
+		<div class="ctl ctl--swatches" data-ctl={setting} role="group" aria-labelledby={`${id}-label`}>
+			<span class="ctl__label" id={`${id}-label`}>
+				{label}
+			</span>
+			<div class="swc">
+				<label class="swc__opt swc__opt--wide">
+					<input class="swc__input" type="radio" name={id} value="auto" data-setting={setting} />
+					<span class="swc__dot" data-swc="auto" aria-hidden="true" />
+					<span class="swc__text">Theme</span>
+					<SettingsTick class="swc__tick" />
+				</label>
+				{GUIDE_COLORS.map((color) => (
+					<label class="swc__opt">
+						<input class="swc__input" type="radio" name={id} value={color.value} data-setting={setting} />
+						<span class="swc__dot" style={`--swc: ${color.value}`} aria-hidden="true" />
+						<span class="sd-visually-hidden">{color.label}</span>
+						<SettingsTick class="swc__tick" />
+					</label>
+				))}
+				<label class="swc__opt swc__opt--wide" data-swc-custom>
+					<input class="swc__input" type="color" data-guide-custom aria-label="Custom colour" />
+					<span class="swc__dot swc__dot--custom" aria-hidden="true">
+						<svg class="swc__plus" viewBox="0 0 12 12">
+							<path d="M6 2v8M2 6h8" />
+						</svg>
+					</span>
+					<span class="swc__text" aria-hidden="true">Custom</span>
+					<SettingsTick class="swc__tick" />
+				</label>
+			</div>
+			{hint && <SettingsHint id={hintId}>{hint}</SettingsHint>}
+		</div>
+	)
+}
+
+<style>
+	.ctl {
+		display: grid;
+		gap: var(--space-1) var(--space-3);
+		min-inline-size: 0;
+	}
+	.ctl__label {
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+	}
+	.ctl[data-disabled] {
+		opacity: 0.4;
+	}
+
+	.ctl--range {
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: baseline;
+	}
+	.ctl__out {
+		color: var(--ink-muted);
+		font-variant-numeric: tabular-nums;
+		text-align: end;
+		white-space: nowrap;
+	}
+	.ctl__range,
+	.ctl--range :global(.ctl__hint) {
+		grid-column: 1 / -1;
+	}
+	.ctl__range {
+		inline-size: 100%;
+		min-block-size: 24px;
+		margin: 0;
+		accent-color: var(--marker-blue);
+		cursor: pointer;
+	}
+	/* 44px touch target; negative margins keep the visual spacing. */
+	@media (pointer: coarse) {
+		.ctl__range {
+			min-block-size: 44px;
+			margin-block: calc((24px - 44px) / 2);
+		}
+	}
+	.ctl__range:disabled {
+		cursor: not-allowed;
+	}
+	.ctl__range:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 0;
+		border-radius: var(--radius-sm);
+	}
+
+	.ctl--toggle {
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: var(--space-3);
+	}
+	.ctl__check {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 2px 0 0;
+		accent-color: var(--marker-blue);
+		cursor: pointer;
+	}
+	.ctl__check:disabled {
+		cursor: not-allowed;
+	}
+	.ctl__check:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.ctl--toggle .ctl__label {
+		cursor: pointer;
+	}
+	.ctl--toggle :global(.ctl__hint) {
+		grid-column: 2;
+	}
+
+	.seg {
+		display: flex;
+		inline-size: fit-content;
+		max-inline-size: 100%;
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-md);
+		overflow: clip;
+	}
+	.seg__opt {
+		position: relative;
+		display: grid;
+		flex: 1 1 auto;
+		place-items: center;
+		box-sizing: border-box;
+		min-inline-size: 4.5rem;
+		min-block-size: 40px;
+		padding-inline: var(--space-4);
+		font-family: var(--font-display);
+		font-size: 14px;
+		line-height: 20px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: var(--ink);
+		background: var(--paper-raised);
+		cursor: pointer;
+		user-select: none;
+	}
+	.seg__opt + .seg__opt {
+		border-inline-start: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	.seg__input {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.seg__text {
+		padding-block-start: 2px; /* Josefin rides high */
+	}
+	.seg__opt:has(:checked) {
+		background: var(--ink);
+		color: var(--ink-inverse);
+	}
+	.seg__opt:has(:focus-visible) {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: -3px;
+	}
+	.seg__opt:has(:checked:focus-visible) {
+		outline-color: var(--paper-raised);
+	}
+	.seg__opt:active {
+		filter: brightness(0.94);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.seg__opt:not(:has(:checked)):hover {
+			background: var(--paper-sunken);
+		}
+	}
+
+	.swc {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-1);
+	}
+	.swc__opt {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-2);
+		box-sizing: border-box;
+		min-inline-size: 36px;
+		min-block-size: 36px;
+		border-radius: var(--radius-pill);
+		cursor: pointer;
+		user-select: none;
+	}
+	.swc__opt--wide {
+		justify-content: flex-start;
+		padding-inline: 6px var(--space-3);
+	}
+	.swc__input {
+		position: absolute;
+		inset: 0;
+		inline-size: 100%;
+		block-size: 100%;
+		margin: 0;
+		padding: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.swc__dot {
+		flex: none;
+		inline-size: 24px;
+		block-size: 24px;
+		box-sizing: border-box;
+		background: var(--swc, transparent);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-pill);
+	}
+	.swc__dot--custom {
+		display: grid;
+		place-items: center;
+		border-style: dashed;
+		border-color: var(--ink-muted);
+	}
+	.swc__plus {
+		inline-size: 12px;
+		block-size: 12px;
+		fill: none;
+		stroke: var(--ink-muted);
+		stroke-width: 1.5;
+		stroke-linecap: round;
+	}
+	.swc__opt[data-selected] .swc__dot--custom {
+		background: var(--swc);
+		border-style: solid;
+		border-color: var(--rule-strong);
+	}
+	.swc__opt[data-selected] .swc__plus {
+		display: none;
+	}
+	.swc__text {
+		font-family: var(--font-display);
+		font-size: 14px;
+		line-height: 20px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		color: var(--ink);
+		padding-block-start: 2px; /* Josefin rides high */
+	}
+	.swc__opt:has(:checked) .swc__dot,
+	.swc__opt[data-selected] .swc__dot {
+		outline: var(--stroke-pen) solid var(--marker-blue);
+		outline-offset: 2px;
+	}
+	.swc__opt :global(.swc__tick) {
+		inset-block-start: 1px;
+		inset-inline-end: 1px;
+	}
+	.swc__opt--wide :global(.swc__tick) {
+		inset-inline-end: auto;
+		inset-inline-start: 21px;
+	}
+	.swc__opt:has(:checked) :global(.swc__tick),
+	.swc__opt[data-selected] :global(.swc__tick) {
+		opacity: 1;
+	}
+	.swc__opt:has(:focus-visible) {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.swc__opt:active .swc__dot {
+		transform: scale(0.94);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.swc__dot {
+			transition: transform 160ms var(--ease-out, ease-out);
+		}
+	}
+	.ctl--swatches[data-disabled] .swc__opt,
+	.ctl--swatches[data-disabled] .swc__input {
+		cursor: not-allowed;
+	}
+
+	:global([data-variant="drawer"]) .ctl {
+		gap: 0 var(--space-3);
+	}
+	:global([data-variant="drawer"] .ctl__hint) {
+		font-size: 13px;
+		line-height: 18px;
+	}
+	:global([data-variant="drawer"]) .ctl__range {
+		min-block-size: 32px;
+	}
+	:global([data-variant="drawer"]) .seg__opt {
+		min-inline-size: 3.5rem;
+		min-block-size: 36px;
+		padding-inline: var(--space-3);
+	}
+
+	@media (pointer: coarse) {
+		.ctl--toggle {
+			grid-template-rows: auto auto;
+			align-items: center;
+		}
+		.ctl--toggle .ctl__check {
+			grid-area: 1 / 1;
+			position: relative;
+			z-index: 1;
+			margin: 0;
+		}
+		.ctl--toggle .ctl__label {
+			grid-area: 1 / 1 / 2 / -1;
+			display: flex;
+			align-items: center;
+			min-block-size: 44px;
+			padding-inline-start: calc(20px + var(--space-3));
+		}
+		.ctl--toggle :global(.ctl__hint) {
+			grid-row: 2;
+			margin-block-start: calc(-1 * var(--space-1));
+		}
+		.seg__opt {
+			min-block-size: 44px;
+		}
+		.swc__opt {
+			min-inline-size: 44px;
+			min-block-size: 44px;
+		}
+		.swc__opt--wide {
+			padding-inline-start: 10px;
+		}
+		.swc__opt--wide :global(.swc__tick) {
+			inset-block-start: 5px;
+			inset-inline-start: 25px;
+		}
+		.swc__opt:not(.swc__opt--wide) :global(.swc__tick) {
+			inset-block-start: 5px;
+			inset-inline-end: 9px;
+		}
+		:global([data-variant="drawer"]) .ctl__range,
+		:global([data-variant="drawer"]) .seg__opt {
+			min-block-size: 44px;
+		}
+	}
+</style>

@@ -1,0 +1,161 @@
+---
+import Button from "../../components/Button.astro";
+---
+
+<div class="tpe" data-tp-edit>
+	<div class="tpe__feedback">
+		<p class="tpe__status" role="status" aria-live="polite" data-tpe="status"></p>
+		<div class="tpe__fallback" data-tpe="fallback" hidden>
+			<label class="tpe__fallback-label" for="tpe-link">Copy this link:</label>
+			<input id="tpe-link" class="tpe__link" type="text" readonly data-tpe="link" />
+		</div>
+	</div>
+
+	<div class="tpe__field">
+		<label class="tpe__label sd-text-label" for="tpe-script">Your script</label>
+		<textarea
+			id="tpe-script"
+			class="tpe__script"
+			data-tpe="script"
+			rows="16"
+			spellcheck="true"
+			autocomplete="off"
+			autocapitalize="sentences"
+			aria-describedby="tpe-stats"
+			placeholder="Paste or type your script here."></textarea>
+		<div class="tpe__meta">
+			<p id="tpe-stats" class="tpe__stats sd-text-meta" data-tpe="stats">&nbsp;</p>
+			<Button variant="quiet" size="sm" data-tpe="clear">Clear script</Button>
+		</div>
+	</div>
+</div>
+
+<style>
+	.tpe {
+		--tpe-max: clamp(12rem, 50dvh, 30rem);
+		display: grid;
+		gap: var(--space-4);
+		min-inline-size: 0;
+	}
+	.tpe__field {
+		display: grid;
+		gap: var(--space-2);
+	}
+	.tpe__label {
+		color: var(--ink);
+	}
+	.tpe__script {
+		box-sizing: border-box;
+		inline-size: 100%;
+		min-block-size: min(clamp(11lh, 52dvh, 16lh), var(--tpe-max));
+		max-block-size: var(--tpe-max);
+		margin: 0;
+		padding: var(--space-3) var(--space-4);
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		resize: vertical;
+		field-sizing: content;
+	}
+	@container tp-work (min-width: 55rem) {
+		.tpe {
+			block-size: 100%;
+			min-block-size: 0;
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+		.tpe__field {
+			min-block-size: 0;
+			grid-template-rows: auto minmax(0, 1fr) auto;
+		}
+		.tpe__script {
+			field-sizing: fixed;
+			block-size: 100%;
+			min-block-size: 4rem;
+			max-block-size: none;
+			resize: none;
+		}
+	}
+	@media (max-width: 30rem) {
+		.tpe__script {
+			min-block-size: min(9lh, 45dvh);
+			max-block-size: 45dvh;
+		}
+	}
+	.tpe__script::placeholder {
+		color: var(--ink-muted);
+		opacity: 1;
+		font-style: italic;
+	}
+	.tpe__script:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 1px;
+		border-color: var(--focus);
+	}
+	.tpe__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-1) var(--space-3);
+	}
+	.tpe__stats {
+		margin: 0;
+		color: var(--ink-muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.tpe__meta :global(.sd-btn) {
+		margin-inline-end: calc(-1 * var(--space-2));
+	}
+
+	.tpe__feedback {
+		display: grid;
+		gap: var(--space-2);
+	}
+	/* Empty, the live region takes no room but stays in the layout so announcements still work. */
+	.tpe__feedback:not(:has(.tpe__status:not(:empty), .tpe__fallback:not([hidden]))) {
+		margin-block-end: calc(-1 * var(--space-4));
+	}
+	.tpe__status {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+	}
+	.tpe__status[data-tone="warning"] {
+		padding-inline-start: var(--space-3);
+		border-inline-start: var(--stroke-marker) solid var(--marker-orange);
+	}
+	.tpe__fallback {
+		display: grid;
+		gap: var(--space-1);
+	}
+	.tpe__fallback[hidden] {
+		display: none;
+	}
+	.tpe__fallback-label {
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+	}
+	.tpe__link {
+		box-sizing: border-box;
+		inline-size: 100%;
+		padding: 6px var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 13px;
+		line-height: 20px;
+		color: var(--ink);
+		background: var(--paper-sunken);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+	}
+	.tpe__link:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 1px;
+	}
+</style>
