@@ -1,12 +1,8 @@
 /*
  * Browser features the Prompt view leans on, each feature-detected and failing silently.
- *
- * Fullscreen: the standard API, with the webkit prefix for older Safari (iPadOS before 16.4).
- * iPhone Safari has no element fullscreen at all; there the Prompt view is already a fixed,
- * full-viewport overlay, which is the fallback, and the button is hidden.
- *
- * Wake lock: keeps the screen on while the Prompt view is open. The browser drops the lock
- * whenever the page is hidden, so it is requested again when the page comes back.
+ * Fullscreen uses the webkit prefix on older Safari (iPadOS before 16.4). iPhone Safari has no
+ * element fullscreen; there the full-viewport overlay is the fallback and the button is hidden.
+ * The browser drops the wake lock whenever the page is hidden, so it is requested again on return.
  */
 
 type WebkitDocument = Document & {
@@ -54,7 +50,6 @@ export function toggleFullscreen(element: HTMLElement): Promise<void> {
 	return fullscreenElement() ? exitFullscreen() : enterFullscreen(element);
 }
 
-/** Calls back on every fullscreen change. Returns an unsubscribe function. */
 export function onFullscreenChange(callback: () => void): () => void {
 	document.addEventListener("fullscreenchange", callback);
 	document.addEventListener("webkitfullscreenchange", callback);

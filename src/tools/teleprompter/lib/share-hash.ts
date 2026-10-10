@@ -1,6 +1,5 @@
 /*
- * The share-link hash format, without the decoder, so code that only needs to recognise a share link
- * (analytics, page start-up) doesn't pull lz-string in.
+ * Share-link hash parsing without the lz-string decoder, so code that only recognises a link stays light.
  */
 
 /** Hash key: the link looks like /tools/teleprompter#s=<compressed>. */

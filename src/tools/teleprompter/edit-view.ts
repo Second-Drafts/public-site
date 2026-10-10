@@ -1,63 +1,57 @@
-/*
- * Edit view: the script textarea, word count and read time, Start prompting, Copy share link, Clear.
- * Markup: EditView.astro. All text from the user goes in through .value / .textContent, never as HTML.
- */
 import { askConfirm } from "./confirm";
 import { required } from "./lib/dom";
 import type { Store } from "./lib/store";
 import { countWords, formatReadTime, readTimeSeconds } from "./lib/timing";
 
 export interface EditHooks {
-	/** The user changed the script by pasting or typing. main.ts debounces and reports it. */
 	onScriptInput(source: "paste" | "typed"): void;
-	/** A share link was copied (or shown for manual copy). */
+	/** A share link was copied, or shown for manual copy. */
 	onShareCopied(tooLong: boolean): void;
 }
 
-const number = new Intl.NumberFormat("en");
+const wordCountFormat = new Intl.NumberFormat("en");
 
-/** "312 words · About 2 min to read". Zero and one word read naturally. */
 function statsText(script: string): string {
 	const words = countWords(script);
 	if (words === 0) return "No words yet. Paste or type a script to begin.";
-	const count = `${number.format(words)} ${words === 1 ? "word" : "words"}`;
+	const count = `${wordCountFormat.format(words)} ${words === 1 ? "word" : "words"}`;
 	const time = formatReadTime(readTimeSeconds(words));
 	return `${count} · ${time} to read`;
 }
 
 /** How long a notice stays before it clears by itself. */
 const NOTICE_MS = 10_000;
+/** How long Copy share link reads "Link copied" after a copy. */
+const COPIED_MS = 2_000;
 
-/** Set when the Edit view mounts, which happens before anything calls showNotice. */
-let showNoticeNow: ((message: string) => void) | undefined;
-
-/**
- * Show a short message in the Edit view's live status line, next to the actions. It clears on the next
- * script edit or after about ten seconds. Call it after mountEditView.
- */
-export function showNotice(message: string): void {
-	showNoticeNow?.(message);
+export interface EditView {
+	/** Shows a message in the live status line until the next script edit or about ten seconds. */
+	showNotice(message: string): void;
 }
 
-export function mountEditView(store: Store, hooks: EditHooks): void {
+export function mountEditView(store: Store, hooks: EditHooks): EditView {
 	const root = required(document, "[data-tp-edit]");
 	const part = <T extends HTMLElement = HTMLElement>(name: string) => required<T>(root, `[data-tpe="${name}"]`);
 	const textarea = part<HTMLTextAreaElement>("script");
 	const stats = part("stats");
-	const start = part<HTMLButtonElement>("start");
-	const share = part<HTMLButtonElement>("share");
+	// Start prompting and Copy share link float in the preview band, outside this view's root.
+	const start = required<HTMLButtonElement>(document, '[data-tpe="start"]');
+	const share = required<HTMLButtonElement>(document, '[data-tpe="share"]');
+	const shareLabel = required(share, '[data-tpe="share-label"]');
+	const shareText = shareLabel.textContent;
 	const clear = part<HTMLButtonElement>("clear");
 	const status = part("status");
 	const fallback = part("fallback");
 	const link = part<HTMLInputElement>("link");
 
 	let noticeTimer: ReturnType<typeof setTimeout> | undefined;
+	let copiedTimer: ReturnType<typeof setTimeout> | undefined;
 	let noticeShown = false;
 
 	function clearFeedback() {
 		clearTimeout(noticeTimer);
 		noticeShown = false;
-		// Writes only when there is something to clear: this runs on every keystroke.
+		// Runs on every keystroke, so write only when there is something to clear.
 		if (status.textContent !== "") status.textContent = "";
 		if (status.hasAttribute("data-tone")) status.removeAttribute("data-tone");
 		if (!fallback.hidden) {
@@ -66,13 +60,13 @@ export function mountEditView(store: Store, hooks: EditHooks): void {
 		}
 	}
 
-	showNoticeNow = (message) => {
+	function showNotice(message: string) {
 		clearFeedback();
 		status.textContent = message;
 		status.dataset.tone = "warning";
 		noticeShown = true;
 		noticeTimer = setTimeout(clearFeedback, NOTICE_MS);
-	};
+	}
 
 	function render() {
 		const { script } = store.get();
@@ -130,6 +124,10 @@ export function mountEditView(store: Store, hooks: EditHooks): void {
 			: "";
 		if (copied) {
 			status.textContent = `Link copied. Anyone with it can open your script and settings.${warning}`;
+			// The status line sits below the band; the button itself confirms where the eye already is.
+			clearTimeout(copiedTimer);
+			shareLabel.textContent = "Link copied";
+			copiedTimer = setTimeout(() => (shareLabel.textContent = shareText), COPIED_MS);
 		} else {
 			status.textContent = `We couldn't copy the link for you. Copy it from the box below.${warning}`;
 			link.value = url;
@@ -142,9 +140,12 @@ export function mountEditView(store: Store, hooks: EditHooks): void {
 	});
 
 	store.subscribe((state, previous) => {
+		const scriptChanged = state.script !== previous.script;
+		const settingsChanged = state.settings !== previous.settings;
 		// A notice is about the page, not the share link, so only a script edit clears it early.
-		if (state.script !== previous.script || (state.settings !== previous.settings && !noticeShown)) clearFeedback();
-		if (state.script !== previous.script) render();
+		if (scriptChanged || (settingsChanged && !noticeShown)) clearFeedback();
+		if (scriptChanged) render();
 	});
 	render();
+	return { showNotice };
 }

@@ -5,7 +5,7 @@
  * bucket. Property values are primitives only, and string values are drawn from closed sets or
  * from settings, never from what the user typed.
  *
- * Funnel for "real interest" (spec §3): tp_script_entered with word_bucket 201-600 or 600+,
+ * Funnel for "real interest": tp_script_entered with word_bucket 201-600 or 600+,
  * then tp_play, then tp_engaged (fired once per session after 60s of prompting a >200-word script).
  * word_bucket is also on tp_prompt_started and tp_play so the segment can be rebuilt in any tool.
  */

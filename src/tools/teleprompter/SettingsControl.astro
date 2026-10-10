@@ -1,14 +1,4 @@
 ---
-/*
- * SettingsControl: one labelled control in the settings panel. Four kinds:
- *   range      a slider with a visible <output>; settings-panel.ts fills in the value text
- *   toggle     a checkbox with an optional hint
- *   segmented  a short radio group drawn as joined buttons
- *   swatches   the reading guide colour: round radio swatches (Theme, quick picks) and a native colour input
- * A range can also carry a warning line (`warn`), an empty live region that settings-panel.ts fills when needed.
- * A hint can carry an alternative (`hintAlt`) that settings-panel.ts swaps in while the control is in its other state.
- * Every control carries data-setting="<Settings key>"; settings-panel.ts listens for changes and renders from the store.
- */
 import { uniqueId } from "../../lib/uniqueId";
 import { GUIDE_COLORS } from "./lib/themes";
 import SettingsHint from "./SettingsHint.astro";
@@ -25,8 +15,6 @@ interface Props {
 	setting: string;
 	label: string;
 	hint?: string;
-	/** The hint to show instead while the control is in its other state (disabled, forced). */
-	hintAlt?: string;
 	/** range only */
 	min?: number;
 	max?: number;
@@ -37,7 +25,7 @@ interface Props {
 	options?: Option[];
 }
 
-const { kind, setting, label, hint, hintAlt, min, max, step, warn, options = [] } = Astro.props;
+const { kind, setting, label, hint, min, max, step, warn, options = [] } = Astro.props;
 const id = uniqueId(`tps-${setting}`);
 const hintId = hint ? `${id}-hint` : undefined;
 ---
@@ -60,7 +48,7 @@ const hintId = hint ? `${id}-hint` : undefined;
 				aria-describedby={hintId}
 			/>
 			{hint && (
-				<SettingsHint id={hintId} alt={hintAlt}>
+				<SettingsHint id={hintId}>
 					{hint}
 				</SettingsHint>
 			)}
@@ -77,7 +65,7 @@ const hintId = hint ? `${id}-hint` : undefined;
 				{label}
 			</label>
 			{hint && (
-				<SettingsHint id={hintId} alt={hintAlt}>
+				<SettingsHint id={hintId}>
 					{hint}
 				</SettingsHint>
 			)}
@@ -163,7 +151,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		opacity: 0.4;
 	}
 
-	/* range: label and value on one line, slider under it */
 	.ctl--range {
 		grid-template-columns: minmax(0, 1fr) auto;
 		align-items: baseline;
@@ -178,12 +165,20 @@ const hintId = hint ? `${id}-hint` : undefined;
 	.ctl--range :global(.ctl__hint) {
 		grid-column: 1 / -1;
 	}
+	/* The track is a thin line centred in the input's box, so the box is only as tall as the thumb needs. */
 	.ctl__range {
 		inline-size: 100%;
-		min-block-size: 44px;
+		min-block-size: 24px;
 		margin: 0;
 		accent-color: var(--marker-blue);
 		cursor: pointer;
+	}
+	/* Touch keeps a 44px target; the negative margins tuck its empty top and bottom under the label and hint. */
+	@media (pointer: coarse) {
+		.ctl__range {
+			min-block-size: 44px;
+			margin-block: calc((24px - 44px) / 2);
+		}
 	}
 	.ctl__range:disabled {
 		cursor: not-allowed;
@@ -194,7 +189,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		border-radius: var(--radius-sm);
 	}
 
-	/* toggle: checkbox, label, hint under the label */
 	.ctl--toggle {
 		grid-template-columns: auto minmax(0, 1fr);
 		align-items: start;
@@ -220,9 +214,7 @@ const hintId = hint ? `${id}-hint` : undefined;
 	.ctl--toggle :global(.ctl__hint) {
 		grid-column: 2;
 	}
-	/* The touch rules for the toggle, segments and swatches share one block, further down. */
 
-	/* segmented: joined buttons, the chosen one filled with ink */
 	.seg {
 		display: flex;
 		inline-size: fit-content;
@@ -283,10 +275,7 @@ const hintId = hint ? `${id}-hint` : undefined;
 		}
 	}
 
-	/*
-	 * swatches: round radios, like the marker's nib. The chosen one gets a ring and a tick, so the choice
-	 * isn't carried by colour alone. The input covers its label and is invisible; the label draws the state.
-	 */
+	/* The input covers its label and is invisible; the label draws the state. */
 	.swc {
 		display: flex;
 		flex-wrap: wrap;
@@ -320,7 +309,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		opacity: 0;
 		cursor: pointer;
 	}
-	/* Theme follows the theme: settings-panel.ts sets --swc on its dot. */
 	.swc__dot {
 		flex: none;
 		inline-size: 24px;
@@ -330,7 +318,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		border: var(--stroke-hairline) solid var(--rule-strong);
 		border-radius: var(--radius-pill);
 	}
-	/* Custom is an empty dashed ring (a plus) until chosen. */
 	.swc__dot--custom {
 		display: grid;
 		place-items: center;
@@ -397,7 +384,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		cursor: not-allowed;
 	}
 
-	/* In the Prompt view's drawer the same controls sit closer together. */
 	:global([data-variant="drawer"]) .ctl {
 		gap: 0 var(--space-3);
 	}
@@ -414,7 +400,6 @@ const hintId = hint ? `${id}-hint` : undefined;
 		padding-inline: var(--space-3);
 	}
 
-	/* Touch: every control is a 44px target. A toggle's whole row, box and words, is one target; its hint sits under it. */
 	@media (pointer: coarse) {
 		.ctl--toggle {
 			grid-template-rows: auto auto;

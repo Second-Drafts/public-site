@@ -6,7 +6,7 @@
  *   - the Prompt view, where the scroll engine drives `scroller` and `text`;
  *   - the Edit view's preview, where people can scroll it by hand.
  *
- * Markup comes from PromptStage.astro. The stage sizes itself to its container, so the guide
+ * The stage sizes itself to its container, so the guide
  * position and padding are relative to the stage's own height, not the window's.
  */
 import { splitParagraphs } from "./lib/engine";
@@ -32,11 +32,15 @@ export interface Stage {
 export interface StageOptions {
 	/** Shown in place of the script when it is empty. Hosts word it for their own context. */
 	emptyMessage?: string;
+	/**
+	 * Also gets the theme colours (--tp-fg, --tp-bg), for host chrome that sits beside the stage rather
+	 * than inside it (inside, it would mirror and flip with the text).
+	 */
+	themeTarget?: HTMLElement;
 }
 
 const PARA_CLASS = "tpst-para";
 
-/** Custom properties, alignment and guide mode for one set of settings. Pure, for tests. */
 export interface StageLook {
 	vars: Record<`--tp-${string}`, string>;
 	align: Align;
@@ -51,7 +55,7 @@ export function stageLook(settings: Settings): StageLook {
 			"--tp-bg": theme.background,
 			"--tp-guide": theme.guide,
 			"--tp-font": fontStack(settings.font),
-			"--tp-weight": String(fontWeight(settings.font, theme.bold)),
+			"--tp-weight": String(fontWeight(settings.font, settings.bold)),
 			"--tp-size": `${settings.fontSize}px`,
 			"--tp-lh": String(settings.lineHeight),
 			"--tp-col": `${settings.columnWidth}%`,
@@ -66,8 +70,7 @@ export function stageLook(settings: Settings): StageLook {
 	};
 }
 
-
-/** `root` is the [data-tp-stage] element rendered by PromptStage.astro. */
+/** Must contain [data-tpst="scroller"] and [data-tpst="text"]. */
 export function createStage(root: HTMLElement, options: StageOptions = {}): Stage {
 	const scroller = required(root, '[data-tpst="scroller"]');
 	const text = required(root, '[data-tpst="text"]');
@@ -105,14 +108,14 @@ export function createStage(root: HTMLElement, options: StageOptions = {}): Stag
 		apply(settings) {
 			const look = stageLook(settings);
 			for (const [name, value] of Object.entries(look.vars)) root.style.setProperty(name, value);
+			for (const name of ["--tp-fg", "--tp-bg"] as const) options.themeTarget?.style.setProperty(name, look.vars[name]);
 			if (root.dataset.align !== look.align) root.dataset.align = look.align;
 			if (root.dataset.guide !== look.guide) root.dataset.guide = look.guide;
 			// Same font and weight as last time: hand back the same promise rather than start another load.
-			const bold = resolveTheme(settings).bold;
-			const key = `${settings.font}:${bold}`;
+			const key = `${settings.font}:${settings.bold}`;
 			if (key !== fontKey) {
 				fontKey = key;
-				fontReady = loadFont(settings.font, bold);
+				fontReady = loadFont(settings.font, settings.bold);
 			}
 			return fontReady;
 		},

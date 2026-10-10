@@ -1,16 +1,4 @@
 ---
-/*
- * SettingsPanel: font cards, theme swatches, layout, reading guide, playback and reset.
- *
- *   <SettingsPanel />                    the Edit page (variant "page"): a heading, roomy spacing
- *   <SettingsPanel variant="drawer" />   the Prompt view's settings sheet: compact, no heading
- *
- * Reusable: it can appear more than once on a page. Every id, label `for` and radio `name` carries a
- * per-instance prefix, and mountSettingsPanel(root, store) in settings-panel.ts mounts each
- * [data-tp-settings] root on its own, so two panels stay in step through the store.
- * The drawer takes its colours from whatever data-theme its container sets (tokens only).
- * The markup is static; settings-panel.ts sets every control from the store.
- */
 import Button from "../../components/Button.astro";
 import { uniqueId } from "../../lib/uniqueId";
 import { FONTS, previewStack } from "./lib/fonts";
@@ -41,33 +29,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 	{!drawer && <h2 id={`${pid}-title`} class="tps__title sd-text-title">Settings</h2>}
 
 	<fieldset class="tps__group">
-		<legend class="tps__legend sd-text-label">Font</legend>
-		<div class="tps__body">
-			<div class="tps__cards tps__cards--fonts" data-tps="fonts">
-				{
-					fonts.map((font) => (
-						<label class="card">
-							<input class="card__input" type="radio" name={`${pid}-font`} value={font.id} data-setting="font" />
-							<span class="card__name" style={`font-family: ${previewStack(font.id)}`}>
-								{font.label}
-							</span>
-							<span class="card__note">{font.note}</span>
-							<SettingsTick class="card__tick" />
-						</label>
-					))
-				}
-			</div>
-			<SettingsControl
-				kind="toggle"
-				setting="bold"
-				label="Bold"
-				hint="Heavier strokes. Easier to read from a distance."
-				hintAlt="High contrast always uses bold."
-			/>
-		</div>
-	</fieldset>
-
-	<fieldset class="tps__group">
 		<legend class="tps__legend sd-text-label">Theme</legend>
 		<div class="tps__body">
 			<div class="tps__cards tps__cards--themes">
@@ -79,13 +40,12 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 						>
 							<input class="card__input" type="radio" name={`${pid}-theme`} value={theme.id} data-setting="theme" />
 							<span class="swatch" aria-hidden="true">
-								<span class="swatch__aa" data-bold={theme.forceBold ? "" : undefined}>
+								<span class="swatch__aa" data-bold={theme.bold ? "" : undefined}>
 									Aa
 								</span>
 								<span class="swatch__bar" />
 							</span>
 							<span class="card__label">{theme.label}</span>
-							{theme.forceBold && <span class="card__note">Always bold</span>}
 							<SettingsTick class="card__tick" />
 						</label>
 					))
@@ -121,6 +81,32 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 	</fieldset>
 
 	<fieldset class="tps__group">
+		<legend class="tps__legend sd-text-label">Font</legend>
+		<div class="tps__body">
+			<div class="tps__cards tps__cards--fonts" data-tps="fonts">
+				{
+					fonts.map((font) => (
+						<label class="card">
+							<input class="card__input" type="radio" name={`${pid}-font`} value={font.id} data-setting="font" />
+							<span class="card__name" style={`font-family: ${previewStack(font.id)}`}>
+								{font.label}
+							</span>
+							<span class="card__note">{font.note}</span>
+							<SettingsTick class="card__tick" />
+						</label>
+					))
+				}
+			</div>
+			<SettingsControl
+				kind="toggle"
+				setting="bold"
+				label="Bold"
+				hint="Heavier strokes. Easier to read from a distance."
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="tps__group">
 		<legend class="tps__legend sd-text-label">Layout</legend>
 		<div class="tps__body">
 			<SettingsControl kind="range" setting="fontSize" label="Text size" {...LIMITS.fontSize} />
@@ -137,7 +123,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 				setting="columnPosition"
 				label="Horizontal position"
 				hint="Line the text up under your camera."
-				hintAlt="Narrow the column to move it."
 				{...LIMITS.columnPosition}
 			/>
 			<SettingsControl
@@ -223,7 +208,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		scroll-margin-block: var(--space-6);
 	}
 
-	/* Groups */
 	.tps__group {
 		min-inline-size: 0;
 		margin: 0;
@@ -245,7 +229,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		min-inline-size: 0;
 	}
 
-	/* Radio cards: fonts and themes */
 	.tps__cards {
 		display: grid;
 		gap: var(--space-2);
@@ -279,7 +262,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 	.card:has(:checked) {
 		background: var(--paper-sunken);
 		border-color: var(--marker-blue);
-		box-shadow: inset 0 0 0 1px var(--marker-blue);
 	}
 	.card:has(:focus-visible) {
 		outline: var(--stroke-pen) solid var(--focus);
@@ -323,18 +305,42 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 	/* The chosen card also shows a tick, so the choice isn't carried by colour alone. */
 	.card :global(.card__tick) {
 		--tick-size: 16px;
+		z-index: 2;
 		inset-block-start: var(--space-2);
 		inset-inline-end: var(--space-2);
 	}
 	.card:has(:checked) :global(.card__tick) {
 		opacity: 1;
 	}
+	/* The selected frame is an overlay because an inset shadow would sit under the full-width swatch. */
 	.card--theme {
-		padding: var(--space-2);
+		--theme-pad-x: var(--space-3);
+		--theme-pad-y: var(--space-2);
+		gap: 0;
+		padding: 0;
+		overflow: clip;
+	}
+	.card--theme:has(:checked)::after {
+		content: "";
+		position: absolute;
+		inset: calc(-1 * var(--stroke-hairline));
+		z-index: 1;
+		border: 2px solid var(--marker-blue);
+		border-radius: inherit;
+		pointer-events: none;
 	}
 	.card--theme .card__label,
 	.card--theme .card__note {
-		padding-inline: var(--space-1);
+		padding-inline: var(--theme-pad-x);
+	}
+	.card--theme .card__label {
+		padding-block: var(--theme-pad-y);
+	}
+	.card--theme .card__label:has(+ .card__note) {
+		padding-block-end: 0;
+	}
+	.card--theme .card__note {
+		padding-block: 0 var(--theme-pad-y);
 	}
 	.swatch {
 		position: relative;
@@ -344,8 +350,7 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		overflow: clip;
 		color: var(--sw-fg, #fff);
 		background: var(--sw-bg, #000);
-		border: var(--stroke-hairline) solid var(--rule-strong);
-		border-radius: var(--radius-sm);
+		border-block-end: var(--stroke-hairline) solid var(--rule-strong);
 	}
 	.swatch__aa {
 		font-family: var(--font-prose);
@@ -364,7 +369,6 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		background: var(--sw-guide, #fff);
 	}
 
-	/* Custom colours */
 	.tps__custom {
 		display: grid;
 		gap: var(--space-3);
@@ -424,11 +428,7 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		margin-inline-start: calc(-1 * var(--space-2));
 	}
 
-	/*
-	 * Drawer variant: a ~24rem side sheet or a bottom sheet. Same controls, tighter rhythm, two font
-	 * cards and three theme swatches per row, and no font notes. Colours stay tokens, so it follows the
-	 * data-theme of whatever holds it.
-	 */
+	/* Colours stay tokens, so the drawer follows the data-theme of whatever holds it. */
 	.tps[data-variant="drawer"] {
 		gap: var(--space-4);
 	}
@@ -451,7 +451,9 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 		padding: var(--space-2) var(--space-3);
 	}
 	.tps[data-variant="drawer"] .card--theme {
-		padding: var(--space-2);
+		--theme-pad-x: var(--space-2);
+		--theme-pad-y: var(--space-1);
+		padding: 0;
 	}
 	.tps[data-variant="drawer"] .card__name {
 		font-size: 18px;

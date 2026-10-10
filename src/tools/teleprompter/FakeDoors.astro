@@ -1,9 +1,5 @@
 ---
-/*
- * FakeDoors: demand tests for features we haven't built. Each button opens one dialog that asks
- * whether the reader would use it. Nothing here works yet, and the copy says so.
- * Behaviour: fake-doors.ts. Email capture stays off until EMAIL_CAPTURE_ENABLED is true (lib/interest.ts).
- */
+/* Fake doors: buttons for unbuilt features that measure interest. None of them work yet. */
 import Button from "../../components/Button.astro";
 import TextField from "../../components/TextField.astro";
 import Dialog from "./Dialog.astro";
@@ -72,7 +68,7 @@ const doors = [
 </script>
 
 <style>
-	/* After the workspace, quiet: a rule, a small label, three outlined doors. Same measure as the workspace. */
+	/* Same measure as the workspace (--tp-measure). */
 	.fd {
 		inline-size: min(100% - 2 * var(--space-6), var(--tp-measure, 80rem));
 		margin-inline: auto;
@@ -85,12 +81,15 @@ const doors = [
 		color: var(--ink-muted);
 	}
 	.fd__list {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+		display: flex;
+		flex-wrap: wrap;
 		gap: var(--space-3);
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+	.fd__list > li {
+		max-inline-size: 100%;
 	}
 	.fd__door {
 		display: grid;
@@ -135,7 +134,7 @@ const doors = [
 		justify-content: space-between;
 		gap: var(--space-2);
 	}
-	/* Josefin rides high: 2px more top padding than bottom */
+	/* Josefin sits high in its line box, so it gets 2px extra top padding. */
 	.fd__tag {
 		font-family: var(--font-display);
 		font-size: 11px;

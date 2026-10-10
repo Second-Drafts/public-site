@@ -5,8 +5,6 @@ import {
 	captureAnchor,
 	clampDt,
 	easeOutCubic,
-	isDoubleTap,
-	isTap,
 	paragraphIndexAt,
 	paragraphTarget,
 	positionForAnchor,
@@ -14,6 +12,7 @@ import {
 	splitPosition,
 	stepPosition,
 } from "./engine";
+import { isDoubleTap, isTap } from "./taps";
 import { actionForKey, isRepeatable, shortcutsFor } from "./keyboard";
 
 describe("splitParagraphs", () => {

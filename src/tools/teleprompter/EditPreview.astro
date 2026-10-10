@@ -1,19 +1,9 @@
 ---
-/*
- * EditPreview: the Edit page's preview band. It shows the script through the same PromptStage the Prompt
- * view uses, at actual size (the real font size in px, the column as a share of the band, the real
- * colours, guide, alignment, mirror and flip), so what you see is what you will read.
- * It doesn't play; wheel or touch scrolls it by hand. Behaviour: edit-preview.ts.
- *
- *   <EditPreview />
- *
- * Height: --tp-preview-h, set by the page; the workspace below takes whatever the first screen has left.
- */
 import PromptStage from "./PromptStage.astro";
 ---
 
 <section class="tpv" aria-label="Preview" data-tp-preview>
-	<!-- The words are already in the script box, so a screen reader skips this copy. -->
+	<!-- Hidden from screen readers: the script box already has these words. -->
 	<div class="tpv__stage" aria-hidden="true">
 		<PromptStage />
 	</div>
@@ -22,6 +12,20 @@ import PromptStage from "./PromptStage.astro";
 		<span class="tpv__flag" data-tpv="mirror" hidden>Mirrored</span>
 		<span class="tpv__flag" data-tpv="flip" hidden>Flipped</span>
 	</p>
+	<!-- Outside the stage, so mirror and flip never reverse them and screen readers can reach them. -->
+	<div class="tpv__actions">
+		<button type="button" class="tpv__btn tpv__start" data-tpe="start" disabled>
+			<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"></path></svg>
+			Start prompting
+		</button>
+		<button type="button" class="tpv__btn tpv__share" data-tpe="share" disabled>
+			<svg viewBox="0 0 24 24" aria-hidden="true"
+				><path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"
+				></path></svg
+			>
+			<span data-tpe="share-label">Copy share link</span>
+		</button>
+	</div>
 </section>
 
 <style>
@@ -40,18 +44,14 @@ import PromptStage from "./PromptStage.astro";
 		inline-size: 100%;
 		block-size: 100%;
 	}
-	/* The Prompt view traps scrolling; here it must not, or the page can't be scrolled with the pointer over the band. */
+	/* The Prompt view traps scrolling; here it must not, or the band blocks page scroll. */
 	.tpv :global([data-tpst="scroller"]) {
 		overscroll-behavior: auto;
 	}
-	/*
-	 * A paper chip, not prompter colours: it has to read over any theme, and it marks the band as
-	 * chrome around a preview, not something to type into. It sits outside the stage, so mirror
-	 * and flip never reverse it.
-	 */
+	/* Paper chip, not prompter colours, so it reads over any theme. Outside the stage, so mirror and flip never reverse it. */
 	.tpv__caption {
 		position: absolute;
-		inset-block-end: var(--space-3);
+		inset-block-start: var(--space-3);
 		inset-inline-start: var(--space-3);
 		z-index: 1;
 		display: flex;
@@ -63,8 +63,83 @@ import PromptStage from "./PromptStage.astro";
 		color: var(--ink-muted);
 		background: var(--paper);
 		border: var(--stroke-hairline) solid var(--rule-strong);
-		border-radius: var(--radius-pill);
+		border-radius: var(--radius-sm);
 		pointer-events: none;
+	}
+	/* In the prompter's colours, so they match the Prompt view that Start opens. */
+	.tpv__actions {
+		position: absolute;
+		inset-block-end: var(--space-4);
+		inset-inline: var(--space-3);
+		z-index: 1;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-2) var(--space-3);
+		pointer-events: none;
+	}
+	.tpv__btn {
+		pointer-events: auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem;
+		box-sizing: border-box;
+		min-block-size: 44px;
+		padding: 2px 1.25rem 0;
+		font-family: var(--font-display);
+		font-size: 16px;
+		line-height: 20px;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+		border-radius: 0.5rem;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.tpv__start {
+		color: var(--tp-bg, var(--paper));
+		background: var(--tp-fg, var(--ink));
+		border: 0;
+	}
+	.tpv__share {
+		color: var(--tp-fg, var(--ink));
+		background: var(--tp-bg, var(--paper));
+		border: var(--stroke-hairline) solid var(--tp-fg, var(--ink));
+	}
+	.tpv__btn svg {
+		inline-size: 24px;
+		block-size: 24px;
+		flex: none;
+		margin-block-start: -2px;
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.75;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.tpv__start:not(:disabled):hover {
+			box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--tp-bg, var(--paper)) 14%, transparent);
+		}
+		.tpv__share:not(:disabled):hover {
+			box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--tp-fg, var(--ink)) 14%, transparent);
+		}
+	}
+	.tpv__btn:focus-visible {
+		outline: 2px solid var(--tp-fg, var(--ink));
+		outline-offset: 2px;
+	}
+	.tpv__btn:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.tpv__btn {
+			transition: transform 160ms var(--ease-out, ease-out);
+		}
+		.tpv__btn:not(:disabled):active {
+			transform: scale(0.97);
+		}
 	}
 	.tpv__flag {
 		color: var(--ink);

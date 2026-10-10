@@ -1,10 +1,3 @@
-/*
- * Fake doors: opens the "Coming soon" dialog for each unbuilt feature and records the answer.
- * Self-mounting: FakeDoors.astro imports this file, and it finds its own DOM. No shared store.
- *
- * Analytics: a click logs tp_fake_door_clicked; an answer logs tp_fake_door_interest. The email
- * address itself is never sent to analytics, only whether one was provided.
- */
 import { track } from "./lib/analytics";
 import type { FakeDoorFeature } from "./lib/analytics/events";
 import { wireDialog } from "./lib/dialog";
@@ -30,7 +23,6 @@ function mount(): void {
 	const askEl = required(dialog, "[data-fake-door-ask]");
 	const doneEl = required(dialog, "[data-fake-door-done]");
 	const closeButton = required<HTMLButtonElement>(dialog, "[data-close]");
-	// Only there while EMAIL_CAPTURE_ENABLED.
 	const emailInput = dialog.querySelector<HTMLInputElement>('input[name="email"]');
 
 	let feature: FakeDoorFeature | null = null;
@@ -91,7 +83,6 @@ function mount(): void {
 		else if (target.closest("[data-close]")) dialog.close();
 	});
 
-	// Esc, Close and a backdrop click all just close; only Yes and Not really record an answer.
 	wireDialog(dialog, {
 		onClose() {
 			window.clearTimeout(confirmTimer);

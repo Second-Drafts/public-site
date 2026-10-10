@@ -4,6 +4,7 @@
  */
 import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
 import { DEFAULT_SETTINGS, validateSettings, type Settings } from "./settings";
+import { isRecord } from "./object";
 import { findHashParam, SHARE_HASH_KEY } from "./share-hash";
 
 export { SHARE_HASH_KEY };
@@ -15,7 +16,6 @@ export interface SharePayload {
 
 /** Above this many characters, some apps may truncate the link. We still let people copy it. */
 export const SHARE_URL_WARN_LENGTH = 8000;
-
 
 /** Payload format version. Bump when the JSON shape changes. */
 const PAYLOAD_VERSION = 1;
@@ -61,7 +61,6 @@ export function decodeShareHash(hash: string): SharePayload | null {
 	}
 }
 
-
 function capScript(text: string): string {
 	if (text.length <= MAX_SHARED_SCRIPT_LENGTH) return text;
 	let cut = text.slice(0, MAX_SHARED_SCRIPT_LENGTH);
@@ -69,10 +68,6 @@ function capScript(text: string): string {
 	const last = cut.charCodeAt(cut.length - 1);
 	if (last >= 0xd800 && last <= 0xdbff) cut = cut.slice(0, -1);
 	return cut;
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 /** Only the settings (and custom colours) that differ from the defaults. */

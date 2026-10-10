@@ -1,17 +1,4 @@
 ---
-/*
- * PromptView: the full-viewport reading surface. Hidden until the store's view becomes "prompt";
- * prompt-view.ts owns all behaviour. Everything here is bare on purpose: theme colours only,
- * no logo, chrome that gets out of the way while the text moves.
- *
- * Layers, bottom to top:
- *   PromptStage   the script, guide, mirror and flip (shared with the Edit preview; see stage.ts)
- *   .tpp-countdown, .tpp-hint, .tpp-chrome   never transformed, so they always read the right way
- *   .tpp-drawer   every setting, in the site's own Paper or Night shift (whichever suits the prompter
- *                 background), so it reads well whatever the theme, mirror or flip
- *
- * Styles are global (prefixed tpp-) so prompt-view.ts can set state on any part.
- */
 import { shortcutsFor, TOUCH_HINT } from "./lib/keyboard";
 import { LIMITS } from "./lib/settings";
 import PromptStage from "./PromptStage.astro";
@@ -70,7 +57,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 				<span class="tpp-blabel" data-tpp="play-label">Play</span>
 			</button>
 
-			<div class="tpp-group" role="group" aria-labelledby="tpp-speed-label">
+			<div class="tpp-group tpp-speed" role="group" aria-labelledby="tpp-speed-label">
 				<span class="tpp-glabel" id="tpp-speed-label">Speed</span>
 				<span class="tpp-value" data-tpp="speed-value" aria-hidden="true"></span>
 				<button type="button" class="tpp-btn" data-tpp="slower">
@@ -172,19 +159,18 @@ import SettingsPanel from "./SettingsPanel.astro";
 </div>
 
 <style is:global>
-	/* Page behind stays put while the prompter is open. */
 	:root:has(.tpp:not([hidden])) {
 		overflow: hidden;
 	}
 
 	.tpp {
-		/* Theme colours for the chrome, set by prompt-view.ts. The stage sets its own (see PromptStage). */
+		/* Chrome colours follow the theme at runtime. The stage sets its own. */
 		--tp-fg: oklch(0.88 0.18 95);
 		--tp-bg: oklch(0 0 none);
 		--tpp-hit: 2.5rem;
 		--tpp-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 
-		/* Chrome: neutral, translucent, derived from the theme so it fits every one. */
+		/* Derived from the theme, so the translucent chrome fits every one. */
 		--tpp-chrome-bg: color-mix(in oklch, color-mix(in oklch, var(--tp-bg) 93%, var(--tp-fg)) 94%, transparent);
 		--tpp-chrome-fg: color-mix(in oklch, var(--tp-fg) 96%, var(--tp-bg));
 		--tpp-chrome-muted: color-mix(in oklch, var(--tp-fg) 88%, var(--tp-bg));
@@ -199,7 +185,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		background: var(--tp-bg);
 		color: var(--tp-fg);
 		color-scheme: dark;
-		font-family: system-ui, sans-serif;
+		font-family: var(--font-display);
 	}
 
 	@media (pointer: coarse) {
@@ -208,12 +194,12 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* The dialog itself takes focus on open; a ring around the whole screen would only distract. */
+	/* The dialog takes focus on open; a ring around the whole screen would only distract. */
 	.tpp:focus-visible {
 		outline: 2px solid transparent;
 	}
 
-	/* The prompter's own controls ring in the theme's text colour. The drawer keeps the site's focus style. */
+	/* Rings in the theme's text colour. The drawer keeps the site's focus style. */
 	.tpp-chrome :focus-visible {
 		outline: 2px solid currentColor;
 		outline-offset: 2px;
@@ -222,8 +208,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 	.tpp[data-chrome="hidden"] {
 		cursor: none;
 	}
-
-	/* ---- Countdown ---- */
 
 	.tpp-countdown {
 		position: absolute;
@@ -246,13 +230,13 @@ import SettingsPanel from "./SettingsPanel.astro";
 		font-weight: 600;
 		line-height: 1;
 		font-variant-numeric: tabular-nums;
+		/* Josefin sits high in its line box, so the digits get extra top padding to centre them. */
+		padding-block-start: 0.08em;
 	}
 
 	.tpp-count[hidden] {
 		display: none;
 	}
-
-	/* ---- First-use hint ---- */
 
 	.tpp-hint {
 		box-sizing: border-box;
@@ -261,8 +245,10 @@ import SettingsPanel from "./SettingsPanel.astro";
 		pointer-events: auto;
 		border: 1px solid var(--tpp-chrome-line);
 		border-radius: 0.75rem;
-		background: var(--tpp-chrome-bg);
+		/* Opaque: the script runs behind the hint, so translucency would show its text. */
+		background: color-mix(in oklch, var(--tp-bg) 93%, var(--tp-fg));
 		color: var(--tpp-chrome-fg);
+		font-family: var(--font-prose);
 		font-size: 0.9375rem;
 		line-height: 1.4;
 	}
@@ -273,6 +259,8 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 	.tpp-hint-title {
 		margin: 0 0 0.5rem;
+		padding-block: 2px 0;
+		font-family: var(--font-display);
 		font-size: 1rem;
 		font-weight: 600;
 	}
@@ -299,6 +287,8 @@ import SettingsPanel from "./SettingsPanel.astro";
 
 	.tpp-keys kbd {
 		font: inherit;
+		font-family: var(--font-display);
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 		color: var(--tpp-chrome-fg);
 		white-space: nowrap;
@@ -313,7 +303,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color: var(--tpp-chrome-muted);
 	}
 
-	/* Touch devices: one short line and the button side by side, small enough to stay clear of the read line. */
+	/* Touch: the hint shrinks to one line beside its button, so it stays clear of the read line. */
 	.tpp-hint:not([hidden]):has(> .tpp-hint-touch:not([hidden])) {
 		display: flex;
 		align-items: center;
@@ -344,15 +334,16 @@ import SettingsPanel from "./SettingsPanel.astro";
 		margin-block-start: 0.75rem;
 		min-block-size: var(--tpp-hit);
 		padding: 0 1rem;
+		padding-block: 2px 0;
 		border: 1px solid var(--tpp-chrome-line);
 		border-radius: 0.5rem;
 		background: transparent;
 		color: var(--tpp-chrome-fg);
 		font: inherit;
+		font-family: var(--font-display);
+		font-weight: 600;
 		cursor: pointer;
 	}
-
-	/* ---- Toolbar ---- */
 
 	.tpp-chrome {
 		position: absolute;
@@ -381,6 +372,8 @@ import SettingsPanel from "./SettingsPanel.astro";
 		background: var(--tpp-chrome-bg);
 		color: var(--tpp-chrome-fg);
 		font-size: 0.875rem;
+		/* Semibold: lighter Josefin goes spindly at toolbar size. */
+		font-weight: 600;
 		pointer-events: auto;
 	}
 
@@ -397,7 +390,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* Each group is its own hairline capsule, so the speed number can't be read as part of Size. */
+	/* Each group is its own capsule, so the speed value doesn't read as part of Size. */
 	.tpp-group {
 		display: flex;
 		align-items: center;
@@ -408,6 +401,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 	}
 
 	.tpp-glabel {
+		padding-block: 2px 0;
 		margin-inline: 0.25rem 0.125rem;
 		color: var(--tpp-chrome-muted);
 	}
@@ -429,6 +423,10 @@ import SettingsPanel from "./SettingsPanel.astro";
 		-webkit-tap-highlight-color: transparent;
 	}
 
+	.tpp-blabel {
+		padding-block: 2px 0;
+	}
+
 	.tpp-btn:is([aria-pressed="true"], [aria-expanded="true"]) {
 		background: var(--tpp-chrome-pressed);
 	}
@@ -442,6 +440,21 @@ import SettingsPanel from "./SettingsPanel.astro";
 		display: none;
 	}
 
+	/* Filled in the text colour, matching Start prompting on the Edit page. */
+	.tpp-play {
+		background: var(--tp-fg);
+		color: var(--tp-bg);
+		padding-inline: 0.75rem;
+	}
+
+	.tpp-chrome .tpp-play:focus-visible {
+		outline-color: var(--tp-fg);
+	}
+
+	.tpp-btn.tpp-play:active {
+		box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--tp-bg) 24%, transparent);
+	}
+
 	.tpp-btn:active:not([aria-disabled="true"]),
 	.tpp-textbtn:active {
 		scale: 0.96;
@@ -451,6 +464,11 @@ import SettingsPanel from "./SettingsPanel.astro";
 		.tpp-btn:hover:not([aria-disabled="true"]),
 		.tpp-textbtn:hover {
 			background: var(--tpp-chrome-hover);
+		}
+
+		.tpp-btn.tpp-play:hover {
+			background: var(--tp-fg);
+			box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--tp-bg) 14%, transparent);
 		}
 	}
 
@@ -491,11 +509,10 @@ import SettingsPanel from "./SettingsPanel.astro";
 	}
 
 	/*
-	 * Text that gives way when the bar is short of room but stays the accessible name: the
-	 * .sd-visually-hidden declarations, which a container query can't apply as a class.
-	 * Button labels show only on a wide bar.
+	 * Labels give way on a short bar by visually hiding inline, since a container query can't apply
+	 * the sd-visually-hidden class. 80rem is the narrowest bar that fits every label; keep in step with the Play rule below.
 	 */
-	@container (inline-size <= 72rem) {
+	@container (inline-size <= 80rem) {
 		.tpp-blabel {
 			position: absolute;
 			inline-size: 1px;
@@ -507,7 +524,6 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* On a phone the group labels go too, and the bar reads "0:19 · 1:12 left". */
 	@container (inline-size < 40rem) {
 		:is(.tpp-glabel, .tpp-time-word) {
 			position: absolute;
@@ -520,11 +536,35 @@ import SettingsPanel from "./SettingsPanel.astro";
 		}
 	}
 
-	/* "Play" and "Pause" take the same room, so the bar doesn't shift when playback toggles. */
-	@container (inline-size > 72rem) {
+	/* Play and Pause share a width, so the bar doesn't shift when playback toggles. */
+	@container (inline-size > 80rem) {
 		.tpp-play .tpp-blabel {
 			min-inline-size: 5ch;
 			text-align: start;
+		}
+	}
+
+	/* Phone: two rows, with Exit ending the second edge to edge. */
+	@container (inline-size < 40rem) {
+		.tpp-toolbar {
+			padding-inline: 0.25rem;
+			column-gap: 0.25rem;
+			justify-content: space-between;
+		}
+
+		.tpp-speed {
+			flex: 1 1 9rem;
+		}
+
+		.tpp-toolbar > .tpp-btn:not(.tpp-play),
+		.tpp-group > .tpp-btn {
+			min-inline-size: 2.5rem;
+		}
+
+		.tpp-group .tpp-range {
+			flex: 1 1 0;
+			inline-size: 0;
+			min-inline-size: 2.5rem;
 		}
 	}
 
@@ -536,13 +576,14 @@ import SettingsPanel from "./SettingsPanel.astro";
 		cursor: pointer;
 	}
 
-	/* Sits right after the Speed label (or first in the group when the label is hidden). */
 	.tpp-value {
 		min-inline-size: 2ch;
 		margin-inline-end: 0.25rem;
 		text-align: center;
+		padding-block: 2px 0;
+		font-family: var(--font-mono);
 		font-variant-numeric: tabular-nums;
-		font-weight: 600;
+		font-weight: 500;
 	}
 
 	.tpp-time {
@@ -550,7 +591,9 @@ import SettingsPanel from "./SettingsPanel.astro";
 		align-items: baseline;
 		gap: 0.375rem;
 		margin: 0;
-		padding-inline: 0.25rem;
+		padding: 2px 0.25rem 0;
+		font-family: var(--font-mono);
+		font-size: 0.8125rem;
 		font-variant-numeric: tabular-nums;
 		white-space: nowrap;
 	}
@@ -560,13 +603,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color: var(--tpp-chrome-muted);
 	}
 
-	/* ---- Settings drawer ---- */
-
-	/*
-	 * Site tokens, not prompter colours: prompt-view.ts sets data-theme to Paper or Night shift to suit
-	 * the prompter background, and the settings components render as they do on the page.
-	 * An inline-end side sheet; a bottom sheet on narrow screens. The middle scrolls, the header stays.
-	 */
+	/* Site tokens, not prompter colours, so the drawer reads well whatever the theme, mirror or flip. */
 	.tpp {
 		--tpp-drawer-w: min(24rem, 100%);
 	}
@@ -600,7 +637,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 		color-scheme: dark;
 	}
 
-	/* The sheet takes focus on open so its name is read out; a ring round all of it would only distract. */
+	/* The sheet takes focus on open so its name is read out; a ring around it would only distract. */
 	.tpp-drawer:focus-visible {
 		outline: 2px solid transparent;
 	}
@@ -655,12 +692,12 @@ import SettingsPanel from "./SettingsPanel.astro";
 		overflow-y: auto;
 		overscroll-behavior: contain;
 		scrollbar-gutter: stable;
-		/* The panel's first group draws its own top rule, which divides it from the header. */
+		/* No top padding: the panel's first group draws the rule under the header. */
 		padding-block: 0 calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
 		padding-inline: var(--space-6);
 	}
 
-	/* While the drawer is open the toolbar centres in the space left beside it, so it stays in view. */
+	/* Shift the toolbar clear of the open drawer, so it stays in view. */
 	@media (width >= 40rem) {
 		.tpp[data-drawer="open"] .tpp-chrome {
 			inset-inline-end: var(--tpp-drawer-w);
@@ -672,7 +709,7 @@ import SettingsPanel from "./SettingsPanel.astro";
 			inset-block-start: auto;
 			inset-inline: 0;
 			inline-size: auto;
-			/* Up to 70% of the screen, but stop short of the read line so the line being tuned stays in view. */
+			/* Stops short of the read line so the line being tuned stays in view. */
 			max-block-size: clamp(40dvh, (1 - var(--tpp-guide-pos, 0.33)) * 100dvh - var(--tpp-line, 3rem) / 2 - 0.5rem, 70dvh);
 			border-inline-start: 0;
 			border-block-start: var(--stroke-hairline) solid var(--rule);

@@ -1,21 +1,17 @@
 /*
- * The curated font list (spec §1.7) and its loaders. All are SIL OFL fonts from Google Fonts.
- *
- * Only the chosen font is loaded in full. The picker's previews use one tiny request with
- * `&text=` (just the glyphs of the labels), registered under a separate "tp-preview-*" family name,
- * so a subset face can never stand in for the full font in the Prompt view.
+ * Curated fonts, all SIL OFL from Google Fonts. Only the chosen font loads in full.
+ * Picker previews load just the label glyphs under "tp-preview-*" names, so a subset face never
+ * stands in for the full font in the Prompt view.
  */
 import type { FontId } from "./settings";
 
 export interface FontOption {
 	id: FontId;
-	/** Picker label. */
 	label: string;
 	/** One-line reason, shown under the label. */
 	note: string;
 	/** CSS family name as Google Fonts serves it. */
 	family: string;
-	/** Fallback stack after the family. */
 	fallback: string;
 	/** Weights for the regular / bold toggle. */
 	weights: { regular: number; bold: number };
@@ -76,10 +72,8 @@ const API = "https://fonts.googleapis.com/css2";
 const familyParam = (font: FontOption, weights: number[]) =>
 	`family=${font.family.replace(/ /g, "+")}:wght@${weights.join(";")}`;
 
-/** CSS font-family value for the Prompt view. */
 export const fontStack = (id: FontId) => `"${FONTS[id].family}", ${FONTS[id].fallback}`;
 
-/** CSS font-family value for a picker preview label. */
 export const previewStack = (id: FontId) => `"tp-preview-${id}", ${FONTS[id].fallback}`;
 
 export const fontWeight = (id: FontId, bold: boolean) => FONTS[id].weights[bold ? "bold" : "regular"];
@@ -87,8 +81,8 @@ export const fontWeight = (id: FontId, bold: boolean) => FONTS[id].weights[bold 
 const requested = new Set<FontId>();
 
 /**
- * Load a font's regular and bold faces. Safe to call repeatedly. Resolves when the requested weight
- * is ready, or after a short timeout, so callers never hang on a slow network (display=swap covers the gap).
+ * Safe to call repeatedly. Resolves once the requested weight is ready or after a timeout, so a slow
+ * network never hangs the caller (display=swap covers the gap).
  */
 export function loadFont(id: FontId, bold = false): Promise<void> {
 	const font = FONTS[id];
@@ -111,9 +105,8 @@ export function loadFont(id: FontId, bold = false): Promise<void> {
 let previewsRequested = false;
 
 /**
- * Load just the glyphs needed to draw each picker label in its own font. The stylesheet is fetched
- * and its families renamed to "tp-preview-<id>", so these subset faces stay out of the real families.
- * Fails quietly: labels then show in the fallback stack.
+ * Subset glyphs for the picker labels only. Families are renamed to "tp-preview-<id>" so subset faces
+ * stay out of the real ones. Fails quietly to the fallback stacks.
  */
 export async function loadFontPreviews(): Promise<void> {
 	if (previewsRequested) return;

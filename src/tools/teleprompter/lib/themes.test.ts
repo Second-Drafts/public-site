@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { validateSettings } from "./settings";
-import { MIN_CONTRAST, THEMES, bandContrast, contrastRatio, mixHex, resolveTheme } from "./themes";
+import { contrastRatio, MIN_CONTRAST, mixHex } from "./color";
+import { THEMES, bandContrast, pickTheme, resolveTheme } from "./themes";
 
 describe("contrastRatio", () => {
 	it("gives 21 for black on white", () => {
@@ -76,4 +77,17 @@ describe("guide colour and band contrast", () => {
 		// A yellow band at 60% under yellow text does not.
 		expect(bandContrast({ ...base, guideColor: "#ffd400", guideOpacity: 0.6 })!).toBeLessThan(MIN_CONTRAST);
 	});
+});
+
+describe("pickTheme", () => {
+	it("turns Bold on with High contrast, as a shortcut", () => {
+		expect(pickTheme("high-contrast")).toEqual({ theme: "high-contrast", bold: true });
+	});
+
+	it("leaves Bold alone for every other theme", () => {
+		for (const id of ["classic", "studio", "paper", "night", "green-room", "custom"] as const) {
+			expect(pickTheme(id)).toEqual({ theme: id });
+		}
+	});
+
 });

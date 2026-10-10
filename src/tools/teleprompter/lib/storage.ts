@@ -1,30 +1,31 @@
-/*
- * localStorage, wrapped so the tool keeps working when storage is blocked or full (private browsing,
- * strict privacy settings). Every read and write is in try/catch; failures are silent.
- */
-
 export const KEYS = {
 	script: "tp:script",
 	settings: "tp:settings:v1",
 	lastVisit: "tp:lastVisit",
 	hintSeen: "tp:hintSeen",
+	sessionId: "tp:sessionId",
+	visitRecorded: "tp:visitRecorded",
 } as const;
 
-export function read(key: string): string | null {
+type StorageArea = () => Storage;
+
+export const local: StorageArea = () => localStorage;
+export const session: StorageArea = () => sessionStorage;
+
+// The storage getter itself throws when storage is blocked, so access stays inside the try.
+export function read(key: string, area: StorageArea = local): string | null {
 	try {
-		return localStorage.getItem(key);
+		return area().getItem(key);
 	} catch {
 		return null;
 	}
 }
 
-/** Returns false if the write failed. */
-export function write(key: string, value: string): boolean {
+export function write(key: string, value: string, area: StorageArea = local): void {
 	try {
-		localStorage.setItem(key, value);
-		return true;
+		area().setItem(key, value);
 	} catch {
-		return false;
+		// blocked or full: the value just won't survive a reload
 	}
 }
 
@@ -39,30 +40,6 @@ export function readJSON(key: string): unknown {
 	}
 }
 
-export function writeJSON(key: string, value: unknown): boolean {
-	return write(key, JSON.stringify(value));
-}
-
-/** Trailing-edge debounce with a flush, so a pending save can be written on pagehide. */
-export function debounce<A extends unknown[]>(fn: (...args: A) => void, ms: number) {
-	let timer: ReturnType<typeof setTimeout> | undefined;
-	let pending: A | undefined;
-	const run = () => {
-		timer = undefined;
-		if (pending) {
-			const args = pending;
-			pending = undefined;
-			fn(...args);
-		}
-	};
-	const debounced = (...args: A) => {
-		pending = args;
-		clearTimeout(timer);
-		timer = setTimeout(run, ms);
-	};
-	debounced.flush = () => {
-		clearTimeout(timer);
-		run();
-	};
-	return debounced;
+export function writeJSON(key: string, value: unknown): void {
+	write(key, JSON.stringify(value));
 }

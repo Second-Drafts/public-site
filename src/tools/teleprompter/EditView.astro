@@ -1,16 +1,16 @@
 ---
-/*
- * EditView: the script textarea, its word count and read time, and the three actions
- * (Start prompting, Copy share link, Clear script). Behaviour: edit-view.ts.
- *
- * Sits in the page's tool, a container named tp-work. Wide, the page gives this view the workspace row's
- * height and the script box takes whatever the label, stats and actions leave; narrow, the box sizes to
- * its text (up to a cap) and the view flows with the page.
- */
 import Button from "../../components/Button.astro";
 ---
 
 <div class="tpe" data-tp-edit>
+	<div class="tpe__feedback">
+		<p class="tpe__status" role="status" aria-live="polite" data-tpe="status"></p>
+		<div class="tpe__fallback" data-tpe="fallback" hidden>
+			<label class="tpe__fallback-label" for="tpe-link">Copy this link:</label>
+			<input id="tpe-link" class="tpe__link" type="text" readonly data-tpe="link" />
+		</div>
+	</div>
+
 	<div class="tpe__field">
 		<label class="tpe__label sd-text-label" for="tpe-script">Your script</label>
 		<textarea
@@ -23,29 +23,16 @@ import Button from "../../components/Button.astro";
 			autocapitalize="sentences"
 			aria-describedby="tpe-stats"
 			placeholder="Paste or type your script here."></textarea>
-		<p id="tpe-stats" class="tpe__stats sd-text-meta" data-tpe="stats">&nbsp;</p>
-	</div>
-
-	<div class="tpe__actions">
-		<Button variant="accent" size="lg" data-tpe="start" disabled>Start prompting</Button>
-		<Button variant="secondary" data-tpe="share">Copy share link</Button>
-		<Button variant="quiet" data-tpe="clear">Clear script</Button>
-	</div>
-
-	<div class="tpe__feedback">
-		<p class="tpe__status" role="status" aria-live="polite" data-tpe="status"></p>
-		<div class="tpe__fallback" data-tpe="fallback" hidden>
-			<label class="tpe__fallback-label" for="tpe-link">Copy this link:</label>
-			<input id="tpe-link" class="tpe__link" type="text" readonly data-tpe="link" />
+		<div class="tpe__meta">
+			<p id="tpe-stats" class="tpe__stats sd-text-meta" data-tpe="stats">&nbsp;</p>
+			<Button variant="quiet" size="sm" data-tpe="clear">Clear script</Button>
 		</div>
 	</div>
-
-	<p class="tpe__privacy">Saved in this browser only. We never see your script.</p>
 </div>
 
 <style>
 	.tpe {
-		/* Stacked (narrow): the tallest the script box may grow, so Start prompting stays near the fold. */
+		/* Stacked: caps the script box so the settings stay a short scroll away. */
 		--tpe-max: clamp(12rem, 50dvh, 30rem);
 		display: grid;
 		gap: var(--space-4);
@@ -75,12 +62,11 @@ import Button from "../../components/Button.astro";
 		resize: vertical;
 		field-sizing: content;
 	}
-	/* Side by side: the script box fills the column and scrolls inside itself. */
 	@container tp-work (min-width: 55rem) {
 		.tpe {
 			block-size: 100%;
 			min-block-size: 0;
-			grid-template-rows: minmax(0, 1fr) auto auto auto;
+			grid-template-rows: auto minmax(0, 1fr);
 		}
 		.tpe__field {
 			min-block-size: 0;
@@ -94,7 +80,7 @@ import Button from "../../components/Button.astro";
 			resize: none;
 		}
 	}
-	/* On a phone, keep Start prompting near the fold: the box scrolls inside itself past about half the screen. */
+	/* Phone: the box scrolls past 45dvh, so it can't swallow the page. */
 	@media (max-width: 30rem) {
 		.tpe__script {
 			min-block-size: min(9lh, 45dvh);
@@ -111,32 +97,30 @@ import Button from "../../components/Button.astro";
 		outline-offset: 1px;
 		border-color: var(--focus);
 	}
+	.tpe__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-1) var(--space-3);
+	}
 	.tpe__stats {
 		margin: 0;
 		color: var(--ink-muted);
 		font-variant-numeric: tabular-nums;
 	}
-
-	.tpe__actions {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: var(--space-3);
-	}
-	/* Start prompting is the one move forward: on a phone it takes the full row. */
-	@media (max-width: 30rem) {
-		.tpe__actions :global([data-tpe="start"]) {
-			flex: 1 1 100%;
-		}
+	/* Cancels the quiet button's padding so its text lines up with the column edge. */
+	.tpe__meta :global(.sd-btn) {
+		margin-inline-end: calc(-1 * var(--space-2));
 	}
 
 	.tpe__feedback {
 		display: grid;
 		gap: var(--space-2);
 	}
-	/* Empty, the live region takes no room (it stays in the layout so announcements still work). */
+	/* Empty, the live region takes no room but stays in the layout so announcements still work. */
 	.tpe__feedback:not(:has(.tpe__status:not(:empty), .tpe__fallback:not([hidden]))) {
-		margin-block-start: calc(-1 * var(--space-4));
+		margin-block-end: calc(-1 * var(--space-4));
 	}
 	.tpe__status {
 		margin: 0;
@@ -176,13 +160,5 @@ import Button from "../../components/Button.astro";
 	.tpe__link:focus-visible {
 		outline: var(--stroke-pen) solid var(--focus);
 		outline-offset: 1px;
-	}
-
-	.tpe__privacy {
-		margin: 0;
-		font-family: var(--font-prose);
-		font-size: 15px;
-		line-height: 24px;
-		color: var(--ink-muted);
 	}
 </style>

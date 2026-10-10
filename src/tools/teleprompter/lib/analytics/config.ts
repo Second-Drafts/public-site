@@ -18,8 +18,7 @@ export interface AnalyticsConfig {
 	gaMeasurementId: string;
 }
 
-/** Names that need no provider file. */
-const OFF = "none";
+const EXPLICITLY_OFF = "none";
 
 export function resolveProviders(env: AnalyticsEnv): AnalyticsConfig {
 	const dev = Boolean(env.DEV);
@@ -33,7 +32,7 @@ export function resolveProviders(env: AnalyticsEnv): AnalyticsConfig {
 		requested = raw
 			.split(",")
 			.map((name) => name.trim().toLowerCase())
-			.filter((name) => name !== "" && name !== OFF);
+			.filter((name) => name !== "" && name !== EXPLICITLY_OFF);
 	}
 
 	const providers: string[] = [];

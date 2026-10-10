@@ -1,8 +1,3 @@
-/*
- * A small promise-based confirm, styled like the rest of the tool (window.confirm can't be styled and
- * blocks the page). Used by "Clear script", by Reset, and by a share link that would replace a saved script.
- * The markup is ConfirmDialog.astro, rendered once by the page.
- */
 import { required } from "./lib/dom";
 import { wireDialog } from "./lib/dialog";
 
@@ -25,14 +20,12 @@ interface Parts {
 	cancelLabel: HTMLElement;
 }
 
-let parts: Parts | null | undefined;
+let parts: Parts | undefined;
 let settle: ((confirmed: boolean) => void) | null = null;
 
-/** Finds and wires the dialog on first use. null when the page has none. */
-function mount(): Parts | null {
-	if (parts !== undefined) return parts;
-	const dialog = document.querySelector<HTMLDialogElement>("[data-tp-confirm]");
-	if (!dialog || typeof dialog.showModal !== "function") return (parts = null);
+function mount(): Parts {
+	if (parts) return parts;
+	const dialog = required<HTMLDialogElement>(document, "[data-tp-confirm]");
 
 	const part = (name: string) => required(dialog, `[data-tpc="${name}"]`);
 	const confirmButton = part("confirm");
@@ -45,7 +38,7 @@ function mount(): Parts | null {
 	};
 	confirmButton.addEventListener("click", () => answer(true));
 	cancelButton.addEventListener("click", () => answer(false));
-	// Esc or a backdrop click closes the dialog without an answer: that is a no.
+	// Esc or a backdrop click closes without an answer: that is a no.
 	wireDialog(dialog, { onClose: () => answer(false) });
 
 	return (parts = {
@@ -62,10 +55,6 @@ function mount(): Parts | null {
 /** Resolves true on confirm; false on cancel, Esc or a backdrop click. */
 export function askConfirm(options: ConfirmOptions): Promise<boolean> {
 	const ui = mount();
-	if (!ui) {
-		// No dialog markup (or a very old browser): fall back to the browser's own confirm.
-		return Promise.resolve(window.confirm([options.title, options.body].filter(Boolean).join("\n\n")));
-	}
 	const { dialog } = ui;
 
 	// A second question while one is open cancels the first, and takes over the open dialog.

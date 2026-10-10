@@ -1,7 +1,6 @@
 /*
- * Scroll speed. The slider has SPEED_STEPS discrete steps; each maps to a pace in lines per second,
- * spaced geometrically so every step feels like the same-sized change. Pace is in lines, not pixels,
- * so changing font size or line spacing keeps the reading pace roughly the same.
+ * Scroll speed. The steps are geometric, so each one feels like the same-sized change. Pace is in
+ * lines, not pixels, so changing font size or line spacing keeps the reading pace roughly the same.
  *
  *   px per second = linesPerSecond(step) × fontSize × lineHeight
  */

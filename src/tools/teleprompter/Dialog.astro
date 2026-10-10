@@ -1,22 +1,9 @@
 ---
-/*
- * Dialog: the one native modal <dialog> the teleprompter's dialogs share (ConfirmDialog, FakeDoors).
- * It draws the box, the backdrop, the fade and the padded panel, and shares the prose classes the content uses.
- * Behaviour (backdrop click, close) is wireDialog in lib/dialog.ts.
- *
- *   <Dialog aria-labelledby="x-title" data-x-dialog width="28rem">
- *     <h3 id="x-title" class="tpd__title sd-text-title">…</h3>
- *     <p class="tpd__text">…</p>
- *     <div class="tpd__actions"><Button>…</Button></div>
- *   </Dialog>
- *
- * Put it at body level, never inside an element that goes inert: a modal dialog inside an inert
- * subtree can't be used.
- */
+/* Render at body level: a modal inside an inert subtree can't be used. */
 import type { HTMLAttributes } from "astro/types";
 
 interface Props extends HTMLAttributes<"dialog"> {
-	/** The dialog's inline size, as a CSS length. It never exceeds the viewport less the gutters. */
+	/** Inline size as a CSS length, e.g. "28rem". Capped to the viewport less the gutters. */
 	width?: string;
 }
 
@@ -71,7 +58,6 @@ const { width = "26rem", class: className, style, ...rest } = Astro.props;
 		padding: var(--space-6);
 	}
 
-	/* What goes inside: a title, prose, and a row of buttons. */
 	:global(.tpd__title) {
 		margin: 0;
 	}

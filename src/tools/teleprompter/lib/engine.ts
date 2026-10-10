@@ -1,21 +1,16 @@
 /*
  * The Prompt view's scroll engine.
  *
- * The text lives in a native `overflow-y: auto` scroller, so wheel, trackpad and touch drag (with
- * momentum) work for free. Auto-scroll is a requestAnimationFrame loop that advances a float
- * position by speed × real dt. Browsers round scrollTop to whole pixels, which visibly steps at slow
- * speeds (8 px/s is one step every ~7 frames), so each frame writes the whole part to scrollTop and
- * the fractional remainder as a transform on the text:
+ * The text lives in a native `overflow-y: auto` scroller, so wheel, trackpad and touch momentum come
+ * free. Auto-scroll advances a float position by speed × real dt each frame. Browsers round scrollTop
+ * to whole pixels, which visibly steps at slow speeds (8 px/s is one step every ~7 frames), so each
+ * frame writes the whole part to scrollTop and the fractional remainder as a transform on the text:
  *
  *   scrollTop = floor(pos);  text.transform = translate3d(0, -(pos - floor(pos))px, 0)
  *
- * Both land in the same frame, so the text moves by a fraction of a pixel every frame.
- *
  * Positions are in "read" coordinates: pos 0 puts the top of the text on the read line, and a
- * paragraph's offsetTop inside the text element is the pos that puts it there. The scroller's
- * padding (set in CSS) makes scrollTop equal to that pos.
- *
- * The pure helpers below are exported for unit tests; createScrollEngine is the only DOM part.
+ * paragraph's offsetTop inside the text element is the pos that puts it there. The scroller's CSS
+ * padding makes scrollTop equal that pos.
  */
 
 import { clamp } from "./math";
@@ -30,9 +25,6 @@ export const SCROLL_QUIET_MS = 150;
 export const END_EPSILON_PX = 0.5;
 /** Paragraph jumps animate for this long, unless the reader asks for reduced motion. */
 export const JUMP_MS = 180;
-
-// ---------------------------------------------------------------------------------------------
-// Pure helpers
 
 /**
  * Split a script into paragraphs on blank lines. Single line breaks stay inside a paragraph.
@@ -140,31 +132,6 @@ export function positionForAnchor(offsets: readonly number[], end: number, ancho
 /** Ease-out cubic: fast start, gentle landing. t in [0, 1]. */
 export const easeOutCubic = (t: number) => 1 - Math.pow(1 - clamp(t, 0, 1), 3);
 
-export const TAP_MAX_MOVE_PX = 10;
-export const TAP_MAX_MS = 500;
-
-/** A pointer gesture short and still enough to count as a tap (play/pause), not a drag or scroll. */
-export function isTap(dx: number, dy: number, durationMs: number): boolean {
-	return Math.hypot(dx, dy) < TAP_MAX_MOVE_PX && durationMs >= 0 && durationMs <= TAP_MAX_MS;
-}
-
-export const DOUBLE_TAP_MS = 350;
-export const DOUBLE_TAP_MAX_PX = 30;
-
-export function isDoubleTap(
-	previous: { t: number; x: number; y: number } | null,
-	current: { t: number; x: number; y: number },
-): boolean {
-	if (!previous) return false;
-	return (
-		current.t - previous.t <= DOUBLE_TAP_MS &&
-		Math.hypot(current.x - previous.x, current.y - previous.y) <= DOUBLE_TAP_MAX_PX
-	);
-}
-
-// ---------------------------------------------------------------------------------------------
-// The engine
-
 export interface EngineOptions {
 	/** The overflow-y: auto element. */
 	scroller: HTMLElement;
@@ -241,12 +208,16 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 
 	const userActive = () => touching || now() - userScrollAt < SCROLL_QUIET_MS;
 
+	/** Records a scroll the user made by hand since the last write. */
+	function recordHandScroll(): boolean {
+		if (Math.abs(scroller.scrollTop - lastWritten) <= MANUAL_SCROLL_THRESHOLD_PX) return false;
+		userScrollAt = now();
+		jump = null;
+		return true;
+	}
+
 	function onScroll() {
-		if (Math.abs(scroller.scrollTop - lastWritten) > MANUAL_SCROLL_THRESHOLD_PX) {
-			userScrollAt = now();
-			jump = null;
-			adopt();
-		}
+		if (recordHandScroll()) adopt();
 	}
 	const onWheel = () => {
 		userScrollAt = now();
@@ -282,10 +253,7 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 		lastTime = time;
 
 		// A scroll event may not have arrived yet for a gesture that already moved the scroller.
-		if (Math.abs(scroller.scrollTop - lastWritten) > MANUAL_SCROLL_THRESHOLD_PX) {
-			userScrollAt = now();
-			jump = null;
-		}
+		recordHandScroll();
 
 		if (userActive()) {
 			// Never fight a finger or momentum: follow the scroller, write nothing.

@@ -1,17 +1,13 @@
-/*
- * Teleprompter settings: the one shape shared by localStorage, share links and the UI.
- * Everything that reads settings from outside (storage, a URL) goes through validateSettings,
- * so a bad or old value falls back to its default instead of breaking the tool.
- */
-
 import { normalizeHex } from "./color";
 import { clamp } from "./math";
+import { isRecord } from "./object";
 
 export const FONT_IDS = ["clean", "classic", "hyperlegible", "condensed", "display", "mono"] as const;
 export type FontId = (typeof FONT_IDS)[number];
 
 export const THEME_IDS = ["classic", "studio", "paper", "high-contrast", "night", "green-room", "custom"] as const;
 export type ThemeId = (typeof THEME_IDS)[number];
+export const isThemeId = (value: string): value is ThemeId => (THEME_IDS as readonly string[]).includes(value);
 
 export const GUIDE_MODES = ["band", "arrows", "off"] as const;
 export type GuideMode = (typeof GUIDE_MODES)[number];
@@ -50,18 +46,16 @@ export interface Settings {
 	 */
 	columnPosition: number;
 	align: Align;
-	/** Speed step, 1 (slowest) to SPEED_STEPS. See speed.ts. */
+	/** Speed step, 1 (slowest) to SPEED_STEPS. */
 	speed: number;
 	guide: GuideMode;
 	/** Read line position as a fraction of the stage height from the top. */
 	guidePosition: number;
 	/** Band opacity, 0–1. */
 	guideOpacity: number;
-	/** Reading guide colour: "auto" uses the theme's own guide colour, otherwise "#rrggbb". */
 	guideColor: GuideColor;
 	/** Horizontal mirror, for beam-splitter glass. */
 	mirror: boolean;
-	/** Vertical flip. */
 	flip: boolean;
 	/** 3-2-1 each time playback starts from paused. */
 	countdown: boolean;
@@ -113,36 +107,32 @@ export const SETTINGS_VERSION = 1;
  * Never throws.
  */
 export function validateSettings(input: unknown): Settings {
-	const d = DEFAULT_SETTINGS;
-	const raw: Record<string, unknown> =
-		typeof input === "object" && input !== null && !Array.isArray(input) ? (input as Record<string, unknown>) : {};
-	const rawCustom: Record<string, unknown> =
-		typeof raw.custom === "object" && raw.custom !== null && !Array.isArray(raw.custom)
-			? (raw.custom as Record<string, unknown>)
-			: {};
+	const defaults = DEFAULT_SETTINGS;
+	const raw = isRecord(input) ? input : {};
+	const rawCustom = isRecord(raw.custom) ? raw.custom : {};
 
 	return {
-		font: pickEnum(FONT_IDS, raw.font, d.font),
-		bold: pickBool(raw.bold, d.bold),
-		theme: pickEnum(THEME_IDS, raw.theme, d.theme),
+		font: pickEnum(FONT_IDS, raw.font, defaults.font),
+		bold: pickBool(raw.bold, defaults.bold),
+		theme: pickEnum(THEME_IDS, raw.theme, defaults.theme),
 		custom: {
-			text: pickColor(rawCustom.text, d.custom.text),
-			background: pickColor(rawCustom.background, d.custom.background),
+			text: pickColor(rawCustom.text, defaults.custom.text),
+			background: pickColor(rawCustom.background, defaults.custom.background),
 		},
-		fontSize: pickNumber("fontSize", raw.fontSize, d.fontSize),
-		lineHeight: pickNumber("lineHeight", raw.lineHeight, d.lineHeight),
-		columnWidth: pickNumber("columnWidth", raw.columnWidth, d.columnWidth),
-		columnPosition: pickNumber("columnPosition", raw.columnPosition, d.columnPosition),
-		align: pickEnum(ALIGNMENTS, raw.align, d.align),
-		speed: pickNumber("speed", raw.speed, d.speed),
-		guide: pickEnum(GUIDE_MODES, raw.guide, d.guide),
-		guidePosition: pickNumber("guidePosition", raw.guidePosition, d.guidePosition),
-		guideOpacity: pickNumber("guideOpacity", raw.guideOpacity, d.guideOpacity),
-		guideColor: raw.guideColor === "auto" ? "auto" : (pickColor(raw.guideColor, d.guideColor) as GuideColor),
-		mirror: pickBool(raw.mirror, d.mirror),
-		flip: pickBool(raw.flip, d.flip),
-		countdown: pickBool(raw.countdown, d.countdown),
-		arrowKeys: pickEnum(ARROW_KEY_LAYOUTS, raw.arrowKeys, d.arrowKeys),
+		fontSize: pickNumber("fontSize", raw.fontSize, defaults.fontSize),
+		lineHeight: pickNumber("lineHeight", raw.lineHeight, defaults.lineHeight),
+		columnWidth: pickNumber("columnWidth", raw.columnWidth, defaults.columnWidth),
+		columnPosition: pickNumber("columnPosition", raw.columnPosition, defaults.columnPosition),
+		align: pickEnum(ALIGNMENTS, raw.align, defaults.align),
+		speed: pickNumber("speed", raw.speed, defaults.speed),
+		guide: pickEnum(GUIDE_MODES, raw.guide, defaults.guide),
+		guidePosition: pickNumber("guidePosition", raw.guidePosition, defaults.guidePosition),
+		guideOpacity: pickNumber("guideOpacity", raw.guideOpacity, defaults.guideOpacity),
+		guideColor: raw.guideColor === "auto" ? "auto" : (pickColor(raw.guideColor, defaults.guideColor) as GuideColor),
+		mirror: pickBool(raw.mirror, defaults.mirror),
+		flip: pickBool(raw.flip, defaults.flip),
+		countdown: pickBool(raw.countdown, defaults.countdown),
+		arrowKeys: pickEnum(ARROW_KEY_LAYOUTS, raw.arrowKeys, defaults.arrowKeys),
 	};
 }
 
@@ -161,7 +151,6 @@ function pickNumber(key: NumericSetting, value: unknown, fallback: number): numb
 	return clamp(value, min, max);
 }
 
-/** Accepts "#rgb" or "#rrggbb" (any case) and returns lowercase "#rrggbb". */
 function pickColor(value: unknown, fallback: string): string {
 	return normalizeHex(value) ?? fallback;
 }

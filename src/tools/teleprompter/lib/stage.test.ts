@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { stageLook } from "../stage";
-import { CUSTOM_GUIDE, relativeLuminance, siteThemeFor } from "./themes";
+import { relativeLuminance } from "./color";
+import { CUSTOM_GUIDE, siteThemeFor } from "./themes";
 import { DEFAULT_SETTINGS, type Settings } from "./settings";
 import { THEMES } from "./themes";
 
@@ -71,12 +72,12 @@ describe("stageLook", () => {
 		expect([flipOnly["--tp-sx"], flipOnly["--tp-sy"]]).toEqual(["1", "-1"]);
 	});
 
-	it("takes the bold weight when the theme forces it", () => {
+	it("follows the Bold setting alone, whatever the theme", () => {
 		const regular = stageLook(settings({ theme: "studio", bold: false })).vars["--tp-weight"];
-		const forced = stageLook(settings({ theme: "high-contrast", bold: false })).vars["--tp-weight"];
 		const chosen = stageLook(settings({ theme: "studio", bold: true })).vars["--tp-weight"];
-		expect(Number(forced)).toBeGreaterThan(Number(regular));
-		expect(forced).toBe(chosen);
+		const highContrastOff = stageLook(settings({ theme: "high-contrast", bold: false })).vars["--tp-weight"];
+		expect(Number(chosen)).toBeGreaterThan(Number(regular));
+		expect(highContrastOff).toBe(regular);
 	});
 });
 

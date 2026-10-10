@@ -1,6 +1,3 @@
-/*
- * Word counts and time estimates. Pure functions.
- */
 import type { WordBucket } from "./analytics/events";
 
 /** Baseline speaking pace for the read-time estimate. */
@@ -11,7 +8,7 @@ export function countWords(text: string): number {
 	return text.split(/\s+/).filter(Boolean).length;
 }
 
-/** Analytics bucket: 0–50, 51–200, 201–600, 600+ (spec §3). */
+/** Analytics bucket: 0–50, 51–200, 201–600, 600+. */
 export function wordBucket(words: number): WordBucket {
 	if (words <= 50) return "0-50";
 	if (words <= 200) return "51-200";
@@ -19,7 +16,6 @@ export function wordBucket(words: number): WordBucket {
 	return "600+";
 }
 
-/** Estimated read time in seconds at WORDS_PER_MINUTE. */
 export function readTimeSeconds(words: number, wpm: number = WORDS_PER_MINUTE): number {
 	return (words / wpm) * 60;
 }

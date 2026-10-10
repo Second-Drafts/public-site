@@ -1,14 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveProviders } from "./config";
 import type { AnalyticsProvider, EventName, EventProps } from "./events";
-import {
-	__setProvidersForTest,
-	initAnalytics,
-	landingSource,
-	recordVisit,
-	referrerDomain,
-	track,
-} from "./index";
+import { hostnameOf, landingSource, recordVisit } from "./index";
 
 function memoryStorage(): Storage {
 	const data = new Map<string, string>();
@@ -51,18 +44,18 @@ describe("landingSource", () => {
 		expect(landingSource(url, "")).toBe("organic");
 	});
 
+	beforeEach(() => {
+		vi.stubGlobal("location", { hostname: "tools.example" });
+	});
+	afterEach(() => vi.unstubAllGlobals());
+
 	it("direct with no referrer or an invalid one", () => {
 		expect(landingSource("", "")).toBe("direct");
 		expect(landingSource("not a url", "")).toBe("direct");
 	});
 
 	it("direct for same-origin referrers", () => {
-		vi.stubGlobal("location", { hostname: "example.org" });
-		try {
-			expect(landingSource("https://example.org/blog", "")).toBe("direct");
-		} finally {
-			vi.unstubAllGlobals();
-		}
+		expect(landingSource("https://tools.example/blog", "")).toBe("direct");
 	});
 
 	it("referral for other sites, including look-alike search hosts", () => {
@@ -84,13 +77,13 @@ describe("landingSource", () => {
 	});
 });
 
-describe("referrerDomain", () => {
+describe("hostnameOf", () => {
 	it("returns hostname only", () => {
-		expect(referrerDomain("https://www.google.com/search?q=secret")).toBe("www.google.com");
+		expect(hostnameOf("https://www.google.com/search?q=secret")).toBe("www.google.com");
 	});
 	it("returns empty string for none or invalid", () => {
-		expect(referrerDomain("")).toBe("");
-		expect(referrerDomain("nope")).toBe("");
+		expect(hostnameOf("")).toBe("");
+		expect(hostnameOf("nope")).toBe("");
 	});
 });
 
@@ -123,18 +116,35 @@ describe("resolveProviders", () => {
 });
 
 describe("track", () => {
+	async function loadAnalytics(providers: AnalyticsProvider[]) {
+		vi.resetModules();
+		vi.doMock("./config", () => ({
+			readConfig: () => ({ providers: providers.map((p) => p.name), gaMeasurementId: "" }),
+		}));
+		vi.doMock("./providers", () => ({
+			REGISTRY: Object.fromEntries(providers.map((p) => [p.name, () => p])),
+		}));
+		return import("./index");
+	}
+
 	beforeEach(() => {
 		vi.stubGlobal("sessionStorage", memoryStorage());
+		vi.stubGlobal("window", {
+			matchMedia: () => ({ matches: false }),
+			screen: { width: 1440, height: 900 },
+		});
+		vi.stubGlobal("navigator", { platform: "Win32", userAgent: "Windows", maxTouchPoints: 0 });
 	});
 	afterEach(() => {
-		__setProvidersForTest(null);
+		vi.doUnmock("./config");
+		vi.doUnmock("./providers");
 		vi.unstubAllGlobals();
 	});
 
-	it("keeps primitives, drops objects and long strings, and merges session context", () => {
+	it("keeps primitives, drops objects and long strings, and merges session context", async () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([provider]);
+		const { initAnalytics, track } = await loadAnalytics([provider]);
 		initAnalytics();
 		track("tp_script_entered", {
 			word_bucket: "51-200",
@@ -157,26 +167,26 @@ describe("track", () => {
 		warn.mockRestore();
 	});
 
-	it("keeps a 64-char string", () => {
+	it("keeps a 64-char string", async () => {
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([provider]);
+		const { initAnalytics, track } = await loadAnalytics([provider]);
 		initAnalytics();
 		track("tp_script_entered", { word_bucket: "0-50", source: "x".repeat(64) } as never);
 		expect(calls[0].props.source).toHaveLength(64);
 	});
 
-	it("uses a stable session id across events", () => {
+	it("uses a stable session id across events", async () => {
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([provider]);
+		const { initAnalytics, track } = await loadAnalytics([provider]);
 		initAnalytics();
 		track("tp_share_link_opened", {});
 		track("tp_share_link_opened", {});
 		expect(calls[0].props.session_id).toBe(calls[1].props.session_id);
 	});
 
-	it("queues events before init and flushes them on init", () => {
+	it("queues events before init and flushes them on init", async () => {
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([provider]);
+		const { initAnalytics, track } = await loadAnalytics([provider]);
 		track("tp_play", { word_bucket: "201-600", play_count: 1 });
 		expect(calls).toHaveLength(0);
 		initAnalytics();
@@ -184,10 +194,10 @@ describe("track", () => {
 		expect(calls[0].event).toBe("tp_play");
 	});
 
-	it("init is idempotent", () => {
+	it("init is idempotent", async () => {
 		const init = vi.fn();
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([{ ...provider, init }]);
+		const { initAnalytics, track } = await loadAnalytics([{ ...provider, init }]);
 		initAnalytics();
 		initAnalytics();
 		track("tp_share_link_opened", {});
@@ -195,7 +205,7 @@ describe("track", () => {
 		expect(calls).toHaveLength(1);
 	});
 
-	it("a throwing provider does not break the others", () => {
+	it("a throwing provider does not break the others", async () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const bad: AnalyticsProvider = {
 			name: "bad",
@@ -213,7 +223,7 @@ describe("track", () => {
 			},
 		};
 		const { provider, calls } = fakeProvider();
-		__setProvidersForTest([bad, badInit, provider]);
+		const { initAnalytics, track } = await loadAnalytics([bad, badInit, provider]);
 		initAnalytics();
 		expect(() => track("tp_share_link_opened", {})).not.toThrow();
 		expect(calls).toHaveLength(1);

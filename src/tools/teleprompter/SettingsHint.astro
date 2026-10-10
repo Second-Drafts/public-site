@@ -1,16 +1,11 @@
 ---
-/*
- * SettingsHint: the quiet line under a control. `alt` is the text it shows instead when the control is in
- * its other state (a disabled slider, a forced toggle); settings-panel.ts reads it from data-hint-alt.
- */
 interface Props {
 	id?: string;
-	alt?: string;
 }
-const { id, alt } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<p class="ctl__hint" {id} data-hint-alt={alt}><slot /></p>
+<p class="ctl__hint" {id}><slot /></p>
 
 <style is:global>
 	.ctl__hint {
