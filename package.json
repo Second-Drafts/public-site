@@ -9,6 +9,7 @@
 		"preview": "astro preview",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"og": "node scripts/og/render.js",
 		"predeploy": "npm run build",
 		"deploy": "node scripts/deploy.js"
 	},
