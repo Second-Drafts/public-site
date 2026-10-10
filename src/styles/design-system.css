@@ -5,6 +5,7 @@
  * Rules: DESIGN.md.
  */
 @import "../../design-system/tokens.css";
+@import "./fonts.css";
 
 ::selection {
   background: var(--selection);

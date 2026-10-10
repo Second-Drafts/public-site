@@ -4,3 +4,4 @@ dist
 
 # impeccable ships a per-platform binary; its launcher downloads one on first run
 .claude/skills/impeccable/scripts/bin/
+.venv-fonts/

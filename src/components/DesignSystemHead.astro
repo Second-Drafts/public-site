@@ -1,6 +1,6 @@
 ---
 /*
- * Loads the design system: tokens, global rules and the three Google Fonts.
+ * Loads the design system: tokens, global rules and the three self-hosted fonts.
  * Put it inside a layout's <head>. Components bring their own styles.
  *
  * Theme: an explicit data-theme always wins. Without one, the reader's system setting picks Paper or Night shift.
@@ -9,9 +9,6 @@
  */
 import tokens from "../../design-system/tokens.json";
 import "../styles/design-system.css";
-
-const fonts =
-	"https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300..700&family=Literata:ital,opsz,wght@0,7..72,400..700;1,7..72,400..700&family=IBM+Plex+Mono:wght@400;500&display=swap";
 
 type Themed = { light?: string; dark?: string };
 
@@ -35,7 +32,6 @@ const systemDark = `@media screen and (prefers-color-scheme: dark) { :root:not([
 const print = `@media print { :root:not(#print), [data-theme="dark"]:not(#print) { ${declarations("light")} } }`;
 ---
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="stylesheet" href={fonts} />
+<link rel="preload" href="/fonts/literata.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="/fonts/josefin-sans.woff2" as="font" type="font/woff2" crossorigin />
 <Fragment set:html={`<style>${systemDark}\n${print}</style>`} />

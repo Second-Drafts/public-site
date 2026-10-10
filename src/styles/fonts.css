@@ -1,0 +1,39 @@
+@font-face {
+  font-family: "Josefin Sans";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/josefin-sans.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Literata";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/literata.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Literata";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/literata-italic.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-400.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/ibm-plex-mono-500.woff2") format("woff2");
+}

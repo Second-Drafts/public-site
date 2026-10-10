@@ -1,7 +1,7 @@
 ---
 import Button from "../../components/Button.astro";
 import { uniqueId } from "../../lib/uniqueId";
-import { FONTS, previewStack } from "./lib/fonts";
+import { FONTS, fontStack } from "./lib/fonts";
 import { LIMITS } from "./lib/settings";
 import { THEMES } from "./lib/themes";
 import SettingsControl from "./SettingsControl.astro";
@@ -88,7 +88,7 @@ const themes = Object.entries(THEMES).map(([id, theme]) => ({ id, ...theme }));
 					fonts.map((font) => (
 						<label class="card">
 							<input class="card__input" type="radio" name={`${pid}-font`} value={font.id} data-setting="font" />
-							<span class="card__name" style={`font-family: ${previewStack(font.id)}`}>
+							<span class="card__name" style={`font-family: ${fontStack(font.id)}`}>
 								{font.label}
 							</span>
 							<span class="card__note">{font.note}</span>

@@ -210,10 +210,10 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 		const seen = new IntersectionObserver((entries) => {
 			if (!entries.some((entry) => entry.isIntersecting)) return;
 			seen.disconnect();
-			void loadFontPreviews();
+			loadFontPreviews();
 		});
 		seen.observe(fontCards);
 	} else {
-		void loadFontPreviews();
+		loadFontPreviews();
 	}
 }
