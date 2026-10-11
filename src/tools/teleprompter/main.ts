@@ -5,6 +5,7 @@ import { mountEditView } from "./edit-view";
 import { initAnalytics, trackPageView } from "./lib/analytics";
 import { defaultSettingsForViewport } from "./lib/defaults";
 import { debounce } from "./lib/debounce";
+import { removeRetiredStorage } from "./lib/retired-storage";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import { validateSettings, type Settings } from "./lib/settings";
 import { hasShareParam } from "./lib/share-hash";
@@ -19,6 +20,7 @@ declare global {
 	}
 }
 
+removeRetiredStorage();
 initAnalytics();
 trackPageView({ referrer: document.referrer, hash: location.hash });
 

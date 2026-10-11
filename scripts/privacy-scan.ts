@@ -65,6 +65,14 @@ function freePort(): Promise<number> {
 	});
 }
 
+async function isServing(origin: string): Promise<boolean> {
+	try {
+		return (await fetch(origin)).ok;
+	} catch {
+		return false;
+	}
+}
+
 async function startPreview(): Promise<{ origin: string; stop: () => void }> {
 	const port = await freePort();
 	const child: ChildProcess = spawn("npx", ["astro", "preview", "--port", String(port), "--ignore-lock"], {
@@ -72,11 +80,8 @@ async function startPreview(): Promise<{ origin: string; stop: () => void }> {
 	});
 	const origin = `http://localhost:${port}`;
 	for (let attempt = 0; attempt < 100; attempt++) {
-		try {
-			if ((await fetch(origin)).ok) return { origin, stop: () => child.kill() };
-		} catch {
-			await new Promise((resolve) => setTimeout(resolve, 200));
-		}
+		if (await isServing(origin)) return { origin, stop: () => child.kill() };
+		await new Promise((resolve) => setTimeout(resolve, 200));
 	}
 	child.kill();
 	throw new Error("astro preview did not start");

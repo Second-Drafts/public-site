@@ -12,7 +12,7 @@ export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "a
 export type Primitive = string | number | boolean;
 export type EventProps = Record<string, Primitive>;
 
-type Kind = "string" | "number" | "boolean";
+export type Kind = "string" | "number" | "boolean";
 
 // `kinds` is what exists at runtime (and in the lock file); the phantom `__type` only narrows the derived TypeScript types.
 interface Prop<T extends Primitive = Primitive> {

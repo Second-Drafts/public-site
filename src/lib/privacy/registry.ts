@@ -158,7 +158,7 @@ export type FirstPartyKey = {
 
 export type RegisteredStorage = StorageEntry & { name: StorageName };
 
-const WILDCARD = "*";
+export const WILDCARD = "*";
 
 function nameMatches(registeredName: string, actualName: string): boolean {
 	if (!registeredName.endsWith(WILDCARD)) return registeredName === actualName;

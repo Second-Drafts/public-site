@@ -11,6 +11,9 @@ const categories = consentSettingsModel();
 <Dialog aria-labelledby="cs-title" width="34rem" data-consent-settings>
 	<h2 id="cs-title" class="sd-dialog__title sd-text-title">Cookie settings</h2>
 	<p class="sd-dialog__text">Choose what we may store on your device. You can change this any time.</p>
+	<p class="sd-dialog__text" data-consent-browser-refusal hidden>
+		Your browser is sending a Global Privacy Control signal, so these stay off.
+	</p>
 
 	<div class="cs__category">
 		<div class="cs__text">
@@ -140,6 +143,10 @@ const categories = consentSettingsModel();
 	.cs__switch:checked::before {
 		inset-inline-start: 22px;
 		background: var(--on-blue);
+	}
+	.cs__switch:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
 	}
 	.cs__switch:focus-visible {
 		outline: none;

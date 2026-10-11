@@ -3,6 +3,7 @@ import {
 	CATEGORY_IDS,
 	STORAGE,
 	VENDORS,
+	WILDCARD,
 	describeRetention,
 	type CategoryId,
 	type StorageArea,
@@ -33,7 +34,7 @@ const STORAGE_TYPES: Record<StorageArea, string> = {
 };
 
 function displayName(name: string): string {
-	return name.endsWith("*") ? `${name.slice(0, -1)}<ID>` : name;
+	return name.endsWith(WILDCARD) ? `${name.slice(0, -WILDCARD.length)}<ID>` : name;
 }
 
 function rowFor(name: StorageName): CookieTableRow {

@@ -1,4 +1,4 @@
-import { buildChoices, consent, type ConsentChoices } from "../../lib/privacy/consent";
+import { buildChoices, consent, type ConsentChoices, type ConsentSource } from "../../lib/privacy/consent";
 import { wireDialog } from "../../lib/dialog";
 import { required } from "../../lib/dom";
 import { CONSENT_CATEGORY_IDS } from "../../lib/privacy/registry";
@@ -7,12 +7,13 @@ const banner = required<HTMLElement>(document, "[data-consent-banner]");
 const status = required<HTMLElement>(document, "[data-consent-status]");
 const settings = required<HTMLDialogElement>(document, "[data-consent-settings]");
 const switches = new Map(CONSENT_CATEGORY_IDS.map((id) => [id, required<HTMLInputElement>(settings, `#cs-${id}`)]));
+const browserRefusalNote = required<HTMLElement>(settings, "[data-consent-browser-refusal]");
 
 function showBannerIfUndecided(): void {
 	banner.hidden = consent.decided();
 }
 
-function recordChoice(choices: ConsentChoices, source: "banner" | "settings"): void {
+function recordChoice(choices: ConsentChoices, source: ConsentSource): void {
 	status.textContent = "Your cookie choice is saved.";
 	consent.set(choices, source);
 }
@@ -22,8 +23,11 @@ function renderState(toggle: HTMLInputElement): void {
 }
 
 function openSettings(): void {
+	const refusedByBrowser = consent.refusedByBrowser();
+	browserRefusalNote.hidden = !refusedByBrowser;
 	for (const [id, toggle] of switches) {
 		toggle.checked = consent.get(id);
+		toggle.disabled = refusedByBrowser;
 		renderState(toggle);
 	}
 	settings.showModal();

@@ -2,6 +2,8 @@ import { CATEGORIES, CONSENT_CATEGORY_IDS, type CategoryId, type ConsentCategory
 import { version as REGISTRY_VERSION } from "./registry.lock.json";
 import { purgeCategory, rawStored } from "./raw-storage";
 
+const CONSENT_KEY = "privacy:consent";
+
 export const CONSENT_MAX_AGE = 6 * 30 * 24 * 60 * 60 * 1000;
 
 export type ConsentSource = "banner" | "settings";
@@ -49,9 +51,25 @@ function isCurrent(record: ConsentRecord): boolean {
 	return isFresh && majorVersion(record.registryVersion) >= majorVersion(REGISTRY_VERSION);
 }
 
+function readStoredRecord(): ConsentRecord | undefined {
+	const record = rawStored(CONSENT_KEY).readJSON();
+	return isConsentRecord(record) ? record : undefined;
+}
+
+let storedRecord: ConsentRecord | undefined;
+let isTrackingStorage = false;
+
+function ensureTrackingStorage(): void {
+	if (isTrackingStorage) return;
+	isTrackingStorage = true;
+	storedRecord = readStoredRecord();
+	window.addEventListener("storage", handleStorageEvent);
+	purgeUngrantedCategories();
+}
+
 function currentRecord(): ConsentRecord | undefined {
-	const record = rawStored("privacy:consent").readJSON();
-	return isConsentRecord(record) && isCurrent(record) ? record : undefined;
+	ensureTrackingStorage();
+	return storedRecord && isCurrent(storedRecord) ? storedRecord : undefined;
 }
 
 function gpcOptedOut(): boolean {
@@ -60,34 +78,51 @@ function gpcOptedOut(): boolean {
 
 function isGranted(category: CategoryId): boolean {
 	if (!CATEGORIES[category].requiresConsent) return true;
-	return currentRecord()?.choices[category as ConsentCategoryId] === true;
+	const record = currentRecord();
+	return !gpcOptedOut() && record?.choices[category as ConsentCategoryId] === true;
+}
+
+function purgeUngrantedCategories(): void {
+	CONSENT_CATEGORY_IDS.filter((category) => !isGranted(category)).forEach(purgeCategory);
+}
+
+function replaceStoredRecord(record: ConsentRecord | undefined): void {
+	const previouslyGranted = CONSENT_CATEGORY_IDS.filter(isGranted);
+	storedRecord = record;
+	listeners.forEach((listener) => listener());
+	purgeUngrantedCategories();
+	if (previouslyGranted.some((category) => !isGranted(category))) location.reload();
+}
+
+function handleStorageEvent(event: StorageEvent): void {
+	if (event.key !== null && event.key !== CONSENT_KEY) return;
+	replaceStoredRecord(readStoredRecord());
 }
 
 export const consent = {
 	get: isGranted,
+
+	refusedByBrowser: gpcOptedOut,
 
 	decided(): boolean {
 		return currentRecord() !== undefined || gpcOptedOut();
 	},
 
 	set(choices: ConsentChoices, source: ConsentSource): void {
-		const previouslyGranted = CONSENT_CATEGORY_IDS.filter(isGranted);
-		rawStored("privacy:consent").writeJSON({
+		const record: ConsentRecord = {
 			id: crypto.randomUUID(),
 			registryVersion: REGISTRY_VERSION,
 			choices,
 			decidedAt: new Date().toISOString(),
 			source,
-		});
-		listeners.forEach((listener) => listener());
-
-		const withdrawn = previouslyGranted.filter((category) => !isGranted(category));
-		if (withdrawn.length === 0) return;
-		withdrawn.forEach(purgeCategory);
-		location.reload();
+		};
+		ensureTrackingStorage();
+		rawStored(CONSENT_KEY).writeJSON(record);
+		replaceStoredRecord(record);
 	},
 
 	onChange(listener: () => void): () => void {
+		ensureTrackingStorage();
 		listeners.add(listener);
 		return () => listeners.delete(listener);
 	},
