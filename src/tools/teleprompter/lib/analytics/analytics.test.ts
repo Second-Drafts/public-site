@@ -168,10 +168,11 @@ describe("track", () => {
 		vi.doUnmock("./providers");
 		vi.doUnmock("../../../../lib/privacy/consent");
 		vi.unstubAllGlobals();
+		vi.unstubAllEnvs();
 	});
 
 	it("keeps primitives, drops objects and long strings, and adds device type", async () => {
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+		vi.stubEnv("DEV", false);
 		const { provider, calls } = fakeProvider();
 		const { initAnalytics, track } = await loadAnalytics([provider]);
 		initAnalytics();
@@ -192,7 +193,6 @@ describe("track", () => {
 		expect(props).not.toHaveProperty("leaked");
 		expect(props).not.toHaveProperty("fn");
 		expect(props.device_type).toBe("desktop");
-		warn.mockRestore();
 	});
 
 	it("keeps a 64-char string", async () => {
@@ -201,6 +201,31 @@ describe("track", () => {
 		initAnalytics();
 		track("tp_script_entered", { word_bucket: "0-50", source: "x".repeat(64) } as never);
 		expect(calls[0].props.source).toHaveLength(64);
+	});
+
+	it("drops properties that are not in the event's schema or have the wrong kind", async () => {
+		vi.stubEnv("DEV", false);
+		const { provider, calls } = fakeProvider();
+		const { initAnalytics, track } = await loadAnalytics([provider]);
+		initAnalytics();
+		track("tp_play", { word_bucket: "201-600", play_count: "three", script_text: "hello" } as never);
+		const props = calls[0].props;
+		expect(props.word_bucket).toBe("201-600");
+		expect(props).not.toHaveProperty("play_count");
+		expect(props).not.toHaveProperty("script_text");
+	});
+
+	describe("in dev, a dropped property is an error", () => {
+		it.each([
+			["a property outside the schema", { word_bucket: "0-50", play_count: 1, script_text: "hi" }, "script_text"],
+			["a string over the length cap", { word_bucket: "x".repeat(65), play_count: 1 }, "word_bucket"],
+			["a value that is not a primitive", { word_bucket: "0-50", play_count: { n: 1 } }, "play_count"],
+		])("throws for %s", async (_name, props, key) => {
+			const { provider } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([provider]);
+			initAnalytics();
+			expect(() => track("tp_play", props as never)).toThrow(key);
+		});
 	});
 
 	it("queues events before init and flushes them on init", async () => {

@@ -1,4 +1,5 @@
 import { consent } from "./consent";
+import { reportViolation } from "./violation";
 import { findStorageEntry, STORAGE, type CategoryId, type FirstPartyKey, type StorageArea } from "./registry";
 
 const COOKIE_DOMAIN = ".seconddrafts.com";
@@ -13,7 +14,7 @@ const webStorage: Record<WebStorageArea, () => Storage> = {
 function isPermitted(key: FirstPartyKey): boolean {
 	const { category } = STORAGE[key];
 	if (consent.get(category)) return true;
-	if (import.meta.env.DEV) console.warn(`[privacy] ${key} (${category}) skipped: consent not granted`);
+	reportViolation(`${key} (${category}) skipped: consent not granted`);
 	return false;
 }
 

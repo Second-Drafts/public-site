@@ -31,7 +31,20 @@ interface StorageDisclosure {
 	retention: Retention;
 }
 
+type PropKinds = Record<string, string[]>;
+
+interface AnalyticsDisclosure {
+	events: Record<string, PropKinds>;
+	context: PropKinds;
+}
+
+export interface AnalyticsSchema {
+	events: Record<string, Record<string, { kinds: readonly string[] }>>;
+	context: Record<string, { kinds: readonly string[] }>;
+}
+
 export interface Snapshot {
+	analytics: AnalyticsDisclosure;
 	categories: Record<string, CategoryDisclosure>;
 	vendors: Record<string, VendorDisclosure>;
 	storage: Record<string, StorageDisclosure>;
@@ -78,8 +91,13 @@ function mapRecord<S, T>(source: Record<string, S>, pick: (value: S) => T): Reco
 	return Object.fromEntries(sortedEntries(source).map(([key, value]) => [key, pick(value)]));
 }
 
-export function buildSnapshot(): Snapshot {
+function kindsOf(props: Record<string, { kinds: readonly string[] }>): PropKinds {
+	return mapRecord(props, ({ kinds }) => [...kinds]);
+}
+
+export function buildSnapshot(analytics: AnalyticsSchema): Snapshot {
 	return {
+		analytics: { events: mapRecord(analytics.events, kindsOf), context: kindsOf(analytics.context) },
 		categories: mapRecord(CATEGORIES, ({ requiresConsent, label, description }) => ({
 			requiresConsent,
 			label,
@@ -104,8 +122,8 @@ export function buildSnapshot(): Snapshot {
 	};
 }
 
-export function snapshotOf({ categories, vendors, storage }: Snapshot): Snapshot {
-	return { categories, vendors, storage };
+export function snapshotOf({ analytics, categories, vendors, storage }: Snapshot): Snapshot {
+	return { analytics, categories, vendors, storage };
 }
 
 function sameValue(a: unknown, b: unknown): boolean {
@@ -146,6 +164,14 @@ export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 		...describeChange("vendor", previous.vendors, next.vendors, {
 			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),
 			changed: (before, after) => (movedInto(before.category, after.category) ? "major" : "minor"),
+		}),
+		...describeChange("analytics event", previous.analytics.events, next.analytics.events, {
+			added: () => "minor",
+			changed: () => "minor",
+		}),
+		...describeChange("session context property", previous.analytics.context, next.analytics.context, {
+			added: () => "minor",
+			changed: () => "minor",
 		}),
 		...describeChange("storage", previous.storage, next.storage, {
 			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),

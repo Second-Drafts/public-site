@@ -1,4 +1,5 @@
 import { readConfig } from "./config";
+import { EVENT_SCHEMA } from "./events";
 import type {
 	AnalyticsProvider,
 	DeviceType,
@@ -11,6 +12,7 @@ import type {
 import { REGISTRY, type ProviderOptions } from "./providers";
 import { hasShareParam } from "../share-hash";
 import { consent } from "../../../../lib/privacy/consent";
+import { reportViolation } from "../../../../lib/privacy/violation";
 
 const MAX_STRING_LENGTH = 64;
 const MAX_QUEUE = 100;
@@ -69,21 +71,23 @@ export function trackPageView({ referrer, hash }: { referrer: string; hash: stri
 	track("tp_page_view", { referrer_domain: hostnameOf(referrer), landing_source: landingSource(referrer, hash) });
 }
 
-function sanitize(props: object): EventProps {
+function sanitize(event: EventName, props: object): EventProps {
+	const schema: Record<string, { kinds: readonly string[] }> = EVENT_SCHEMA[event];
 	const out: EventProps = {};
 	for (const [key, value] of Object.entries(props)) {
-		if (typeof value === "string") {
+		const allowedKinds = schema[key]?.kinds;
+		if (!allowedKinds) {
+			reportViolation(`"${key}" is not in the ${event} schema`);
+		} else if (typeof value === "string") {
 			if (value.length > MAX_STRING_LENGTH) {
-				if (import.meta.env.DEV) {
-					console.warn(`[tp] dropped "${key}": string longer than ${MAX_STRING_LENGTH} chars (content leak?)`);
-				}
+				reportViolation(`"${key}" is a string longer than ${MAX_STRING_LENGTH} chars (content leak?)`);
 				continue;
 			}
-			out[key] = value;
+			if (allowedKinds.includes("string")) out[key] = value;
 		} else if (typeof value === "boolean" || (typeof value === "number" && Number.isFinite(value))) {
-			out[key] = value;
-		} else if (import.meta.env.DEV) {
-			console.warn(`[tp] dropped "${key}": not a string, number or boolean`);
+			if (allowedKinds.includes(typeof value)) out[key] = value;
+		} else {
+			reportViolation(`"${key}" is not a string, number or boolean`);
 		}
 	}
 	return out;
@@ -154,7 +158,7 @@ export function initAnalytics(): void {
 }
 
 export function track<E extends EventName>(event: E, props: TpEvents[E]): void {
-	const clean = sanitize(props);
+	const clean = sanitize(event, props);
 	if (providersStarted) return dispatch(event, clean);
 	if (visitorDeclined() || queue.length >= MAX_QUEUE) return;
 	queue.push({ event, props: clean });

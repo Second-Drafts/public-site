@@ -1,5 +1,6 @@
 // Regenerates src/lib/privacy/registry.lock.json from the registry, proposing the version bump the changes require.
 // Usage: npm run privacy:lock [-- --bump=minor|major]  (a requested bump can raise the proposal, never lower it)
+import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../src/tools/teleprompter/lib/analytics/events.ts";
 import { readFileSync, writeFileSync } from "node:fs";
 import {
 	bumpVersion,
@@ -24,7 +25,7 @@ function requestedBump(): Bump {
 }
 
 const previous: Lock = JSON.parse(readFileSync(LOCK_PATH, "utf8"));
-const snapshot = buildSnapshot();
+const snapshot = buildSnapshot({ events: EVENT_SCHEMA, context: SESSION_CONTEXT_SCHEMA });
 const changes = diffSnapshots(snapshotOf(previous), snapshot);
 
 if (changes.length === 0) {

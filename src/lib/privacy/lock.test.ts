@@ -10,9 +10,14 @@ import {
 	snapshotOf,
 	type Snapshot,
 } from "./lock";
+import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../../tools/teleprompter/lib/analytics/events";
 
 function baseSnapshot(): Snapshot {
 	return {
+		analytics: {
+			events: { app_opened: { source: ["string"], count: ["number"] } },
+			context: { device_type: ["string"] },
+		},
 		categories: {
 			necessary: { requiresConsent: false, label: "Necessary", description: "d" },
 			analytics: { requiresConsent: true, label: "Analytics", description: "d" },
@@ -62,15 +67,19 @@ function bumpFor(change: (snapshot: Snapshot) => void): string {
 	return requiredBump(diffSnapshots(baseSnapshot(), next));
 }
 
+function snapshotOfRegistry() {
+	return buildSnapshot({ events: EVENT_SCHEMA, context: SESSION_CONTEXT_SCHEMA });
+}
+
 describe("registry lock", () => {
 	it("matches the registry", () => {
 		const message =
 			"The registry disagrees with registry.lock.json. Run `npm run privacy:lock` and review the cookie policy.";
-		expect(buildSnapshot(), message).toEqual(snapshotOf(lock as Snapshot));
+		expect(snapshotOfRegistry(), message).toEqual(snapshotOf(lock as Snapshot));
 	});
 
 	it("leaves out internal-only fields", () => {
-		const entry = Object.values(buildSnapshot().storage)[0];
+		const entry = Object.values(snapshotOfRegistry().storage)[0];
 		expect(entry).not.toHaveProperty("owner");
 	});
 });
@@ -130,6 +139,28 @@ describe("bump rules", () => {
 
 		it("for a removed consent-category key", () => {
 			expect(bumpFor((s) => delete s.storage._id)).toBe("minor");
+		});
+	});
+
+	describe("minor, for analytics disclosures", () => {
+		it("for a new event", () => {
+			expect(bumpFor((s) => (s.analytics.events.app_closed = {}))).toBe("minor");
+		});
+
+		it("for a new property", () => {
+			expect(bumpFor((s) => (s.analytics.events.app_opened.locale = ["string"]))).toBe("minor");
+		});
+
+		it("for a removed property", () => {
+			expect(bumpFor((s) => delete s.analytics.events.app_opened.count)).toBe("minor");
+		});
+
+		it("for a changed kind", () => {
+			expect(bumpFor((s) => (s.analytics.events.app_opened.count = ["string"]))).toBe("minor");
+		});
+
+		it("for a new session context property", () => {
+			expect(bumpFor((s) => (s.analytics.context.locale = ["string"]))).toBe("minor");
 		});
 	});
 

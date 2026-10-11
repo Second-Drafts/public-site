@@ -52,6 +52,7 @@ beforeEach(() => {
 afterEach(() => {
 	vi.unstubAllGlobals();
 	vi.restoreAllMocks();
+	vi.unstubAllEnvs();
 	vi.doUnmock("./consent");
 	vi.doUnmock("./registry");
 });
@@ -98,14 +99,20 @@ describe("necessary keys", () => {
 });
 
 describe("analytics keys", () => {
-	it("do nothing and warn naming the key and category without consent", async () => {
-		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+	it("do nothing without consent", async () => {
+		vi.stubEnv("DEV", false);
 		const { stored } = await loadStorage({ analyticsGranted: false });
 		const probe = stored("tp:analyticsProbe" as never);
 		probe.write("1");
 		expect(local.getItem("tp:analyticsProbe")).toBeNull();
 		expect(probe.read()).toBeNull();
-		expect(warn).toHaveBeenCalledWith(expect.stringContaining("tp:analyticsProbe (analytics)"));
+	});
+
+	it("throw in dev naming the key and category without consent", async () => {
+		const { stored } = await loadStorage({ analyticsGranted: false });
+		const probe = stored("tp:analyticsProbe" as never);
+		expect(() => probe.write("1")).toThrow("tp:analyticsProbe (analytics)");
+		expect(() => probe.read()).toThrow("tp:analyticsProbe (analytics)");
 	});
 
 	it("work once consent is granted", async () => {
