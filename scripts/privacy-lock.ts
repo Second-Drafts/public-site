@@ -2,9 +2,9 @@
 // Usage: npm run privacy:lock [-- --bump=minor|major] [-- --confirm=<code>]
 // A requested bump can raise the proposal, never lower it. Anything a person must check blocks the write until
 // they re-run with the code printed for that exact list, and the lock records how each change was reviewed.
-import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../src/tools/teleprompter/lib/analytics/events.ts";
+import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../src/lib/analytics/events.ts";
 import { createHash } from "node:crypto";
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import {
 	bumpVersion,
 	buildSnapshot,
@@ -18,6 +18,8 @@ import {
 import { reviewChanges, type ReviewItem } from "../src/lib/privacy/judgments.ts";
 
 const LOCK_PATH = new URL("../src/lib/privacy/registry.lock.json", import.meta.url);
+const ENV_PATH = new URL("../.env", import.meta.url);
+const ENV_READ_ATTEMPTS = 5;
 const BUMPS: Bump[] = ["patch", "minor", "major"];
 
 function flagValue(name: string): string | undefined {
@@ -29,6 +31,16 @@ function requestedBump(): Bump {
 	const value = (flagValue("bump") ?? "patch") as Bump;
 	if (!BUMPS.includes(value)) throw new Error(`--bump must be one of ${BUMPS.join(", ")}`);
 	return value;
+}
+
+// .env is a 1Password-mounted pipe, and a read of it sometimes comes back empty, so read it until the key appears.
+async function typesafeApiKey(): Promise<string | undefined> {
+	for (let attempt = 0; attempt < ENV_READ_ATTEMPTS && !process.env.TYPESAFE_API_KEY; attempt++) {
+		if (!existsSync(ENV_PATH)) break;
+		process.loadEnvFile(ENV_PATH);
+		if (!process.env.TYPESAFE_API_KEY) await new Promise((resolve) => setTimeout(resolve, 100));
+	}
+	return process.env.TYPESAFE_API_KEY;
 }
 
 function confirmationCode(items: ReviewItem[]): string {
@@ -71,12 +83,10 @@ console.log(
 	`Proposed ${proposed} bump${bump === proposed ? "" : `, raised to ${bump}`}: ${previous.version} → ${version}`,
 );
 
-if (!process.env.TYPESAFE_API_KEY)
-	console.warn(
-		"TYPESAFE_API_KEY isn't set, so Jev can't check these changes. If .env is a 1Password mount, re-run first: the first read after the mount or its values change can come back empty.",
-	);
+const apiKey = await typesafeApiKey();
+if (!apiKey) console.warn("TYPESAFE_API_KEY isn't in .env, so Jev can't check these changes.");
 
-const reviews = await reviewChanges(snapshotOf(previous), snapshot, process.env.TYPESAFE_API_KEY);
+const reviews = await reviewChanges(snapshotOf(previous), snapshot, apiKey);
 if (!confirmedByPerson(reviews)) process.exit(1);
 
 const lock: Lock = {
