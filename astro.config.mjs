@@ -3,6 +3,11 @@ import { defineConfig } from "astro/config";
 
 import sitemap from "@astrojs/sitemap";
 
+import { buildCsp } from "./src/lib/privacy/csp.ts";
+import { VENDORS } from "./src/lib/privacy/registry.ts";
+
+const { directives, scriptResources, styleResources } = buildCsp(VENDORS);
+
 /**
  *
  * @param {string} pageString
@@ -15,6 +20,9 @@ const isInternalPage = (pageString) => {
 // https://astro.build/config
 export default defineConfig({
 	site: "https://seconddrafts.com",
+	security: {
+		csp: { directives, scriptDirective: { resources: scriptResources }, styleDirective: { resources: styleResources } },
+	},
 	integrations: [
 		{
 			name: "dev-pages",
