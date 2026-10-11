@@ -1,6 +1,7 @@
-// Semantic checks on registry changes that code can't decide, answered by TypeSafe's Jev model.
-// The lock trusts `purposeId` and the analytics schema's property kinds; these questions check that trust.
-import type { Snapshot } from "./lock.ts";
+// Checks on registry changes that code can't decide. TypeSafe's Jev model answers the questions about wording;
+// a person confirms every vendor role, and anything Jev flags or couldn't check.
+// The lock trusts `purposeId`, vendor roles and the analytics schema's property kinds; these checks test that trust.
+import type { Review, Snapshot } from "./lock.ts";
 
 const ENDPOINT = "https://api.typesafe.ai/v1/systemone";
 const MODEL = "jev-latest";
@@ -17,26 +18,15 @@ interface NoulQuestion {
 	criteria: { true: string; false: string };
 }
 
-export interface Judgment {
-	subject: string;
-	state: Record<string, unknown>;
-	questions: Record<string, NoulQuestion>;
-}
-
-export interface Concern {
-	subject: string;
-	question: string;
-	probability: number;
-}
-
 const QUESTIONS = {
 	newUse: {
 		type: "noul",
 		instructions:
-			"`previousPurpose` and `newPurpose` describe the same item a website stores on a visitor's device, as written in its cookie policy. Does `newPurpose` describe using the data for something `previousPurpose` did not cover?",
+			"`previousText` and `newText` are two versions of what a website tells visitors about `describes`. Does `newText` describe using visitors' data for something `previousText` did not cover, or giving it to a company `previousText` did not name?",
 		criteria: {
-			true: "The new text adds a use, a recipient, or a kind of tracking: for example linking visits across devices or websites, advertising, profiling, or sharing with another company.",
-			false: "The new text rewords, clarifies, shortens or narrows the same use, or names the provider differently.",
+			true: "The new text adds a use, a recipient, or a kind of tracking, or drops a limit the previous text promised: for example a different or additional company receiving the data, linking visits across devices or websites, advertising, profiling, sharing with another company, or no longer promising to leave out what visitors write.",
+			false:
+				"The new text rewords, clarifies, shortens or narrows the same use by the same companies, including calling the same company by a different name.",
 		},
 	},
 	visitorText: {
@@ -67,11 +57,31 @@ const QUESTIONS = {
 	},
 } as const satisfies Record<string, NoulQuestion>;
 
-const QUESTION_DESCRIPTIONS: Record<keyof typeof QUESTIONS, string> = {
-	newUse: "describes a new use of the data, which needs a new purposeId and re-consent",
-	visitorText: "could carry text the visitor wrote",
-	identifiesPerson: "could identify a person",
+type QuestionId = keyof typeof QUESTIONS;
+
+const CONCERNS: Record<QuestionId, string> = {
+	newUse: "may describe a new use or recipient of the data, which needs re-consent",
+	visitorText: "may carry text the visitor wrote",
+	identifiesPerson: "may identify a person",
 };
+
+export interface Judgment {
+	subject: string;
+	state: Record<string, unknown>;
+	questions: QuestionId[];
+}
+
+// `toCheck` is what a person must confirm before the lock records `outcome`. It's empty when Jev found nothing.
+export interface ReviewItem extends Review {
+	toCheck: string[];
+}
+
+const STORED_ITEM = "an item it stores on a visitor's device, as written in its cookie policy";
+const CONSENT_CATEGORY = "a category of cookies, shown next to the switch visitors use to accept or refuse it";
+
+function rewording(subject: string, describes: string, previousText: string, newText: string): Judgment {
+	return { subject, state: { describes, previousText, newText }, questions: ["newUse"] };
+}
 
 function rewordedPurposes(previous: Snapshot, next: Snapshot): Judgment[] {
 	const previousPurposeText = new Map(
@@ -80,13 +90,15 @@ function rewordedPurposes(previous: Snapshot, next: Snapshot): Judgment[] {
 	return Object.entries(next.storage).flatMap(([name, { category, purposeId, purpose }]) => {
 		const previousPurpose = previousPurposeText.get(`${category}/${purposeId}`);
 		if (previousPurpose === undefined || previousPurpose === purpose) return [];
-		return [
-			{
-				subject: `storage ${name} (purposeId ${purposeId})`,
-				state: { purposeId, previousPurpose, newPurpose: purpose },
-				questions: { newUse: QUESTIONS.newUse },
-			},
-		];
+		return [rewording(`storage ${name} (purposeId ${purposeId})`, STORED_ITEM, previousPurpose, purpose)];
+	});
+}
+
+function rewordedCategoryDescriptions(previous: Snapshot, next: Snapshot): Judgment[] {
+	return Object.entries(next.categories).flatMap(([id, { description }]) => {
+		const previousDescription = previous.categories[id]?.description;
+		if (previousDescription === undefined || previousDescription === description) return [];
+		return [rewording(`category ${id} description`, CONSENT_CATEGORY, previousDescription, description)];
 	});
 }
 
@@ -99,7 +111,7 @@ function newOrRetypedProperties(previous: PropKinds | undefined, next: PropKinds
 			{
 				subject: `analytics property ${event}.${property}`,
 				state: { event, property, valueKinds },
-				questions: { visitorText: QUESTIONS.visitorText, identifiesPerson: QUESTIONS.identifiesPerson },
+				questions: ["visitorText", "identifiesPerson"],
 			},
 		];
 	});
@@ -110,25 +122,63 @@ export function judgmentsFor(previous: Snapshot, next: Snapshot): Judgment[] {
 		newOrRetypedProperties(previous.analytics.events[event], properties, event),
 	);
 	const contextProperties = newOrRetypedProperties(previous.analytics.context, next.analytics.context, "all events");
-	return [...rewordedPurposes(previous, next), ...eventProperties, ...contextProperties];
+	return [
+		...rewordedCategoryDescriptions(previous, next),
+		...rewordedPurposes(previous, next),
+		...eventProperties,
+		...contextProperties,
+	];
 }
 
-async function judge({ subject, state, questions }: Judgment, apiKey: string): Promise<Concern[]> {
+// A processor label lets the lock skip re-consent, so only a person reading the vendor's terms can vouch for it.
+function vendorRolesToConfirm(previous: Snapshot, next: Snapshot): ReviewItem[] {
+	return Object.entries(next.vendors).flatMap(([id, { name, category, role, privacyUrl }]) => {
+		const before = previous.vendors[id];
+		if (before?.name === name && before.role === role && before.category === category) return [];
+		return [
+			{
+				subject: `vendor ${id} (${name}) as ${role} in ${category}`,
+				outcome: "role-confirmed",
+				toCheck: [
+					`Confirm ${name} acts as a ${role} under its current terms (a processor uses the data only on our instructions): ${privacyUrl}`,
+				],
+			},
+		];
+	});
+}
+
+async function judge({ subject, state, questions }: Judgment, apiKey: string): Promise<ReviewItem> {
 	const response = await fetch(ENDPOINT, {
 		method: "POST",
 		headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-		body: JSON.stringify({ model: MODEL, state, questions }),
+		body: JSON.stringify({
+			model: MODEL,
+			state,
+			questions: Object.fromEntries(questions.map((id) => [id, QUESTIONS[id]])),
+		}),
 	});
 	if (!response.ok) throw new Error(`Jev request for ${subject} failed: ${response.status} ${await response.text()}`);
-	const { answers } = (await response.json()) as { answers: Record<string, { noul: number }> };
-	return Object.entries(answers).map(([id, { noul }]) => ({
-		subject,
-		question: QUESTION_DESCRIPTIONS[id as keyof typeof QUESTIONS],
-		probability: noul,
-	}));
+	const { answers } = (await response.json()) as { answers: Record<QuestionId, { noul: number }> };
+	const concerns = questions
+		.filter((id) => answers[id].noul >= FLAG_AT)
+		.map((id) => `Jev: ${CONCERNS[id]} (${answers[id].noul.toFixed(2)})`);
+	return { subject, outcome: concerns.length === 0 ? "clear" : "accepted", toCheck: concerns };
 }
 
-export async function concernsAbout(judgments: Judgment[], apiKey: string): Promise<Concern[]> {
-	const answers = await Promise.all(judgments.map((judgment) => judge(judgment, apiKey)));
-	return answers.flat().filter(({ probability }) => probability >= FLAG_AT);
+function checkByHand({ subject, questions }: Judgment): ReviewItem {
+	return {
+		subject,
+		outcome: "checked-by-hand",
+		toCheck: questions.map((id) => `Jev didn't run: check whether it ${CONCERNS[id]}`),
+	};
+}
+
+export async function reviewChanges(
+	previous: Snapshot,
+	next: Snapshot,
+	apiKey: string | undefined,
+): Promise<ReviewItem[]> {
+	const review = (judgment: Judgment) => (apiKey ? judge(judgment, apiKey) : checkByHand(judgment));
+	const judged = await Promise.all(judgmentsFor(previous, next).map(review));
+	return [...judged, ...vendorRolesToConfirm(previous, next)];
 }

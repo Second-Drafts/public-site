@@ -120,6 +120,14 @@ describe("bump rules", () => {
 			expect(bumpFor((s) => (s.storage._id.retention = "until-cleared"))).toBe("major");
 		});
 
+		it("for a key kept longer than before, even within another key's retention for the purpose", () => {
+			const previous = baseSnapshot();
+			previous.storage._id_long = { ...previous.storage._id, retention: { months: 24 } };
+			const next = structuredClone(previous);
+			next.storage._id.retention = { months: 18 };
+			expect(requiredBump(diffSnapshots(previous, next))).toBe("major");
+		});
+
 		it("for a replacement processor that keeps data longer", () => {
 			expect(bumpFor((s) => swapStatsFor(s, { months: 24 }))).toBe("major");
 		});

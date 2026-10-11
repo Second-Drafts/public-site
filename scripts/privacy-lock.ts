@@ -1,7 +1,9 @@
 // Regenerates src/lib/privacy/registry.lock.json from the registry, proposing the version bump the changes require.
-// Usage: npm run privacy:lock [-- --bump=minor|major] [-- --accept-concerns]
-// A requested bump can raise the proposal, never lower it. Concerns Jev raises block the write until accepted.
+// Usage: npm run privacy:lock [-- --bump=minor|major] [-- --confirm=<code>]
+// A requested bump can raise the proposal, never lower it. Anything a person must check blocks the write until
+// they re-run with the code printed for that exact list, and the lock records how each change was reviewed.
 import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../src/tools/teleprompter/lib/analytics/events.ts";
+import { createHash } from "node:crypto";
 import { readFileSync, writeFileSync } from "node:fs";
 import {
 	bumpVersion,
@@ -12,39 +14,42 @@ import {
 	snapshotOf,
 	type Bump,
 	type Lock,
-	type Snapshot,
 } from "../src/lib/privacy/lock.ts";
-import { concernsAbout, judgmentsFor } from "../src/lib/privacy/judgments.ts";
+import { reviewChanges, type ReviewItem } from "../src/lib/privacy/judgments.ts";
 
 const LOCK_PATH = new URL("../src/lib/privacy/registry.lock.json", import.meta.url);
 const BUMPS: Bump[] = ["patch", "minor", "major"];
 
+function flagValue(name: string): string | undefined {
+	const prefix = `--${name}=`;
+	return process.argv.find((arg) => arg.startsWith(prefix))?.slice(prefix.length);
+}
+
 function requestedBump(): Bump {
-	const flag = process.argv.find((arg) => arg.startsWith("--bump="));
-	if (!flag) return "patch";
-	const value = flag.slice("--bump=".length) as Bump;
+	const value = (flagValue("bump") ?? "patch") as Bump;
 	if (!BUMPS.includes(value)) throw new Error(`--bump must be one of ${BUMPS.join(", ")}`);
 	return value;
 }
 
-async function reviewWithJev(previous: Snapshot, next: Snapshot): Promise<boolean> {
-	const judgments = judgmentsFor(previous, next);
-	if (judgments.length === 0) return true;
+function confirmationCode(items: ReviewItem[]): string {
+	const listed = items.map(({ subject, outcome }) => `${subject}\t${outcome}`).join("\n");
+	return createHash("sha256").update(listed).digest("hex").slice(0, 8);
+}
 
-	const apiKey = process.env.TYPESAFE_API_KEY;
-	if (!apiKey) {
-		console.warn("TYPESAFE_API_KEY is not set, so Jev didn't check these. Check them yourself:");
-		for (const { subject } of judgments) console.warn(`  - ${subject}`);
-		return true;
+function confirmedByPerson(reviews: ReviewItem[]): boolean {
+	const forPerson = reviews.filter(({ toCheck }) => toCheck.length > 0);
+	if (forPerson.length === 0) return true;
+	const code = confirmationCode(forPerson);
+	if (flagValue("confirm") === code) return true;
+
+	console.warn("A person needs to check these before the lock is written:");
+	for (const { subject, toCheck } of forPerson) {
+		console.warn(`  - ${subject}`);
+		for (const line of toCheck) console.warn(`      ${line}`);
 	}
-
-	const concerns = await concernsAbout(judgments, apiKey);
-	if (concerns.length === 0) return true;
-	console.warn("Jev thinks these changes may need more than a lock update:");
-	for (const { subject, question, probability } of concerns)
-		console.warn(`  - ${subject} ${question} (${probability.toFixed(2)})`);
-	if (process.argv.includes("--accept-concerns")) return true;
-	console.warn("Fix them, or re-run with -- --accept-concerns once you've checked them. The lock was not written.");
+	console.warn(
+		`Fix them, or once you've checked each one, re-run with -- --confirm=${code}. The lock was not written.`,
+	);
 	return false;
 }
 
@@ -57,8 +62,6 @@ if (changes.length === 0) {
 	process.exit(0);
 }
 
-if (!(await reviewWithJev(snapshotOf(previous), snapshot))) process.exit(1);
-
 const proposed = requiredBump(changes);
 const bump = maxBump(proposed, requestedBump());
 const version = bumpVersion(previous.version, bump);
@@ -68,6 +71,14 @@ console.log(
 	`Proposed ${proposed} bump${bump === proposed ? "" : `, raised to ${bump}`}: ${previous.version} → ${version}`,
 );
 
-const lock: Lock = { version, updated: new Date().toISOString().slice(0, 10), ...snapshot };
+const reviews = await reviewChanges(snapshotOf(previous), snapshot, process.env.TYPESAFE_API_KEY);
+if (!confirmedByPerson(reviews)) process.exit(1);
+
+const lock: Lock = {
+	version,
+	updated: new Date().toISOString().slice(0, 10),
+	reviews: reviews.map(({ subject, outcome }) => ({ subject, outcome })),
+	...snapshot,
+};
 writeFileSync(LOCK_PATH, `${JSON.stringify(lock, null, "\t")}\n`);
 console.log("Wrote registry.lock.json. Review the cookie policy before committing.");

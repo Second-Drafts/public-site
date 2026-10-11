@@ -50,9 +50,20 @@ export interface Snapshot {
 	storage: Record<string, StorageDisclosure>;
 }
 
+// `clear`: Jev found nothing. `accepted`: Jev raised a concern a person accepted. `checked-by-hand`: Jev couldn't
+// run, so a person checked. `role-confirmed`: a person checked a vendor's role against its current terms.
+export type ReviewOutcome = "clear" | "accepted" | "checked-by-hand" | "role-confirmed";
+
+export interface Review {
+	subject: string;
+	outcome: ReviewOutcome;
+}
+
+// `reviews` covers only the changes in this version; git history holds earlier ones.
 export interface Lock extends Snapshot {
 	version: string;
 	updated: string;
+	reviews: Review[];
 }
 
 const BUMP_ORDER: Bump[] = ["patch", "minor", "major"];
@@ -180,6 +191,8 @@ export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 		const consented = consentedRetention.get(purposeKey(category, purposeId));
 		return consented === undefined || compareRetention(retention, consented) > 0;
 	};
+	const keptLongerThanBefore = (before: StorageDisclosure, after: StorageDisclosure) =>
+		requiresConsent(after.category) && compareRetention(after.retention, before.retention) > 0;
 
 	return [
 		...describeChange("category", previous.categories, next.categories, {
@@ -194,7 +207,7 @@ export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 		...describeChange("session context property", previous.analytics.context, next.analytics.context),
 		...describeChange("storage", previous.storage, next.storage, {
 			added: (entry) => (exceedsConsent(entry) ? "major" : "minor"),
-			changed: (_before, after) => (exceedsConsent(after) ? "major" : "minor"),
+			changed: (before, after) => (exceedsConsent(after) || keptLongerThanBefore(before, after) ? "major" : "minor"),
 		}),
 	];
 }
