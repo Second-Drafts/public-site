@@ -155,7 +155,7 @@ export function initAnalytics(): void {
 
 export function track<E extends EventName>(event: E, props: TpEvents[E]): void {
 	const clean = sanitize(props);
-	if (providersStarted) dispatch(event, clean);
-	else if (visitorDeclined()) return;
-	else if (queue.length < MAX_QUEUE) queue.push({ event, props: clean });
+	if (providersStarted) return dispatch(event, clean);
+	if (visitorDeclined() || queue.length >= MAX_QUEUE) return;
+	queue.push({ event, props: clean });
 }

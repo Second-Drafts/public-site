@@ -1,36 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { fakeCookieJar, fakeWebStorage } from "./test-fakes";
 import { CONSENT_MAX_AGE, type ConsentRecord } from "./consent";
 
 const CONSENT_KEY = "privacy:consent";
 const GRANT = { analytics: true };
 const DENY = { analytics: false };
-
-function fakeWebStorage(): Storage {
-	const items = new Map<string, string>();
-	return {
-		get length() {
-			return items.size;
-		},
-		key: (index) => Array.from(items.keys())[index] ?? null,
-		getItem: (name) => items.get(name) ?? null,
-		setItem: (name, value) => void items.set(name, value),
-		removeItem: (name) => void items.delete(name),
-		clear: () => items.clear(),
-	};
-}
-
-function fakeCookieJar(initialNames: string[]) {
-	let names = [...initialNames];
-	return {
-		get cookie() {
-			return names.map((name) => `${name}=1`).join("; ");
-		},
-		set cookie(assignment: string) {
-			const [pair, ...attributes] = assignment.split(";").map((part) => part.trim());
-			if (attributes.includes("Max-Age=0")) names = names.filter((name) => name !== pair.split("=")[0]);
-		},
-	};
-}
 
 function recordFrom(overrides: Partial<ConsentRecord> = {}): ConsentRecord {
 	return {
@@ -64,7 +38,11 @@ async function loadConsent({ gpc = false } = {}) {
 beforeEach(() => {
 	local = fakeWebStorage();
 	reload = vi.fn();
-	cookies = fakeCookieJar(["_ga", "_ga_ABC123", "unrelated"]);
+	cookies = fakeCookieJar([
+		{ name: "_ga", value: "1" },
+		{ name: "_ga_ABC123", value: "1" },
+		{ name: "unrelated", value: "1" },
+	]);
 	vi.stubGlobal("localStorage", local);
 	vi.stubGlobal("sessionStorage", fakeWebStorage());
 	vi.stubGlobal("document", cookies);

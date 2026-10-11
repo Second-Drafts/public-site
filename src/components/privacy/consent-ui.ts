@@ -1,9 +1,9 @@
-import { consent, type ConsentChoices } from "../../lib/privacy/consent";
+import { buildChoices, consent, type ConsentChoices } from "../../lib/privacy/consent";
 import { wireDialog } from "../../lib/dialog";
-import { consentSettingsModel } from "./consentSettingsModel";
+import { CONSENT_CATEGORY_IDS } from "../../lib/privacy/registry";
 
-function required<T extends Element>(selector: string): T {
-	const element = document.querySelector<T>(selector);
+function required<T extends Element>(selector: string, root: ParentNode = document): T {
+	const element = root.querySelector<T>(selector);
 	if (!element) throw new Error(`Missing ${selector}`);
 	return element;
 }
@@ -11,11 +11,7 @@ function required<T extends Element>(selector: string): T {
 const banner = required<HTMLElement>("[data-consent-banner]");
 const status = required<HTMLElement>("[data-consent-status]");
 const settings = required<HTMLDialogElement>("[data-consent-settings]");
-const switches = Array.from(settings.querySelectorAll<HTMLInputElement>("[data-consent-category]"));
-
-function choicesFrom(isGranted: (id: string) => boolean): ConsentChoices {
-	return Object.fromEntries(consentSettingsModel().map(({ id }) => [id, isGranted(id)])) as ConsentChoices;
-}
+const switches = new Map(CONSENT_CATEGORY_IDS.map((id) => [id, required<HTMLInputElement>(`#cs-${id}`, settings)]));
 
 function showBannerIfUndecided(): void {
 	banner.hidden = consent.decided();
@@ -27,43 +23,41 @@ function recordChoice(choices: ConsentChoices, source: "banner" | "settings"): v
 }
 
 function renderState(toggle: HTMLInputElement): void {
-	const state = toggle.parentElement?.querySelector("[data-consent-state]");
-	if (state) state.textContent = toggle.checked ? "On" : "Off";
+	required("[data-consent-state]", toggle.parentElement!).textContent = toggle.checked ? "On" : "Off";
 }
 
 function openSettings(): void {
-	for (const toggle of switches) {
-		toggle.checked = consent.get(toggle.dataset.consentCategory as Parameters<typeof consent.get>[0]);
+	for (const [id, toggle] of switches) {
+		toggle.checked = consent.get(id);
 		renderState(toggle);
 	}
 	settings.showModal();
 }
 
 function saveSettings(): void {
-	const granted = new Set(switches.filter((toggle) => toggle.checked).map((toggle) => toggle.dataset.consentCategory));
 	settings.close();
 	recordChoice(
-		choicesFrom((id) => granted.has(id)),
+		buildChoices((id) => switches.get(id)!.checked),
 		"settings",
 	);
 }
 
 wireDialog(settings);
-for (const toggle of switches) toggle.addEventListener("change", () => renderState(toggle));
-banner.querySelector("[data-consent-accept]")?.addEventListener("click", () =>
+for (const toggle of switches.values()) toggle.addEventListener("change", () => renderState(toggle));
+required("[data-consent-accept]", banner).addEventListener("click", () =>
 	recordChoice(
-		choicesFrom(() => true),
+		buildChoices(() => true),
 		"banner",
 	),
 );
-banner.querySelector("[data-consent-reject]")?.addEventListener("click", () =>
+required("[data-consent-reject]", banner).addEventListener("click", () =>
 	recordChoice(
-		choicesFrom(() => false),
+		buildChoices(() => false),
 		"banner",
 	),
 );
-settings.querySelector("[data-consent-save]")?.addEventListener("click", saveSettings);
-settings.querySelector("[data-consent-cancel]")?.addEventListener("click", () => settings.close());
+required("[data-consent-save]", settings).addEventListener("click", saveSettings);
+required("[data-consent-cancel]", settings).addEventListener("click", () => settings.close());
 document.addEventListener("click", (event) => {
 	if (event.target instanceof Element && event.target.closest("[data-open-cookie-settings]")) openSettings();
 });

@@ -29,6 +29,10 @@ export type ConsentCategoryId = {
 	[C in CategoryId]: (typeof CATEGORIES)[C]["requiresConsent"] extends true ? C : never;
 }[CategoryId];
 
+export const CONSENT_CATEGORY_IDS = (Object.keys(CATEGORIES) as CategoryId[]).filter(
+	(id): id is ConsentCategoryId => CATEGORIES[id].requiresConsent,
+);
+
 interface Vendor {
 	name: string;
 	category: CategoryId;

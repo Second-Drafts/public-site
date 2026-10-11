@@ -1,4 +1,4 @@
-import { CATEGORIES, type CategoryId, type ConsentCategoryId } from "./registry";
+import { CATEGORIES, CONSENT_CATEGORY_IDS, type CategoryId, type ConsentCategoryId } from "./registry";
 import { purgeCategory, stored } from "./storage";
 
 export const CONSENT_MAX_AGE = 6 * 30 * 24 * 60 * 60 * 1000;
@@ -16,9 +16,15 @@ export interface ConsentRecord {
 	source: ConsentSource;
 }
 
-const consentCategoryIds = (Object.keys(CATEGORIES) as CategoryId[]).filter(
-	(id): id is ConsentCategoryId => CATEGORIES[id].requiresConsent,
-);
+declare global {
+	interface Navigator {
+		globalPrivacyControl?: boolean;
+	}
+}
+
+export function buildChoices(isGranted: (category: ConsentCategoryId) => boolean): ConsentChoices {
+	return Object.fromEntries(CONSENT_CATEGORY_IDS.map((id) => [id, isGranted(id)])) as ConsentChoices;
+}
 
 const listeners = new Set<() => void>();
 
@@ -54,16 +60,12 @@ function recordConsent(record: ConsentRecord): void {
 }
 
 function gpcOptedOut(): boolean {
-	return (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl === true;
+	return navigator.globalPrivacyControl === true;
 }
 
 function isGranted(category: CategoryId): boolean {
 	if (!CATEGORIES[category].requiresConsent) return true;
 	return currentRecord()?.choices[category as ConsentCategoryId] === true;
-}
-
-function withdrawnSince(previouslyGranted: ConsentCategoryId[]): ConsentCategoryId[] {
-	return previouslyGranted.filter((category) => !isGranted(category));
 }
 
 export const consent = {
@@ -74,7 +76,7 @@ export const consent = {
 	},
 
 	set(choices: ConsentChoices, source: ConsentSource): void {
-		const previouslyGranted = consentCategoryIds.filter(isGranted);
+		const previouslyGranted = CONSENT_CATEGORY_IDS.filter(isGranted);
 		recordConsent({
 			id: crypto.randomUUID(),
 			registryVersion: REGISTRY_VERSION,
@@ -84,7 +86,7 @@ export const consent = {
 		});
 		listeners.forEach((listener) => listener());
 
-		const withdrawn = withdrawnSince(previouslyGranted);
+		const withdrawn = previouslyGranted.filter((category) => !isGranted(category));
 		if (withdrawn.length === 0) return;
 		withdrawn.forEach(purgeCategory);
 		location.reload();
