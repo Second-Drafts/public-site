@@ -24,7 +24,7 @@
 		"lint": "oxlint src",
 		"format": "oxfmt",
 		"format:check": "oxfmt --check",
-		"privacy:lock": "op run --env-file=.env -- node scripts/privacy-lock.ts",
+		"privacy:lock": "node --env-file-if-exists=.env scripts/privacy-lock.ts",
 		"privacy:scan": "node scripts/privacy-scan.ts",
 		"privacy:records": "node scripts/privacy-records-check.ts",
 		"spacing:check": "node scripts/spacing-check.ts",

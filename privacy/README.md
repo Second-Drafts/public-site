@@ -17,7 +17,7 @@ A test (`src/lib/privacy/records.test.ts`) fails if a vendor in the registry has
 
 If anything needs a person (a Jev concern, a vendor role, or a question Jev couldn't answer), the script lists it with links, does not write the lock, and prints a code. Once you've checked each item, re-run with `-- --confirm=<code>`. The code covers exactly the items listed, so a different list needs a new code. The lock records how each change was reviewed in its `reviews` list: `clear` (Jev found nothing), `accepted` (Jev raised a concern and you accepted it), `checked-by-hand` (Jev couldn't run and you checked it) or `role-confirmed` (you checked a vendor's role). That list shows up in the commit diff. `-- --bump=minor|major` can still raise the proposed bump.
 
-The script reads `TYPESAFE_API_KEY` through `op run` from a gitignored `.env` holding a 1Password reference: `TYPESAFE_API_KEY=op://<vault>/<item>/<field>`. Without that `.env` or the 1Password CLI, run `node scripts/privacy-lock.ts` directly. Every Jev question then falls to you, and confirming records `checked-by-hand`.
+The script reads `TYPESAFE_API_KEY` from `.env`, which is a 1Password Developer Environment (`second-drafts-public-site`) mounted into the repo: 1Password serves it from the unlocked desktop app whenever it's read, so there's no `op` login. To set it up, mount that Environment at this repo's `.env` in the 1Password app, from the Environment's Destinations tab. Without the mount, the script still runs, every Jev question falls to you, and confirming records `checked-by-hand`.
 
 ## Deploys
 
