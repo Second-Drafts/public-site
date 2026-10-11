@@ -1,7 +1,7 @@
-import { spawn, type ChildProcess } from "node:child_process";
+import { execFileSync, spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
-import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
+import { chromium, type Browser, type BrowserContext, type ConsoleMessage, type Page } from "playwright";
 import lzString from "lz-string";
 
 import lock from "../src/lib/privacy/registry.lock.json" with { type: "json" };
@@ -9,6 +9,9 @@ import {
 	SCAN_STATES,
 	findSentinelLeaks,
 	findViolations,
+	pageUrlExposure,
+	requestExposures,
+	type Exposure,
 	type Observation,
 	type RecordedRequest,
 	type ScanState,
@@ -94,6 +97,7 @@ function sitemapPaths(): string[] {
 }
 
 const ENCODED_SHARE_PAYLOAD = compressToEncodedURIComponent(JSON.stringify({ v: 1, t: SENTINEL, s: {} }));
+const SENTINEL_FORMS = [SENTINEL, ENCODED_SHARE_PAYLOAD, compressToEncodedURIComponent(SENTINEL)];
 
 function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
@@ -177,29 +181,113 @@ async function scanPage(
 	return { report: { storage, origins }, violations };
 }
 
-async function checkShareLinkDoesNotLeave(browser: Browser, origin: string): Promise<string[]> {
-	const context = await newContext(browser, "accepted");
-	const { requests } = trackRequests(context);
-	const page = await context.newPage();
-	await page.goto(origin + shareLink());
-	await page.click("[data-consent-accept]");
+interface WritingTool {
+	name: string;
+	path: string;
+	write: (page: Page) => Promise<void>;
+}
+
+async function playSharedScript(page: Page): Promise<void> {
 	await page.waitForFunction(
 		(sentinel) =>
 			document.body.innerHTML.includes(sentinel) ||
 			[...document.querySelectorAll("textarea")].some((area) => area.value.includes(sentinel)),
 		SENTINEL,
 	);
+	await playScript(page);
+}
+
+async function typeAndPlayScript(page: Page): Promise<void> {
+	await page.fill('[data-tpe="script"]', SENTINEL);
+	await page.click('[data-tpe="share"]');
+	await playScript(page);
+}
+
+async function playScript(page: Page): Promise<void> {
 	await page.click('[data-tpe="start"]');
 	await page.click('[data-tpp="play"]');
 	await page.click('[data-tpp="settings"]');
 	await page.locator('[data-setting="font"]').last().check({ force: true });
+}
+
+async function countWords(page: Page): Promise<void> {
+	await page.fill("#input", SENTINEL);
+	await page.check("#show-target");
+	await page.selectOption("#unit", "characters");
+	await page.selectOption("#style", "goal");
+}
+
+const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
+	{ name: "teleprompter share link", path: shareLink(), write: playSharedScript },
+	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
+	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
+];
+
+const REPORT_TITLES = `
+const reportedTitles = new Set();
+const report = (title) => {
+	if (reportedTitles.has(title)) return;
+	reportedTitles.add(title);
+	window.__scanReportTitle(title);
+};
+const isTitle = (node) => node?.nodeName.toLowerCase() === "title";
+new MutationObserver((records) => {
+	for (const record of records) {
+		const titleNodes = [...record.addedNodes].filter(isTitle);
+		if (isTitle(record.target) || isTitle(record.target.parentNode)) titleNodes.push(record.target, ...record.addedNodes);
+		for (const node of titleNodes) report(node.textContent ?? "");
+	}
+	report(document.title);
+}).observe(document, { subtree: true, childList: true, characterData: true });
+`;
+
+async function consoleExposure(message: ConsoleMessage): Promise<Exposure> {
+	const values = await Promise.all(message.args().map((arg) => arg.jsonValue().catch(() => "")));
+	return { channel: `console.${message.type()}`, text: [message.text(), JSON.stringify(values)].join("\n") };
+}
+
+async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exposure[]>> {
+	const exposures: Exposure[] = [];
+	const pending: Promise<Exposure>[] = [];
+	await context.exposeBinding("__scanReportTitle", (_source, title: string) => {
+		exposures.push({ channel: "document title", text: title });
+	});
+	await context.addInitScript(REPORT_TITLES);
+	context.on("request", (request) => {
+		exposures.push(...requestExposures({ url: request.url(), body: request.postData() ?? "" }));
+	});
+	context.on("page", (page) => {
+		page.on("framenavigated", (frame) => exposures.push(pageUrlExposure(frame.url())));
+		page.on("console", (message) => pending.push(consoleExposure(message)));
+		page.on("pageerror", (error) => exposures.push({ channel: "page error", text: error.stack ?? error.message }));
+	});
+	return async () => [...exposures, ...(await Promise.all(pending))];
+}
+
+async function checkToolDoesNotLeak(browser: Browser, origin: string, tool: WritingTool): Promise<string[]> {
+	const context = await newContext(browser, "accepted");
+	const collectExposures = await watchForLeaks(context);
+	const page = await context.newPage();
+	await page.goto(origin + tool.path);
+	await page.click("[data-consent-accept]");
+	await tool.write(page);
 	await settle(page);
+	const exposures = await collectExposures();
 	await context.close();
-	return findSentinelLeaks(requests, [SENTINEL, ENCODED_SHARE_PAYLOAD]).map((leak) => `[share link] ${leak}`);
+	return findSentinelLeaks(exposures, SENTINEL_FORMS).map((leak) => `[${tool.name}] ${leak}`);
+}
+
+function sourceRevision(): { sourceCommit: string; sourceDirty: boolean } {
+	const git = (...args: string[]) => execFileSync("git", args, { encoding: "utf8" }).trim();
+	return {
+		sourceCommit: git("rev-parse", "HEAD"),
+		sourceDirty: git("status", "--porcelain", "--", ".", `:!${REPORT_PATH}`) !== "",
+	};
 }
 
 async function main(): Promise<void> {
 	if (!existsSync(`${DIST_DIR}/sitemap-0.xml`)) throw new Error(`No build in ${DIST_DIR}/. Run npm run build first.`);
+	const revision = sourceRevision();
 	const preview = await startPreview();
 	const browser = await chromium.launch();
 	const paths = [...sitemapPaths(), shareLink()];
@@ -215,14 +303,16 @@ async function main(): Promise<void> {
 				violations.push(...result.violations);
 			}
 		}
-		violations.push(...(await checkShareLinkDoesNotLeave(browser, preview.origin)));
+		for (const tool of TOOLS_VISITORS_WRITE_IN) {
+			violations.push(...(await checkToolDoesNotLeak(browser, preview.origin, tool)));
+		}
 	} finally {
 		await browser.close();
 		preview.stop();
 	}
 
 	mkdirSync("privacy", { recursive: true });
-	writeFileSync(REPORT_PATH, JSON.stringify({ registryVersion: lock.version, states }, null, "\t") + "\n");
+	writeFileSync(REPORT_PATH, JSON.stringify({ registryVersion: lock.version, ...revision, states }, null, "\t") + "\n");
 
 	if (violations.length > 0) {
 		console.error(`Privacy scan failed:\n${[...new Set(violations)].map((line) => `  - ${line}`).join("\n")}`);

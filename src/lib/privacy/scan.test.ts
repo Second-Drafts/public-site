@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { findSentinelLeaks, findViolations, type Observation } from "./scan";
+import { findSentinelLeaks, findViolations, pageUrlExposure, requestExposures, type Observation } from "./scan";
 
 const SELF = "http://localhost:4399";
 
@@ -80,16 +80,70 @@ describe("CSP violations", () => {
 });
 
 describe("findSentinelLeaks", () => {
-	it("finds a sentinel in a URL or a body", () => {
-		const requests = [
-			{ url: "https://a.test/collect?x=SENTINEL", body: "" },
-			{ url: "https://b.test/collect", body: "text=SENTINEL" },
-			{ url: "https://c.test/ok", body: "fine" },
-		];
-		expect(findSentinelLeaks(requests, ["SENTINEL"])).toHaveLength(2);
+	const leaksIn = (...requests: { url: string; body: string }[]) =>
+		findSentinelLeaks(requests.flatMap(requestExposures), ["SENTINEL"]);
+
+	it("finds a sentinel in a request URL or body", () => {
+		expect(
+			leaksIn(
+				{ url: "https://a.test/collect?x=SENTINEL", body: "" },
+				{ url: "https://b.test/collect", body: "text=SENTINEL" },
+				{ url: "https://c.test/ok", body: "fine" },
+			),
+		).toEqual([
+			'request to https://a.test/collect contains "SENTINEL"',
+			'request body sent to https://b.test/collect contains "SENTINEL"',
+		]);
 	});
 
 	it("finds nothing when no request carries it", () => {
-		expect(findSentinelLeaks([{ url: "https://c.test/ok", body: "" }], ["SENTINEL"])).toEqual([]);
+		expect(leaksIn({ url: "https://c.test/ok", body: "" })).toEqual([]);
+	});
+
+	it("finds a percent-encoded sentinel", () => {
+		const sentinel = "a+b$c";
+		const exposures = requestExposures({ url: `https://a.test/?q=${encodeURIComponent(sentinel)}`, body: "" });
+		expect(findSentinelLeaks(exposures, [sentinel])).toEqual(['request to https://a.test/ contains "a+b$c"']);
+	});
+
+	it("survives text that is not valid percent-encoding", () => {
+		expect(leaksIn({ url: "https://a.test/?q=%E0%A4%A", body: "100% SENTINEL" })).toEqual([
+			'request body sent to https://a.test/ contains "SENTINEL"',
+		]);
+	});
+
+	it("names the analytics page parameter that carries it, in the query or a batched body", () => {
+		expect(
+			leaksIn(
+				{ url: "https://region1.google-analytics.com/g/collect?v=2&dt=SENTINEL", body: "" },
+				{
+					url: "https://region1.google-analytics.com/g/collect?v=2",
+					body: "en=a&dl=x\nen=b&dr=https%3A%2F%2Fr.test%2F%3Fq%3DSENTINEL",
+				},
+			),
+		).toEqual([
+			'request to https://region1.google-analytics.com/g/collect contains "SENTINEL"',
+			'analytics parameter dt sent to https://region1.google-analytics.com/g/collect contains "SENTINEL"',
+			'request body sent to https://region1.google-analytics.com/g/collect contains "SENTINEL"',
+			'analytics parameter dr sent to https://region1.google-analytics.com/g/collect contains "SENTINEL"',
+		]);
+	});
+
+	it("ignores the page URL fragment but not its path or query", () => {
+		const urls = ["https://a.test/tool/#s=SENTINEL", "https://a.test/tool/?s=SENTINEL", "https://a.test/SENTINEL/"];
+		const leaks = urls.map((url) => findSentinelLeaks([pageUrlExposure(url)], ["SENTINEL"]));
+		expect(leaks).toEqual([[], ['page URL contains "SENTINEL"'], ['page URL contains "SENTINEL"']]);
+	});
+
+	it("checks console messages, page errors and titles alike", () => {
+		const exposures = [
+			{ channel: "console.log", text: "typed SENTINEL" },
+			{ channel: "page error", text: "TypeError: SENTINEL is not a function" },
+			{ channel: "document title", text: "Word Counter" },
+		];
+		expect(findSentinelLeaks(exposures, ["SENTINEL"])).toEqual([
+			'console.log contains "SENTINEL"',
+			'page error contains "SENTINEL"',
+		]);
 	});
 });
