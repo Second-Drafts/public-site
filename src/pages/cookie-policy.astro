@@ -1,0 +1,162 @@
+---
+import Base from "../layouts/Base.astro";
+import Button from "../components/Button.astro";
+import Link from "../components/Link.astro";
+import { cookieTableModel } from "../components/privacy/cookieTableModel";
+import lock from "../lib/privacy/registry.lock.json";
+import { VENDORS } from "../lib/privacy/registry";
+
+const ORGANISATION = "The Department of Second Drafts";
+const DOMAIN = "seconddrafts.com";
+// TODO: replace with the real contact address before launch.
+const CONTACT_EMAIL = "privacy@example.com";
+
+const analyticsVendor = VENDORS["google-analytics"];
+const categories = cookieTableModel().filter((category) => category.rows.length > 0);
+const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en-GB", {
+	day: "numeric",
+	month: "long",
+	year: "numeric",
+	timeZone: "UTC",
+});
+---
+
+<Base title="Cookie policy" description={`How ${DOMAIN} uses cookies and similar technologies, and how to change your choices.`}>
+	<h1 class="sd-text-headline">Cookie policy</h1>
+	<p class="updated">Last updated {lastUpdated}</p>
+
+	<p>
+		This policy explains how {ORGANISATION} ("we", "us") uses cookies and similar technologies on {DOMAIN}, what each one
+		is for, and how to change your choices.
+	</p>
+
+	<h2>Cookies and similar technologies</h2>
+	<p>
+		A cookie is a small text file a website saves in your browser. We mainly use two close relatives: local storage and
+		session storage, which let a website keep information in your browser. We treat them exactly like cookies, and this
+		policy covers all three.
+	</p>
+
+	<h2>Strictly necessary</h2>
+	<p>
+		These make the tools work the way you asked them to: saving the script you wrote, your display settings and the tips
+		you have closed, and remembering your cookie choice. They stay on your device and are not shared with advertisers or
+		other companies. We don't ask for consent for these because the site can't work as you expect without them.
+	</p>
+
+	<h2>Analytics</h2>
+	<p>
+		With your consent, we use {analyticsVendor.name} to understand which tools and settings people use, so we know what to
+		improve. It is not loaded at all until you accept. It collects information such as the pages you view, your approximate
+		location, your device type and how you use the tools. It never includes the text of your scripts. This information
+		is shared with Google, which processes it for us. The legal basis for sending it abroad is the {analyticsVendor.transfer}.
+		Read{" "}
+		<Link href={analyticsVendor.privacyUrl}>Google's privacy policy</Link>, or install the{" "}
+		<Link href="https://tools.google.com/dlpage/gaoptout">Google Analytics opt-out add-on</Link> to block it on every
+		site.
+	</p>
+	<p>We don't use advertising cookies, and we don't track you across other websites.</p>
+
+	<h2>What we store</h2>
+	<p>This list is generated from the same source as the site itself, so it always matches what the site does.</p>
+	{
+		categories.map((category) => (
+			<section class="category">
+				<h3>{category.label}</h3>
+				<p class="category-description">{category.description}</p>
+				<div class="table-scroll" tabindex="0" role="region" aria-label={`${category.label} storage`}>
+					<table>
+						<thead>
+							<tr>
+								<th scope="col">Name</th>
+								<th scope="col">Provider</th>
+								<th scope="col">Purpose</th>
+								<th scope="col">Type</th>
+								<th scope="col">Kept for</th>
+							</tr>
+						</thead>
+						<tbody>
+							{category.rows.map((row) => (
+								<tr>
+									<th scope="row">
+										<code>{row.name}</code>
+									</th>
+									<td>{row.provider}</td>
+									<td>{row.purpose}</td>
+									<td>{row.storageType}</td>
+									<td>{row.retention}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			</section>
+		))
+	}
+
+	<h2>Your choices</h2>
+	<p>
+		Analytics is off until you accept. You can change your mind at any time; turning it off removes the analytics
+		cookies it set.
+	</p>
+	<p><Button variant="secondary" data-open-cookie-settings>Change your cookie settings</Button></p>
+	<p>
+		We ask again every six months, or sooner if what we store changes in a way that needs new consent. If your browser
+		sends a Global Privacy Control signal, we treat it as a refusal of analytics. You can also block or delete cookies
+		and site data in your browser settings, though some tools may then forget your script and settings.
+	</p>
+
+	<h2>Changes to this policy</h2>
+	<p>We update this page when what we store changes. The date at the top shows when it last changed.</p>
+
+	<h2>Contact</h2>
+	<p>Questions about this policy? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+</Base>
+
+<style>
+	h1 {
+		margin: 0 0 var(--space-2);
+		font-weight: 600;
+	}
+	h2 {
+		margin: var(--space-12) 0 var(--space-4);
+	}
+	h3 {
+		margin: var(--space-8) 0 var(--space-2);
+	}
+	p {
+		margin: 0 0 var(--space-6);
+		text-wrap: pretty;
+	}
+	.updated {
+		color: var(--ink-muted);
+		margin-bottom: var(--space-8);
+	}
+	.category-description {
+		margin-bottom: var(--space-4);
+	}
+	.table-scroll {
+		overflow-x: auto;
+		margin-bottom: var(--space-6);
+	}
+	table {
+		width: 100%;
+		min-width: 32rem;
+		border-collapse: collapse;
+		font-size: 0.9em;
+	}
+	th,
+	td {
+		padding: var(--space-2) var(--space-3);
+		text-align: start;
+		vertical-align: top;
+		border-block-end: var(--stroke-hairline) solid var(--rule);
+	}
+	thead th {
+		font-weight: 600;
+	}
+	tbody th {
+		font-weight: 400;
+		white-space: nowrap;
+	}
+</style>

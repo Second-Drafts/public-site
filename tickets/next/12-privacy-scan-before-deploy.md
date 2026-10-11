@@ -57,3 +57,7 @@ Write a report (`privacy/scan-report.json`: per state, the keys and origins seen
 - [ ] The share-link sentinel check passes.
 - [ ] `predeploy` runs the scan; a failing scan blocks `npm run deploy`.
 - [ ] Scan report is written and committed.
+
+## Follow-up from #09
+
+Once this scan passes, add the paragraph to the cookie policy (`src/pages/cookie-policy.astro`) saying the script stays on the visitor's device, and that share links carry it after the `#`, which browsers don't send to servers.
