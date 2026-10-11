@@ -18,6 +18,7 @@ Visitors need a way to give, refuse and later change consent. Regulators (EDPB, 
 - Non-modal and out of the way (for example a bottom region). Don't trap focus; give it a labelled landmark so screen readers can find it.
 - **Don't overlay the teleprompter while it's prompting.** Delay the banner until the visitor leaves the prompt view. Since nothing is collected before a decision, waiting is safe.
 - Copy is short and plain: what analytics is for, that it uses Google Analytics, and that rejecting changes nothing about how the tools work.
+  - **Revised after release:** the banner names the purpose ("analytics") rather than the vendor, and says it never sees "what you write" rather than "your scripts", so the copy holds as vendors and tools change. Google Analytics is still named one click away, in the settings dialog and both policies.
 
 ### Settings dialog
 

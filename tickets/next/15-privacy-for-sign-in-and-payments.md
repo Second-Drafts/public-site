@@ -12,7 +12,7 @@ The privacy and cookie policies currently say there are no accounts, no payments
 Do all of this in the release that ships sign-in or payments, not in a later one.
 
 - **Registry (#01):** add Stripe to `VENDORS` (a processor for payments; confirm its role, and the transfer mechanism, against its current terms). Add any email or auth provider the same way. Register every new cookie, local-storage and session-storage key for sign-in, and decide each one's category (a sign-in session cookie is strictly necessary).
-- **Lock (#07):** run `npm run privacy:lock`. A new vendor in a consent-requiring category, or a key moved into one, is a major bump and re-asks visitors; necessary additions are minor. Check the bump matches what you expect.
+- **Lock (#07):** run `npm run privacy:lock`. A new controller in a consent-requiring category, a new purpose, or a key moved into one is a major bump and re-asks visitors; a processor serving purposes visitors already agreed to, and necessary additions, are minor. Check the bump matches what you expect.
 - **Privacy policy (`src/pages/privacy-policy.astro`):**
   - Remove "no accounts" and "no email addresses" from "What we don't do".
   - Add the categories of personal data: account and contact information (name, email), payment information (handled by Stripe; we receive confirmation and billing contact details but never full card numbers), and purchase and licence information (orders, licence issued, download history).

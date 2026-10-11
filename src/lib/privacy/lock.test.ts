@@ -10,6 +10,7 @@ import {
 	snapshotOf,
 	type Snapshot,
 } from "./lock";
+import type { Retention } from "./registry";
 import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../../tools/teleprompter/lib/analytics/events";
 
 function baseSnapshot(): Snapshot {
@@ -61,6 +62,15 @@ function baseSnapshot(): Snapshot {
 	};
 }
 
+function swapStatsFor(snapshot: Snapshot, retention: Retention): void {
+	const { stats } = snapshot.vendors;
+	const { _id } = snapshot.storage;
+	delete snapshot.vendors.stats;
+	delete snapshot.storage._id;
+	snapshot.vendors.counter = { ...stats, name: "Counter" };
+	snapshot.storage._counter_id = { ..._id, setBy: "counter", retention };
+}
+
 function bumpFor(change: (snapshot: Snapshot) => void): string {
 	const next = baseSnapshot();
 	change(next);
@@ -110,8 +120,8 @@ describe("bump rules", () => {
 			expect(bumpFor((s) => (s.storage._id.retention = "until-cleared"))).toBe("major");
 		});
 
-		it("for a new key that keeps a consented purpose longer", () => {
-			expect(bumpFor((s) => (s.storage._new = { ...s.storage._id, retention: { months: 24 } }))).toBe("major");
+		it("for a replacement processor that keeps data longer", () => {
+			expect(bumpFor((s) => swapStatsFor(s, { months: 24 }))).toBe("major");
 		});
 	});
 
@@ -131,18 +141,9 @@ describe("bump rules", () => {
 			expect(bumpFor((s) => (s.vendors.other = { ...s.vendors.stats, name: "Other" }))).toBe("minor");
 		});
 
-		it("for a new key serving a consented purpose", () => {
-			expect(bumpFor((s) => (s.storage._new = { ...s.storage._id, retention: { months: 6 } }))).toBe("minor");
-		});
-
 		it("for swapping one processor for another with the same purposes", () => {
-			const bump = bumpFor((s) => {
-				delete s.vendors.stats;
-				delete s.storage._id;
-				s.vendors.counter = { ...baseSnapshot().vendors.stats, name: "Counter" };
-				s.storage._counter_id = { ...baseSnapshot().storage._id, setBy: "counter" };
-			});
-			expect(bump).toBe("minor");
+			expect(bumpFor((s) => swapStatsFor(s, { months: 12 }))).toBe("minor");
+			expect(bumpFor((s) => swapStatsFor(s, { months: 6 }))).toBe("minor");
 		});
 
 		it("for reworded purpose", () => {

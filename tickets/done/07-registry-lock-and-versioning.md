@@ -22,9 +22,11 @@ A hand-bumped version depends on someone remembering to bump it. Instead, commit
 
 | Bump | When | Consequence |
 |---|---|---|
-| **Major** | In a consent-requiring category: a new vendor, a new `purposeId`, a key moved into the category, or a longer retention | Visitors are asked again (#04) and the policy changes |
+| **Major** | In a consent-requiring category: a new controller (or a processor that becomes one), a new `purposeId`, a key moved into the category, or a longer retention for a purpose | Visitors are asked again (#04) and the policy changes |
 | **Minor** | Any other disclosed change: necessary keys added or removed, purpose wording edited, shorter retention, origins changed | Policy table and "Last updated" change |
 | **Patch** | Lock metadata only | Nothing visible |
+
+**Revised after release:** visitors consent to purposes, not to particular vendors or keys. A new processor, or a new key serving a purpose already consented to for no longer than before, is minor. Swapping one analytics processor for another with the same purposes no longer re-asks everyone. Because the lock now trusts `purposeId` and `role`, `npm run privacy:lock` asks Jev whether a reworded purpose is really a new use, and the privacy reviewer agent (`.claude/agents/privacy-reviewer.md`) checks roles.
 
 - The consent module (#04) reads the major version from the lock instead of the hard-coded `"1"`.
 - The policy page (#09) reads `updated` for "Last updated".
