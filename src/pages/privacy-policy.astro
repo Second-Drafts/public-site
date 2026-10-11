@@ -3,7 +3,7 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Link from "../components/Link.astro";
 import { analyticsEvents, sessionContextProperties, vendorSections } from "../components/privacy/privacyPolicyModel";
-import { CONTACT_EMAIL, DOMAIN, ORGANISATION } from "../lib/privacy/organisation";
+import { CONTACT_EMAIL, DOMAIN, ORGANISATION, POSTAL_ADDRESS } from "../lib/privacy/organisation";
 import lock from "../lib/privacy/registry.lock.json";
 
 const vendors = vendorSections();
@@ -26,7 +26,13 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 	<h2>Who we are</h2>
 	<p>
 		{ORGANISATION} ("we", "us") runs {DOMAIN}, a collection of free writing tools. To ask us anything about your data,
-		email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.
+		email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> or write to us at {POSTAL_ADDRESS}.
+	</p>
+
+	<h2>Children</h2>
+	<p>
+		This site is not directed at children, and we don't knowingly collect personal data from children under 13. If we
+		learn that we have, we will delete it.
 	</p>
 
 	<h2>What we don't do</h2>
@@ -34,13 +40,14 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 		<li>There are no accounts, and we don't ask for your name or email address.</li>
 		<li>We don't show advertising or track you across other websites.</li>
 		<li>We don't sell your data.</li>
+		<li>We don't use personal data to train AI models.</li>
 	</ul>
 
 	<h2>Hosting</h2>
 	<p>
 		{hosting.name} serves this site. When you visit, {hosting.name} logs your IP address for security and to keep the
 		service running, as described in <Link href={hosting.privacyUrl}>its privacy statement</Link>. Our legal basis is
-		legitimate interest: a website can't be delivered or protected without this. We don't have access to these logs.
+		legitimate interest: a website can't be delivered or protected without this. GitHub keeps these logs; we don't receive them.
 	</p>
 
 	<h2>Analytics</h2>
@@ -84,6 +91,13 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 		}
 	</ul>
 
+	<p>We may also disclose personal data:</p>
+	<ul>
+		<li>To comply with the law, a court order or a government or regulatory request.</li>
+		<li>To protect the rights, property or safety of us, our users or others.</li>
+		<li>To a successor, if we are part of a merger, acquisition or sale of assets.</li>
+	</ul>
+
 	<h2>International transfers</h2>
 	<p>These companies may process data outside your country. We rely on the following safeguards:</p>
 	<ul>
@@ -98,14 +112,33 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 
 	<h2>Your rights</h2>
 	<p>
-		You can ask us for access to the personal data we hold about you, ask us to delete it, object to how we use it,
-		or withdraw your consent. You can also complain to your local data protection authority.
+		Depending on where you live, you may be able to ask us for access to the personal data we hold about you, to correct
+		or delete it, to restrict or object to how we use it, to receive a portable copy, and to withdraw your consent. If
+		you are in the EU or UK, you can also complain to your local data protection authority. We don't sell personal data
+		or use it for targeted advertising, so there is nothing to opt out of.
 	</p>
 	<p>
-		To exercise a right, email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>. Analytics data is linked only to
-		a random ID stored in your browser, not to your name, so we usually can't find one person's data. If you want us to
+		To exercise a right, email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>. Analytics data is linked
+		only to a random ID stored in your browser, not to your name, so we usually can't find one person's data. If you want us to
 		try, tell us the value of the <code>_ga</code> cookie from your browser. Turning analytics off in the cookie settings
 		stops any further collection.
+	</p>
+	<p>
+		If you are in the EU or UK, our legal bases are your consent for analytics, and our legitimate interest in running
+		and securing the site for hosting. If a browser sends a Global Privacy Control signal, we treat it as a refusal of
+		analytics. We don't respond to Do Not Track, as there is no common standard for it.
+	</p>
+
+	<h2>Security</h2>
+	<p>
+		We use reasonable measures to protect personal data from loss and unauthorised access. No system is completely secure, so we can't guarantee the security of
+		anything sent over the internet.
+	</p>
+
+	<h2>How long we keep data</h2>
+	<p>
+		We keep personal data only as long as we need it for the purposes above. The cookies we set last as long as the
+		<Link href="/cookie-policy">cookie policy</Link> says, and you can delete them at any time in your browser.
 	</p>
 
 	<h2>Changes to this policy</h2>
