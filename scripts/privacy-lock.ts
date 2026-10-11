@@ -71,6 +71,11 @@ console.log(
 	`Proposed ${proposed} bump${bump === proposed ? "" : `, raised to ${bump}`}: ${previous.version} → ${version}`,
 );
 
+if (!process.env.TYPESAFE_API_KEY)
+	console.warn(
+		"TYPESAFE_API_KEY isn't set, so Jev can't check these changes. If .env is a 1Password mount, re-run first: the first read after the mount or its values change can come back empty.",
+	);
+
 const reviews = await reviewChanges(snapshotOf(previous), snapshot, process.env.TYPESAFE_API_KEY);
 if (!confirmedByPerson(reviews)) process.exit(1);
 
