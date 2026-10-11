@@ -108,8 +108,7 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 		try {
 			await navigator.clipboard.writeText(url);
 			copied = true;
-		} catch {
-		}
+		} catch {}
 
 		const warning = tooLong
 			? " This link is very long, and some apps may cut off long links. Check that it opens before you send it."

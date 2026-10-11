@@ -1,24 +1,29 @@
 {
-  "categories": { "correctness": "off" },
-  "rules": {
-    "no-restricted-globals": ["error",
-      { "name": "localStorage",   "message": "Use stored() from src/lib/privacy/storage." },
-      { "name": "sessionStorage", "message": "Use stored() from src/lib/privacy/storage." },
-      { "name": "indexedDB",      "message": "Register the store in src/lib/privacy/registry first." },
-      { "name": "caches",         "message": "Register the store in src/lib/privacy/registry first." },
-      { "name": "cookieStore",    "message": "Use stored() from src/lib/privacy/storage." }
-    ],
-    "no-restricted-properties": ["error",
-      { "object": "document",   "property": "cookie" },
-      { "object": "window",     "property": "localStorage" },
-      { "object": "window",     "property": "sessionStorage" },
-      { "object": "window",     "property": "indexedDB" },
-      { "object": "globalThis", "property": "localStorage" },
-      { "object": "globalThis", "property": "sessionStorage" }
-    ]
-  },
-  "overrides": [
-    { "files": ["src/lib/privacy/**"], "rules": { "no-restricted-globals": "off", "no-restricted-properties": "off" } },
-    { "files": ["src/pages/sandbox/**"], "rules": { "no-restricted-globals": "off" } }
-  ]
+	"categories": { "correctness": "off" },
+	"rules": {
+		"no-restricted-globals": [
+			"error",
+			{ "name": "localStorage", "message": "Use stored() from src/lib/privacy/storage." },
+			{ "name": "sessionStorage", "message": "Use stored() from src/lib/privacy/storage." },
+			{ "name": "indexedDB", "message": "Register the store in src/lib/privacy/registry first." },
+			{ "name": "caches", "message": "Register the store in src/lib/privacy/registry first." },
+			{ "name": "cookieStore", "message": "Use stored() from src/lib/privacy/storage." }
+		],
+		"no-restricted-properties": [
+			"error",
+			{ "object": "document", "property": "cookie" },
+			{ "object": "window", "property": "localStorage" },
+			{ "object": "window", "property": "sessionStorage" },
+			{ "object": "window", "property": "indexedDB" },
+			{ "object": "globalThis", "property": "localStorage" },
+			{ "object": "globalThis", "property": "sessionStorage" }
+		]
+	},
+	"overrides": [
+		{
+			"files": ["src/lib/privacy/**"],
+			"rules": { "no-restricted-globals": "off", "no-restricted-properties": "off" }
+		},
+		{ "files": ["src/pages/sandbox/**"], "rules": { "no-restricted-globals": "off" } }
+	]
 }

@@ -82,7 +82,11 @@ function trackScriptEntry(store: Store, currentWordBucket: () => WordBucket) {
 	};
 }
 
-function trackPromptSession(store: Store, currentWordBucket: () => WordBucket, reportScriptEntered: (source: ScriptSource) => void) {
+function trackPromptSession(
+	store: Store,
+	currentWordBucket: () => WordBucket,
+	reportScriptEntered: (source: ScriptSource) => void,
+) {
 	let openedAt = 0;
 	let firstPlayAt = 0;
 	let reachedEnd = false;

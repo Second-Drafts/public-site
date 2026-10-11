@@ -230,8 +230,12 @@ describe("keyboard", () => {
 		const label = (id: string) => rows.find((row) => row.id === id)?.label;
 		// The arrow rows' labels match what their first key does in this layout.
 		const does = (key: string) => actionForKey({ key }, layout);
-		expect(label("vertical")).toBe(does("ArrowUp") === "previousParagraph" ? "Previous or next paragraph" : "Faster or slower");
-		expect(label("horizontal")).toBe(does("ArrowLeft") === "previousParagraph" ? "Previous or next paragraph" : "Slower or faster");
+		expect(label("vertical")).toBe(
+			does("ArrowUp") === "previousParagraph" ? "Previous or next paragraph" : "Faster or slower",
+		);
+		expect(label("horizontal")).toBe(
+			does("ArrowLeft") === "previousParagraph" ? "Previous or next paragraph" : "Slower or faster",
+		);
 		expect(actionForKey({ key: rows.find((row) => row.id === "settings")!.keys }, layout)).toBe("settings");
 		// Same rows in the same order either way, so the card can relabel in place.
 		expect(rows.map((row) => row.id)).toEqual(shortcutsFor().map((row) => row.id));

@@ -69,7 +69,11 @@ describe("trackUsage", () => {
 		vi.advanceTimersByTime(30_000);
 		store.set({ view: "edit" });
 		expect(eventNames()).toEqual(["tp_prompt_started", "tp_play", "tp_play", "tp_completed"]);
-		expect(tracked).toHaveBeenLastCalledWith("tp_completed", { reached_end: true, duration_s: 30, word_bucket: "0-50" });
+		expect(tracked).toHaveBeenLastCalledWith("tp_completed", {
+			reached_end: true,
+			duration_s: 30,
+			word_bucket: "0-50",
+		});
 		expect(tracked).toHaveBeenCalledWith("tp_play", { word_bucket: "0-50", play_count: 2 });
 	});
 

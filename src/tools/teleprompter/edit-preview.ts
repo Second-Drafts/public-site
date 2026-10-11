@@ -9,7 +9,9 @@ const EMPTY_TEXT = "Your script will appear here.";
 const NOT_DRAWN: readonly (keyof Settings)[] = ["speed", "countdown", "arrowKeys"];
 
 function drawnSettingsChanged(next: Settings, previous: Settings): boolean {
-	return (Object.keys(next) as (keyof Settings)[]).some((key) => !NOT_DRAWN.includes(key) && next[key] !== previous[key]);
+	return (Object.keys(next) as (keyof Settings)[]).some(
+		(key) => !NOT_DRAWN.includes(key) && next[key] !== previous[key],
+	);
 }
 
 export function mountEditPreview(store: Store): void {
@@ -38,7 +40,8 @@ export function mountEditPreview(store: Store): void {
 
 	store.subscribe((state, previous) => {
 		if (state.script !== previous.script) renderScriptSoon();
-		if (state.settings !== previous.settings && drawnSettingsChanged(state.settings, previous.settings)) renderSettings();
+		if (state.settings !== previous.settings && drawnSettingsChanged(state.settings, previous.settings))
+			renderSettings();
 		else if (state.view !== previous.view && state.view === "edit" && settingsStaleWhileHidden) renderSettings();
 	});
 	renderScript();

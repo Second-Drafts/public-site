@@ -12,4 +12,3 @@ export function linesPerSecond(step: number): number {
 export function pixelsPerSecond(step: number, fontSize: number, lineHeight: number): number {
 	return linesPerSecond(step) * fontSize * lineHeight;
 }
-

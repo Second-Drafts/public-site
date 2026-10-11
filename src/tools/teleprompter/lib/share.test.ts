@@ -6,7 +6,8 @@ import { SHARE_HASH_KEY, SHARE_URL_WARN_LENGTH, buildShareUrl, decodeShareHash }
 const BASE = "https://example.com/tools/teleprompter";
 const defaults = (): Settings => ({ ...DEFAULT_SETTINGS, custom: { ...DEFAULT_SETTINGS.custom } });
 const hashOf = (url: string) => url.slice(url.indexOf("#"));
-const encodeRaw = (value: unknown) => compressToEncodedURIComponent(typeof value === "string" ? value : JSON.stringify(value));
+const encodeRaw = (value: unknown) =>
+	compressToEncodedURIComponent(typeof value === "string" ? value : JSON.stringify(value));
 
 /** Deterministic pseudo-random word generator (no Math.random so tests are stable). */
 function randomWords(count: number): string {
@@ -168,7 +169,10 @@ describe("buildShareUrl / decodeShareHash", () => {
 
 	it("tolerates missing or non-object settings", () => {
 		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x" })}`)).toEqual({ script: "x", settings: defaults() });
-		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x", s: "nope" })}`)).toEqual({ script: "x", settings: defaults() });
+		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x", s: "nope" })}`)).toEqual({
+			script: "x",
+			settings: defaults(),
+		});
 	});
 
 	it("truncates a script over the cap instead of rejecting it", () => {

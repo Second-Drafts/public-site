@@ -55,12 +55,7 @@ export function actionForKey(event: KeyLike, layout: ArrowKeyLayout = "paragraph
 	return KEYMAP[event.key] ?? null;
 }
 
-const REPEATABLE: ReadonlySet<PromptAction> = new Set([
-	"speedUp",
-	"speedDown",
-	"previousParagraph",
-	"nextParagraph",
-]);
+const REPEATABLE: ReadonlySet<PromptAction> = new Set(["speedUp", "speedDown", "previousParagraph", "nextParagraph"]);
 
 export const isRepeatable = (action: PromptAction) => REPEATABLE.has(action);
 

@@ -44,8 +44,7 @@ export function stored(key: FirstPartyKey) {
 		if (!isPermitted(key)) return;
 		try {
 			area().setItem(key, value);
-		} catch {
-		}
+		} catch {}
 	}
 
 	function writeJSON(value: unknown): void {
@@ -55,8 +54,7 @@ export function stored(key: FirstPartyKey) {
 	function remove(): void {
 		try {
 			area().removeItem(key);
-		} catch {
-		}
+		} catch {}
 	}
 
 	return { read, readJSON, write, writeJSON, remove };
@@ -75,8 +73,7 @@ function purgeWebStorage(area: WebStorageArea, category: CategoryId): void {
 		for (const name of presentNames(area)) {
 			if (findStorageEntry(area, name)?.category === category) storage.removeItem(name);
 		}
-	} catch {
-	}
+	} catch {}
 }
 
 function presentCookieNames(): string[] {
@@ -97,8 +94,7 @@ function purgeCookies(category: CategoryId): void {
 		for (const name of presentCookieNames()) {
 			if (findStorageEntry("cookie", name)?.category === category) expireCookie(name);
 		}
-	} catch {
-	}
+	} catch {}
 }
 
 export function purgeCategory(category: CategoryId): void {

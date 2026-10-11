@@ -29,7 +29,8 @@ export const THEMES: Record<Exclude<ThemeId, "custom">, Theme> = {
 export const CUSTOM_GUIDE = "#fbeb4b";
 
 export function resolveTheme(settings: Settings): ThemeColors {
-	const base = settings.theme === "custom" ? { ...settings.custom, guide: CUSTOM_GUIDE } : THEMES[settings.theme].colors;
+	const base =
+		settings.theme === "custom" ? { ...settings.custom, guide: CUSTOM_GUIDE } : THEMES[settings.theme].colors;
 	return settings.guideColor === "auto" ? base : { ...base, guide: settings.guideColor };
 }
 

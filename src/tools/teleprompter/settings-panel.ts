@@ -64,10 +64,14 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 
 	const radios = [...root.querySelectorAll<HTMLInputElement>('input[type="radio"][data-setting]')];
 	const guideRadios = radios.filter((radio) => radio.dataset.setting === "guideColor");
-	const ranges = new Map(NUMERIC.map((key) => [key, one<HTMLInputElement>(`input[type="range"][data-setting="${key}"]`)]));
+	const ranges = new Map(
+		NUMERIC.map((key) => [key, one<HTMLInputElement>(`input[type="range"][data-setting="${key}"]`)]),
+	);
 	const outputs = new Map(NUMERIC.map((key) => [key, one<HTMLOutputElement>(`[data-out="${key}"]`)]));
 	const rangeControls = new Map(NUMERIC.map((key) => [key, one(`[data-ctl="${key}"]`)]));
-	const toggles = new Map(TOGGLES.map((key) => [key, one<HTMLInputElement>(`input[type="checkbox"][data-setting="${key}"]`)]));
+	const toggles = new Map(
+		TOGGLES.map((key) => [key, one<HTMLInputElement>(`input[type="checkbox"][data-setting="${key}"]`)]),
+	);
 	const pickers = new Map(CUSTOM_KEYS.map((key) => [key, one<HTMLInputElement>(`input[data-custom="${key}"]`)]));
 	const hexes = new Map(CUSTOM_KEYS.map((key) => [key, one(`[data-hex="${key}"]`)]));
 	const guideCtl = one('[data-ctl="guideColor"]');
@@ -133,7 +137,10 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 		if (ratio !== null && ratio < MIN_CONTRAST) {
 			// Round down, so a ratio just under the line never reads as "4.5:1".
 			const shown = `${(Math.floor(ratio * 10) / 10).toFixed(1)}:1`;
-			showWarning(bandWarn, `The band makes the line hard to read: ${shown}. Lower the opacity or pick another colour.`);
+			showWarning(
+				bandWarn,
+				`The band makes the line hard to read: ${shown}. Lower the opacity or pick another colour.`,
+			);
 		} else {
 			clearWarning(bandWarn);
 		}

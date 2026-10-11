@@ -92,17 +92,33 @@ describe("validateSettings", () => {
 			expect(r.custom).toEqual({ text: "#aabbcc", background: "#ffaa00" });
 		});
 
-		it.each(["red", "#12", "#1234", "#12345", "#1234567", "#ggg", "ffffff", " #fff", "#fff ", "#fff;", "red; background:url(x)", 5, null])(
-			"rejects %j per colour",
-			(bad) => {
-				const r = validateSettings({ custom: { text: bad, background: "#000", guide: bad } });
-				expect(r.custom).toEqual({ text: "#ffffff", background: "#000000" });
-			},
-		);
+		it.each([
+			"red",
+			"#12",
+			"#1234",
+			"#12345",
+			"#1234567",
+			"#ggg",
+			"ffffff",
+			" #fff",
+			"#fff ",
+			"#fff;",
+			"red; background:url(x)",
+			5,
+			null,
+		])("rejects %j per colour", (bad) => {
+			const r = validateSettings({ custom: { text: bad, background: "#000", guide: bad } });
+			expect(r.custom).toEqual({ text: "#ffffff", background: "#000000" });
+		});
 	});
 
 	it("drops unknown keys", () => {
-		const r = validateSettings({ foo: 1, __proto__: { polluted: true }, custom: { text: "#fff", extra: "#000" }, font: "mono" });
+		const r = validateSettings({
+			foo: 1,
+			__proto__: { polluted: true },
+			custom: { text: "#fff", extra: "#000" },
+			font: "mono",
+		});
 		expect(Object.keys(r).sort()).toEqual(Object.keys(DEFAULT_SETTINGS).sort());
 		expect(Object.keys(r.custom).sort()).toEqual(["background", "text"]);
 		expect(r.font).toBe("mono");

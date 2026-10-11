@@ -40,7 +40,16 @@ declare global {
 
 const FONT_STEP = LIMITS.fontSize.step * 2;
 
-const LAYOUT_KEYS = ["font", "bold", "theme", "fontSize", "lineHeight", "columnWidth", "align", "guidePosition"] as const;
+const LAYOUT_KEYS = [
+	"font",
+	"bold",
+	"theme",
+	"fontSize",
+	"lineHeight",
+	"columnWidth",
+	"align",
+	"guidePosition",
+] as const;
 
 export function mountPromptView(store: Store, hooks: PromptHooks): void {
 	const root = required(document, "[data-tp-prompt]");

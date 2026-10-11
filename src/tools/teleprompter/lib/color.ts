@@ -12,7 +12,11 @@ export function mixHex(top: string, bottom: string, alpha: number): string {
 	const channel = (hex: string, i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
 	const a = clamp(alpha, 0, 1);
 	return `#${[0, 1, 2]
-		.map((i) => Math.round(channel(top, i) * a + channel(bottom, i) * (1 - a)).toString(16).padStart(2, "0"))
+		.map((i) =>
+			Math.round(channel(top, i) * a + channel(bottom, i) * (1 - a))
+				.toString(16)
+				.padStart(2, "0"),
+		)
 		.join("")}`;
 }
 

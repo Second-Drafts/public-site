@@ -24,8 +24,7 @@ async function enterFullscreen(element: HTMLElement): Promise<void> {
 	try {
 		if (el.requestFullscreen) await el.requestFullscreen({ navigationUI: "hide" });
 		else await el.webkitRequestFullscreen?.();
-	} catch {
-	}
+	} catch {}
 }
 
 export async function exitFullscreen(): Promise<void> {
@@ -33,8 +32,7 @@ export async function exitFullscreen(): Promise<void> {
 	try {
 		if (document.exitFullscreen) await document.exitFullscreen();
 		else await doc().webkitExitFullscreen?.();
-	} catch {
-	}
+	} catch {}
 }
 
 export function toggleFullscreen(element: HTMLElement): Promise<void> {

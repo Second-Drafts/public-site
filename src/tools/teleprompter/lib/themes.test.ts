@@ -89,5 +89,4 @@ describe("pickTheme", () => {
 			expect(pickTheme(id)).toEqual({ theme: id });
 		}
 	});
-
 });

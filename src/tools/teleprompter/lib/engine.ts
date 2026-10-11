@@ -46,12 +46,7 @@ export function paragraphIndexAt(offsets: readonly number[], pos: number): numbe
 	return lo;
 }
 
-export function paragraphTarget(
-	offsets: readonly number[],
-	pos: number,
-	direction: 1 | -1,
-	slack = 0,
-): number {
+export function paragraphTarget(offsets: readonly number[], pos: number, direction: 1 | -1, slack = 0): number {
 	if (offsets.length === 0) return pos;
 	const i = paragraphIndexAt(offsets, pos);
 	if (direction === 1) {

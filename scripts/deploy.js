@@ -12,5 +12,5 @@ ghPages.publish(
 		} else {
 			console.log("Deployed to GitHub Pages");
 		}
-	}
+	},
 );

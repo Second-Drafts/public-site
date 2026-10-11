@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"printWidth": 120,
+	"ignorePatterns": [
+		".claude/**",
+		".agents/**",
+		".impeccable/**",
+		"design-system/**",
+		"public/**",
+		"tickets/**",
+		"*.md",
+		"package-lock.json",
+		"skills-lock.json"
+	]
+}
