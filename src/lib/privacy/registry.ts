@@ -57,7 +57,12 @@ export const VENDORS = {
 		category: "analytics",
 		origins: {
 			scripts: ["https://*.googletagmanager.com"],
-			data: ["https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com"],
+			data: [
+				"https://*.google-analytics.com",
+				"https://*.analytics.google.com",
+				"https://*.googletagmanager.com",
+				"https://www.google.com",
+			],
 		},
 		role: "processor",
 		transfer: "EU–US Data Privacy Framework",

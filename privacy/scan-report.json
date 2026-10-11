@@ -1,5 +1,5 @@
 {
-	"registryVersion": "1.1.0",
+	"registryVersion": "1.2.0",
 	"states": {
 		"no-decision": {
 			"/": {
@@ -187,10 +187,15 @@
 			},
 			"/tools/teleprompter/": {
 				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_XMSE6Y7BFR",
 					"local:privacy:consent"
 				],
 				"origins": [
-					"self"
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.google.com",
+					"https://www.googletagmanager.com"
 				]
 			},
 			"/tools/word-counter/": {
@@ -203,12 +208,17 @@
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_XMSE6Y7BFR",
 					"local:privacy:consent",
 					"local:tp:script",
 					"local:tp:settings:v1"
 				],
 				"origins": [
-					"self"
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.google.com",
+					"https://www.googletagmanager.com"
 				]
 			}
 		},

@@ -1,5 +1,5 @@
 {
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"updated": "2026-10-11",
 	"analytics": {
 		"events": {
@@ -85,7 +85,12 @@
 			"privacyUrl": "https://policies.google.com/privacy",
 			"origins": {
 				"scripts": ["https://*.googletagmanager.com"],
-				"data": ["https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com"]
+				"data": [
+					"https://*.google-analytics.com",
+					"https://*.analytics.google.com",
+					"https://*.googletagmanager.com",
+					"https://www.google.com"
+				]
 			}
 		}
 	},

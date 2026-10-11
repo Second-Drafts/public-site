@@ -30,3 +30,13 @@ Once the GA data-retention setting is chosen, state the period on the privacy po
 ## Follow-up from #11
 
 Confirm GA works with no CSP violations (same listener approach as #12), since #11 could only check that the Google origins are in the policy, not that live GA works.
+
+## Status
+
+Done in code: build config in `public-env/.env.production` (provider `gtag`, measurement ID `G-XMSE6Y7BFR`), explicit `page_location` without the URL fragment, scan passes with GA on, and `https://www.google.com` was added to the registry (found by the scan; minor bump to 1.2.0, no re-consent). Because there is no test property yet, the scan blocks GA's `/collect` requests (see #16).
+
+Still to do:
+
+- [ ] GA admin checklist in `privacy/google-analytics.md`, with the date
+- [ ] State the chosen GA data retention on the privacy policy (Analytics section) and in `google-analytics.md`
+- [ ] Production deploy, then check a fresh visit sets no `_ga*` cookies until Accept

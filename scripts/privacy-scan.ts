@@ -28,6 +28,9 @@ document.addEventListener("securitypolicyviolation", (event) => {
 	window.__cspViolations.push(event.violatedDirective + " " + event.blockedURI);
 });
 `;
+// Until there is a separate test property (ticket 16), keep scan visits out of the production property's data.
+const isGoogleCollectRequest = (url: URL) =>
+	url.pathname.endsWith("/collect") && /google|doubleclick/.test(url.hostname);
 const REPORT_GPC = `Object.defineProperty(navigator, "globalPrivacyControl", { value: true });`;
 
 interface InPageStorage {
@@ -92,6 +95,7 @@ function shareLink(): string {
 
 async function newContext(browser: Awaited<ReturnType<typeof chromium.launch>>, state: ScanState) {
 	const context = await browser.newContext(state === "gpc" ? { extraHTTPHeaders: { "Sec-GPC": "1" } } : {});
+	await context.route(isGoogleCollectRequest, (route) => route.abort());
 	await context.addInitScript(RECORD_CSP_VIOLATIONS);
 	if (state === "gpc") await context.addInitScript(REPORT_GPC);
 	return context;
@@ -106,15 +110,16 @@ function trackRequests(context: BrowserContext): { requests: RecordedRequest[] }
 	return tracker;
 }
 
-async function chooseConsent(page: Page, state: ScanState): Promise<void> {
+async function chooseConsent(page: Page, state: ScanState, requests: RecordedRequest[]): Promise<void> {
 	if (state === "rejected") await page.click("[data-consent-reject]");
 	if (state === "accepted" || state === "withdrawn") await page.click("[data-consent-accept]");
-	if (state === "withdrawn") await withdrawAnalytics(page);
+	if (state === "withdrawn") await withdrawAnalytics(page, requests);
 }
 
-async function withdrawAnalytics(page: Page): Promise<void> {
+async function withdrawAnalytics(page: Page, requests: RecordedRequest[]): Promise<void> {
 	await page.locator("[data-open-cookie-settings]:visible").first().click();
 	await page.uncheck("#cs-analytics", { force: true });
+	requests.length = 0;
 	await Promise.all([page.waitForEvent("load"), page.click("[data-consent-save]")]);
 }
 
@@ -149,7 +154,7 @@ async function scanPage(
 	const { requests } = trackRequests(context);
 	const page = await context.newPage();
 	await page.goto(origin + path);
-	await chooseConsent(page, state);
+	await chooseConsent(page, state, requests);
 	await settle(page);
 
 	const observation: Observation = {

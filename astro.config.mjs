@@ -20,6 +20,7 @@ const isInternalPage = (pageString) => {
 // https://astro.build/config
 export default defineConfig({
 	site: "https://seconddrafts.com",
+	vite: { envDir: "./public-env" },
 	security: {
 		csp: { directives, scriptDirective: { resources: scriptResources }, styleDirective: { resources: styleResources } },
 	},

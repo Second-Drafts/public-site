@@ -26,7 +26,12 @@ export function createGtagProvider(measurementId: string): AnalyticsProvider {
 			script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
 			document.head.appendChild(script);
 			window.gtag("js", new Date());
-			window.gtag("config", measurementId, { send_page_view: false });
+			window.gtag("config", measurementId, {
+				send_page_view: false,
+				page_location: location.origin + location.pathname,
+				allow_google_signals: false,
+				allow_ad_personalization_signals: false,
+			});
 		},
 		track(event, props) {
 			window.gtag?.("event", event, props);
