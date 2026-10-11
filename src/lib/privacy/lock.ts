@@ -154,9 +154,32 @@ function describeChange<T>(
 	return changes;
 }
 
+function purposeKey(category: string, purposeId: string): string {
+	return `${category}/${purposeId}`;
+}
+
+function longestRetentionByPurpose(storage: Record<string, StorageDisclosure>): Map<string, Retention> {
+	const longest = new Map<string, Retention>();
+	for (const { category, purposeId, retention } of Object.values(storage)) {
+		const key = purposeKey(category, purposeId);
+		const current = longest.get(key);
+		if (current === undefined || compareRetention(retention, current) > 0) longest.set(key, retention);
+	}
+	return longest;
+}
+
+// Visitors consented to purposes, not to particular vendors or keys. Only a change that asks for more than they
+// agreed to is major: a new purpose, keeping data longer, or a vendor using the data for its own ends.
 export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 	const requiresConsent = (category: string) => next.categories[category]?.requiresConsent === true;
-	const movedInto = (before: string, after: string) => requiresConsent(after) && before !== after;
+	const isConsentedController = ({ category, role }: VendorDisclosure) =>
+		requiresConsent(category) && role === "controller";
+	const consentedRetention = longestRetentionByPurpose(previous.storage);
+	const exceedsConsent = ({ category, purposeId, retention }: StorageDisclosure) => {
+		if (!requiresConsent(category)) return false;
+		const consented = consentedRetention.get(purposeKey(category, purposeId));
+		return consented === undefined || compareRetention(retention, consented) > 0;
+	};
 
 	return [
 		...describeChange("category", previous.categories, next.categories, {
@@ -164,20 +187,14 @@ export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 			changed: (before, after) => (after.requiresConsent && !before.requiresConsent ? "major" : "minor"),
 		}),
 		...describeChange("vendor", previous.vendors, next.vendors, {
-			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),
-			changed: (before, after) => (movedInto(before.category, after.category) ? "major" : "minor"),
+			added: (vendor) => (isConsentedController(vendor) ? "major" : "minor"),
+			changed: (before, after) => (isConsentedController(after) && !isConsentedController(before) ? "major" : "minor"),
 		}),
 		...describeChange("analytics event", previous.analytics.events, next.analytics.events),
 		...describeChange("session context property", previous.analytics.context, next.analytics.context),
 		...describeChange("storage", previous.storage, next.storage, {
-			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),
-			changed: (before, after) => {
-				const isMajor =
-					movedInto(before.category, after.category) ||
-					(requiresConsent(after.category) &&
-						(before.purposeId !== after.purposeId || compareRetention(after.retention, before.retention) > 0));
-				return isMajor ? "major" : "minor";
-			},
+			added: (entry) => (exceedsConsent(entry) ? "major" : "minor"),
+			changed: (_before, after) => (exceedsConsent(after) ? "major" : "minor"),
 		}),
 	];
 }

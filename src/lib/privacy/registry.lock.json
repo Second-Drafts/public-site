@@ -1,68 +1,120 @@
 {
-	"version": "1.2.0",
+	"version": "1.3.0",
 	"updated": "2026-10-11",
 	"analytics": {
 		"events": {
 			"tp_completed": {
-				"duration_s": ["number"],
-				"reached_end": ["boolean"],
-				"word_bucket": ["string"]
+				"duration_s": [
+					"number"
+				],
+				"reached_end": [
+					"boolean"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_engaged": {
-				"duration_s": ["number"],
-				"word_bucket": ["string"]
+				"duration_s": [
+					"number"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_fake_door_clicked": {
-				"feature": ["string"]
+				"feature": [
+					"string"
+				]
 			},
 			"tp_fake_door_interest": {
-				"email_provided": ["boolean"],
-				"feature": ["string"],
-				"interested": ["boolean"]
+				"email_provided": [
+					"boolean"
+				],
+				"feature": [
+					"string"
+				],
+				"interested": [
+					"boolean"
+				]
 			},
 			"tp_page_view": {
-				"landing_source": ["string"],
-				"referrer_domain": ["string"]
+				"landing_source": [
+					"string"
+				],
+				"referrer_domain": [
+					"string"
+				]
 			},
 			"tp_play": {
-				"play_count": ["number"],
-				"word_bucket": ["string"]
+				"play_count": [
+					"number"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_prompt_started": {
-				"font": ["string"],
-				"mirror": ["boolean"],
-				"speed": ["number"],
-				"theme": ["string"],
-				"word_bucket": ["string"]
+				"font": [
+					"string"
+				],
+				"mirror": [
+					"boolean"
+				],
+				"speed": [
+					"number"
+				],
+				"theme": [
+					"string"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_script_entered": {
-				"source": ["string"],
-				"word_bucket": ["string"]
+				"source": [
+					"string"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_setting_changed": {
-				"setting": ["string"],
-				"value": ["string", "number", "boolean"]
+				"setting": [
+					"string"
+				],
+				"value": [
+					"string",
+					"number",
+					"boolean"
+				]
 			},
 			"tp_share_link_copied": {
-				"too_long": ["boolean"],
-				"word_bucket": ["string"]
+				"too_long": [
+					"boolean"
+				],
+				"word_bucket": [
+					"string"
+				]
 			},
 			"tp_share_link_opened": {}
 		},
 		"context": {
-			"device_type": ["string"]
+			"device_type": [
+				"string"
+			]
 		}
 	},
 	"categories": {
 		"analytics": {
 			"requiresConsent": true,
 			"label": "Analytics",
-			"description": "Helps us understand which tools and settings people use, so we know what to improve. Never includes the text of your scripts."
+			"description": "Helps us understand which tools and settings people use, so we know what to improve. Never includes what you write."
 		},
 		"necessary": {
 			"requiresConsent": false,
 			"label": "Strictly necessary",
-			"description": "Makes the tools work the way you asked them to, like keeping the script you wrote. These stay on your device and are never sent to us."
+			"description": "Makes the tools work the way you asked them to, like keeping your work between visits. These stay on your device and are never sent to us."
 		}
 	},
 	"vendors": {
@@ -84,7 +136,9 @@
 			"transfer": "EU–US Data Privacy Framework",
 			"privacyUrl": "https://policies.google.com/privacy",
 			"origins": {
-				"scripts": ["https://*.googletagmanager.com"],
+				"scripts": [
+					"https://*.googletagmanager.com"
+				],
 				"data": [
 					"https://*.google-analytics.com",
 					"https://*.analytics.google.com",

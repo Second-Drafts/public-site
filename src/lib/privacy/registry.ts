@@ -13,13 +13,13 @@ export const CATEGORIES = {
 		requiresConsent: false,
 		label: "Strictly necessary",
 		description:
-			"Makes the tools work the way you asked them to, like keeping the script you wrote. These stay on your device and are never sent to us.",
+			"Makes the tools work the way you asked them to, like keeping your work between visits. These stay on your device and are never sent to us.",
 	},
 	analytics: {
 		requiresConsent: true,
 		label: "Analytics",
 		description:
-			"Helps us understand which tools and settings people use, so we know what to improve. Never includes the text of your scripts.",
+			"Helps us understand which tools and settings people use, so we know what to improve. Never includes what you write.",
 	},
 } as const satisfies Record<string, Category>;
 
@@ -40,6 +40,7 @@ interface Vendor {
 	category: CategoryId;
 	// Origins use CSP host-source syntax. `scripts` are where its code loads from; `data` is everywhere it sends requests.
 	origins: { scripts: readonly string[]; data: readonly string[] };
+	// A controller uses the data for its own purposes, so adding one to a consent category asks every visitor again.
 	role: "processor" | "controller";
 	transfer: string;
 	privacyUrl: string;

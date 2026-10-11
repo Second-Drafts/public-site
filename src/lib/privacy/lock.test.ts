@@ -85,8 +85,12 @@ describe("bump rules", () => {
 	});
 
 	describe("major, in a consent-requiring category", () => {
-		it("for a new vendor", () => {
-			expect(bumpFor((s) => (s.vendors.other = { ...s.vendors.stats, name: "Other" }))).toBe("major");
+		it("for a new controller", () => {
+			expect(bumpFor((s) => (s.vendors.other = { ...s.vendors.stats, role: "controller" }))).toBe("major");
+		});
+
+		it("for a processor that becomes a controller", () => {
+			expect(bumpFor((s) => (s.vendors.stats.role = "controller"))).toBe("major");
 		});
 
 		it("for a new purposeId", () => {
@@ -105,6 +109,10 @@ describe("bump rules", () => {
 			expect(bumpFor((s) => (s.storage._id.retention = { months: 24 }))).toBe("major");
 			expect(bumpFor((s) => (s.storage._id.retention = "until-cleared"))).toBe("major");
 		});
+
+		it("for a new key that keeps a consented purpose longer", () => {
+			expect(bumpFor((s) => (s.storage._new = { ...s.storage._id, retention: { months: 24 } }))).toBe("major");
+		});
 	});
 
 	describe("minor", () => {
@@ -117,6 +125,24 @@ describe("bump rules", () => {
 
 		it("for a new necessary vendor", () => {
 			expect(bumpFor((s) => (s.vendors.cdn = { ...s.vendors.host, name: "CDN" }))).toBe("minor");
+		});
+
+		it("for a new processor in a consent category", () => {
+			expect(bumpFor((s) => (s.vendors.other = { ...s.vendors.stats, name: "Other" }))).toBe("minor");
+		});
+
+		it("for a new key serving a consented purpose", () => {
+			expect(bumpFor((s) => (s.storage._new = { ...s.storage._id, retention: { months: 6 } }))).toBe("minor");
+		});
+
+		it("for swapping one processor for another with the same purposes", () => {
+			const bump = bumpFor((s) => {
+				delete s.vendors.stats;
+				delete s.storage._id;
+				s.vendors.counter = { ...baseSnapshot().vendors.stats, name: "Counter" };
+				s.storage._counter_id = { ...baseSnapshot().storage._id, setBy: "counter" };
+			});
+			expect(bump).toBe("minor");
 		});
 
 		it("for reworded purpose", () => {
