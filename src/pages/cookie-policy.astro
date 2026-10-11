@@ -5,11 +5,8 @@ import Link from "../components/Link.astro";
 import { cookieTableModel } from "../components/privacy/cookieTableModel";
 import lock from "../lib/privacy/registry.lock.json";
 import { VENDORS } from "../lib/privacy/registry";
+import { CONTACT_EMAIL, DOMAIN, ORGANISATION } from "../lib/privacy/organisation";
 
-const ORGANISATION = "The Department of Second Drafts";
-const DOMAIN = "seconddrafts.com";
-// TODO: replace with the real contact address before launch.
-const CONTACT_EMAIL = "privacy@example.com";
 
 const analyticsVendor = VENDORS["google-analytics"];
 const categories = cookieTableModel().filter((category) => category.rows.length > 0);
@@ -27,7 +24,8 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 
 	<p>
 		This policy explains how {ORGANISATION} ("we", "us") uses cookies and similar technologies on {DOMAIN}, what each one
-		is for, and how to change your choices.
+		is for, and how to change your choices. For how we handle personal data more broadly, see our{" "}
+		<Link href="/privacy-policy">privacy policy</Link>.
 	</p>
 
 	<h2>Cookies and similar technologies</h2>
@@ -110,7 +108,7 @@ const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en
 	<p>We update this page when what we store changes. The date at the top shows when it last changed.</p>
 
 	<h2>Contact</h2>
-	<p>Questions about this policy? Email <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.</p>
+	<p>Questions about this policy? Email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.</p>
 </Base>
 
 <style>

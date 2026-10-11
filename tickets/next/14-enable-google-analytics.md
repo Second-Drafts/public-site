@@ -22,3 +22,7 @@ This is the payoff. Everything before this ticket assumed Google Analytics is pr
 - [ ] GA checklist complete and dated.
 - [ ] Scan passes with the real GA test property and `registry.lock.json` is unchanged.
 - [ ] Production deploy with GA on; a fresh visit sets no `_ga*` cookies until Accept.
+
+## Follow-up from #10
+
+Once the GA data-retention setting is chosen, state the period on the privacy policy (`src/pages/privacy-policy.astro`, Analytics section).

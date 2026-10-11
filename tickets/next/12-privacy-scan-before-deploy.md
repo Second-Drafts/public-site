@@ -61,3 +61,7 @@ Write a report (`privacy/scan-report.json`: per state, the keys and origins seen
 ## Follow-up from #09
 
 Once this scan passes, add the paragraph to the cookie policy (`src/pages/cookie-policy.astro`) saying the script stays on the visitor's device, and that share links carry it after the `#`, which browsers don't send to servers.
+
+## Follow-up from #10
+
+The same "script never leaves your device" statement belongs on the privacy policy (`src/pages/privacy-policy.astro`) once this scan passes.
