@@ -1,4 +1,4 @@
-import type { FakeDoorFeature } from "./analytics/events";
+import type { FakeDoorFeature } from "../../../lib/analytics/events";
 
 export const EMAIL_CAPTURE_ENABLED = false;
 

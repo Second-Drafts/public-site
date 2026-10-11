@@ -5,8 +5,8 @@ export function createConsoleProvider(): AnalyticsProvider {
 		name: "console",
 		vendor: null,
 		track(event, props) {
-			console.groupCollapsed(`[tp] ${event}`);
-			console.info("[tp]", event, props);
+			console.groupCollapsed(`[analytics] ${event}`);
+			console.info("[analytics]", event, props);
 			console.groupEnd();
 		},
 	};

@@ -1,10 +1,10 @@
-// Privacy rule: no property may carry script text or anything derived from it beyond a word-count bucket.
-import type { VendorId } from "../../../../lib/privacy/registry";
-import type { FontId, ThemeId } from "../settings";
+// Privacy rule: no property may carry text a visitor writes or anything derived from it beyond a word-count bucket.
+import type { VendorId } from "../privacy/registry";
+import type { FontId, ThemeId } from "../../tools/teleprompter/lib/settings";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "600+";
 export type DeviceType = "phone" | "tablet" | "desktop";
-export type LandingSource = "organic" | "direct" | "share_link" | "referral";
+export type LandingSource = "organic" | "direct" | "referral";
 export type ScriptSource = "paste" | "typed" | "sample" | "share_link";
 export type FakeDoorFeature = "voice_scroll" | "record_video" | "phone_remote";
 export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "arrowKeys" | "guideColor";
@@ -29,7 +29,7 @@ type PropSchema = Record<string, Prop>;
 type Derive<S extends PropSchema> = { [K in keyof S]: S[K] extends Prop<infer T> ? T : never };
 
 export const EVENT_SCHEMA = {
-	tp_page_view: { referrer_domain: text(), landing_source: text<LandingSource>() },
+	page_view: { referrer_domain: text(), landing_source: text<LandingSource>() },
 	tp_script_entered: { word_bucket: text<WordBucket>(), source: text<ScriptSource>() },
 	tp_prompt_started: {
 		font: text<FontId>(),
@@ -50,9 +50,9 @@ export const EVENT_SCHEMA = {
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;
 
-export type TpEvents = { [E in keyof typeof EVENT_SCHEMA]: Derive<(typeof EVENT_SCHEMA)[E]> };
+export type AnalyticsEvents = { [E in keyof typeof EVENT_SCHEMA]: Derive<(typeof EVENT_SCHEMA)[E]> };
 
-export type EventName = keyof TpEvents;
+export type EventName = keyof AnalyticsEvents;
 
 export type SessionContext = Derive<typeof SESSION_CONTEXT_SCHEMA>;
 

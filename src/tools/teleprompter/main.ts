@@ -2,7 +2,6 @@ import { stored } from "../../lib/privacy/storage";
 import { askConfirm } from "./confirm";
 import { mountEditPreview } from "./edit-preview";
 import { mountEditView } from "./edit-view";
-import { initAnalytics, trackPageView } from "./lib/analytics";
 import { defaultSettingsForViewport } from "./lib/defaults";
 import { debounce } from "./lib/debounce";
 import { removeRetiredStorage } from "./lib/retired-storage";
@@ -21,8 +20,6 @@ declare global {
 }
 
 removeRetiredStorage();
-initAnalytics();
-trackPageView({ referrer: document.referrer, hash: location.hash });
 
 const storedScript = stored("tp:script");
 const storedSettings = stored("tp:settings:v1");

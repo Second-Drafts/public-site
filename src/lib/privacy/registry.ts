@@ -19,7 +19,7 @@ export const CATEGORIES = {
 		requiresConsent: true,
 		label: "Analytics",
 		description:
-			"Helps us understand which tools and settings people use, so we know what to improve. Never includes what you write.",
+			"Helps us understand which pages, tools and settings people use, so we know what to improve. Never includes what you write.",
 	},
 } as const satisfies Record<string, Category>;
 

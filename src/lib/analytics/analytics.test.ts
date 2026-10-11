@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveProviders } from "./config";
 import type { AnalyticsProvider, EventName, EventProps } from "./events";
 import { hostnameOf, landingSource } from "./index";
-import type { VendorId } from "../../../../lib/privacy/registry";
+import type { VendorId } from "../privacy/registry";
 
 function fakeProvider(name = "fake", vendor: VendorId | null = "google-analytics") {
 	const calls: { event: EventName; props: EventProps }[] = [];
@@ -32,7 +32,7 @@ describe("landingSource", () => {
 		"https://kagi.com/",
 	];
 	it.each(engines)("organic for %s", (url) => {
-		expect(landingSource(url, "")).toBe("organic");
+		expect(landingSource(url)).toBe("organic");
 	});
 
 	beforeEach(() => {
@@ -41,30 +41,18 @@ describe("landingSource", () => {
 	afterEach(() => vi.unstubAllGlobals());
 
 	it("direct with no referrer or an invalid one", () => {
-		expect(landingSource("", "")).toBe("direct");
-		expect(landingSource("not a url", "")).toBe("direct");
+		expect(landingSource("")).toBe("direct");
+		expect(landingSource("not a url")).toBe("direct");
 	});
 
 	it("direct for same-origin referrers", () => {
-		expect(landingSource("https://tools.example/blog", "")).toBe("direct");
+		expect(landingSource("https://tools.example/blog")).toBe("direct");
 	});
 
 	it("referral for other sites, including look-alike search hosts", () => {
-		expect(landingSource("https://news.ycombinator.com/", "")).toBe("referral");
-		expect(landingSource("https://notgoogle.com/", "")).toBe("referral");
-		expect(landingSource("https://google.evil.com/", "")).toBe("referral");
-	});
-
-	it("share_link wins when the hash carries a share payload", () => {
-		expect(landingSource("https://www.google.com/", "#s=abc")).toBe("share_link");
-		expect(landingSource("", "#x=1&s=abc")).toBe("share_link");
-		expect(landingSource("", "s=abc")).toBe("share_link");
-	});
-
-	it("ignores hashes that are not share payloads", () => {
-		expect(landingSource("", "#section")).toBe("direct");
-		expect(landingSource("", "#sx=1")).toBe("direct");
-		expect(landingSource("https://www.bing.com/", "#top")).toBe("organic");
+		expect(landingSource("https://news.ycombinator.com/")).toBe("referral");
+		expect(landingSource("https://notgoogle.com/")).toBe("referral");
+		expect(landingSource("https://google.evil.com/")).toBe("referral");
 	});
 });
 
@@ -147,7 +135,7 @@ describe("track", () => {
 
 	async function loadAnalytics(providers: AnalyticsProvider[]) {
 		vi.resetModules();
-		vi.doMock("../../../../lib/privacy/consent", () => fake.module);
+		vi.doMock("../privacy/consent", () => fake.module);
 		vi.doMock("./config", () => ({
 			readConfig: () => ({ providers: providers.map((p) => p.name), gaMeasurementId: "" }),
 		}));
@@ -168,7 +156,7 @@ describe("track", () => {
 	afterEach(() => {
 		vi.doUnmock("./config");
 		vi.doUnmock("./providers");
-		vi.doUnmock("../../../../lib/privacy/consent");
+		vi.doUnmock("../privacy/consent");
 		vi.unstubAllGlobals();
 		vi.unstubAllEnvs();
 	});
@@ -243,7 +231,7 @@ describe("track", () => {
 		const { provider, calls } = fakeProvider();
 		const { initAnalytics, trackPageView } = await loadAnalytics([provider]);
 		initAnalytics();
-		trackPageView({ referrer: `https://${"a".repeat(70)}.example/`, hash: "" });
+		trackPageView(`https://${"a".repeat(70)}.example/`);
 		expect(consoleError).not.toHaveBeenCalled();
 		expect(calls[0].props).toMatchObject({ referrer_domain: "", landing_source: "referral" });
 		consoleError.mockRestore();

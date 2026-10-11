@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { track } from "./lib/analytics";
+import { track } from "../../lib/analytics";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import { createStore, type Store } from "./lib/store";
 import { DEFAULT_SETTINGS } from "./lib/settings";
 import { trackUsage, type UsageHooks } from "./usage-tracking";
 
-vi.mock("./lib/analytics", () => ({ track: vi.fn() }));
+vi.mock("../../lib/analytics", () => ({ track: vi.fn() }));
 
 const tracked = vi.mocked(track);
 const eventNames = () => tracked.mock.calls.map(([name]) => name);

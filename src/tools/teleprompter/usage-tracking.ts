@@ -1,5 +1,5 @@
-import { track } from "./lib/analytics";
-import type { ScriptSource, TpEvents, TrackedSetting, WordBucket } from "./lib/analytics/events";
+import { track } from "../../lib/analytics";
+import type { AnalyticsEvents, ScriptSource, TrackedSetting, WordBucket } from "../../lib/analytics/events";
 import { debounce } from "./lib/debounce";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import type { Settings } from "./lib/settings";
@@ -42,7 +42,7 @@ function trackSettingChanges(store: Store): void {
 	const pending = new Map<TrackedSetting, Settings[TrackedSetting]>();
 	const report = debounce(() => {
 		for (const [setting, value] of pending) {
-			track("tp_setting_changed", { setting, value } as TpEvents["tp_setting_changed"]);
+			track("tp_setting_changed", { setting, value } as AnalyticsEvents["tp_setting_changed"]);
 		}
 		pending.clear();
 	}, SETTING_SETTLE_MS);

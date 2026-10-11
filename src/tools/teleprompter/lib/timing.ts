@@ -1,4 +1,4 @@
-import type { WordBucket } from "./analytics/events";
+import type { WordBucket } from "../../../lib/analytics/events";
 
 export const WORDS_PER_MINUTE = 150;
 

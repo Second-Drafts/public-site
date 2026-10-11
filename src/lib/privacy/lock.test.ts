@@ -11,7 +11,7 @@ import {
 	type Snapshot,
 } from "./lock";
 import type { Retention } from "./registry";
-import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../../tools/teleprompter/lib/analytics/events";
+import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../analytics/events";
 
 function baseSnapshot(): Snapshot {
 	return {

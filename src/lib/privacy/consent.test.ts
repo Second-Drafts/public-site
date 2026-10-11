@@ -7,6 +7,10 @@ const CONSENT_KEY = "privacy:consent";
 const GRANT = { analytics: true };
 const DENY = { analytics: false };
 
+const [CURRENT_MAJOR, CURRENT_MINOR] = lock.version.split(".").map(Number);
+const NEWER_MINOR = `${CURRENT_MAJOR}.${CURRENT_MINOR + 1}.2`;
+const PREVIOUS_MAJOR = `${CURRENT_MAJOR - 1}.9.0`;
+
 function recordFrom(overrides: Partial<ConsentRecord> = {}): ConsentRecord {
 	return {
 		id: "record-id",
@@ -118,14 +122,14 @@ describe("expiry", () => {
 	});
 
 	it("is undecided when the record predates the current registry major", async () => {
-		seedRecord(recordFrom({ registryVersion: "0.9.0" }));
+		seedRecord(recordFrom({ registryVersion: PREVIOUS_MAJOR }));
 		const consent = await loadConsent();
 		expect(consent.decided()).toBe(false);
 		expect(consent.get("analytics")).toBe(false);
 	});
 
 	it("accepts a record from the same major with a newer minor", async () => {
-		seedRecord(recordFrom({ registryVersion: "1.4.2" }));
+		seedRecord(recordFrom({ registryVersion: NEWER_MINOR }));
 		const consent = await loadConsent();
 		expect(consent.decided()).toBe(true);
 	});
@@ -138,7 +142,7 @@ describe("expiry", () => {
 	});
 
 	it("purges analytics storage when the record predates the current registry major", async () => {
-		seedRecord(recordFrom({ registryVersion: "0.9.0" }));
+		seedRecord(recordFrom({ registryVersion: PREVIOUS_MAJOR }));
 		const consent = await loadConsent();
 		consent.decided();
 		expect(cookies.cookie).toBe("unrelated=1");

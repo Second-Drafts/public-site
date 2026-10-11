@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { VENDORS } from "../../../../../lib/privacy/registry";
+import { VENDORS } from "../../privacy/registry";
 import { REGISTRY } from ".";
 
 describe("provider vendors", () => {

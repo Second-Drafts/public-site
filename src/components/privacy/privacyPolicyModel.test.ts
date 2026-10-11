@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { VENDORS } from "../../lib/privacy/registry";
-import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../../tools/teleprompter/lib/analytics/events";
+import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../../lib/analytics/events";
 import { EMAIL_CAPTURE_ENABLED } from "../../tools/teleprompter/lib/interest";
 import { analyticsEvents, sessionContextProperties, vendorSections } from "./privacyPolicyModel";
 

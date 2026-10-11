@@ -30,7 +30,7 @@ export function resolveProviders(env: AnalyticsEnv): AnalyticsConfig {
 	for (const name of requested) {
 		if (providers.includes(name)) continue;
 		if (name === "gtag" && gaMeasurementId === "") {
-			if (dev) console.warn("[tp] gtag requested but PUBLIC_GA_MEASUREMENT_ID is not set; skipping gtag.");
+			if (dev) console.warn("[analytics] gtag requested but PUBLIC_GA_MEASUREMENT_ID is not set; skipping gtag.");
 			continue;
 		}
 		providers.push(name);

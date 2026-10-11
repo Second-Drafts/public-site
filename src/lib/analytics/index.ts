@@ -8,20 +8,19 @@ import type {
 	Kind,
 	LandingSource,
 	SessionContext,
-	TpEvents,
+	AnalyticsEvents,
 } from "./events";
 import { REGISTRY, type ProviderOptions } from "./providers";
-import { hasShareParam } from "../share-hash";
-import { consent } from "../../../../lib/privacy/consent";
-import { VENDORS, type CategoryId } from "../../../../lib/privacy/registry";
-import { reportViolation } from "../../../../lib/privacy/violation";
+import { consent } from "../privacy/consent";
+import { VENDORS, type CategoryId } from "../privacy/registry";
+import { reportViolation } from "../privacy/violation";
 
 const MAX_STRING_LENGTH = 64;
 const MAX_QUEUE = 100;
 
 declare global {
 	interface Window {
-		__tpEvents?: { event: string; props: EventProps }[];
+		__analyticsEvents?: { event: string; props: EventProps }[];
 	}
 }
 
@@ -60,8 +59,7 @@ export function hostnameOf(url: string): string {
 	}
 }
 
-export function landingSource(referrer: string, hash: string): LandingSource {
-	if (hasShareParam(hash)) return "share_link";
+export function landingSource(referrer: string): LandingSource {
 	const host = hostnameOf(referrer);
 	if (host === "") return "direct";
 	if (SEARCH_HOSTS.some((re) => re.test(host))) return "organic";
@@ -74,8 +72,8 @@ function referrerDomainOf(referrer: string): string {
 	return hostname.length > MAX_STRING_LENGTH ? "" : hostname;
 }
 
-export function trackPageView({ referrer, hash }: { referrer: string; hash: string }): void {
-	track("tp_page_view", { referrer_domain: referrerDomainOf(referrer), landing_source: landingSource(referrer, hash) });
+export function trackPageView(referrer: string): void {
+	track("page_view", { referrer_domain: referrerDomainOf(referrer), landing_source: landingSource(referrer) });
 }
 
 function kindOf(value: unknown): Kind | undefined {
@@ -125,7 +123,7 @@ function guarded<T>(providerName: string, action: string, run: () => T): T | und
 	try {
 		return run();
 	} catch (error) {
-		if (import.meta.env.DEV) console.warn(`[tp] provider "${providerName}" threw in ${action}`, error);
+		if (import.meta.env.DEV) console.warn(`[analytics] provider "${providerName}" threw in ${action}`, error);
 		return undefined;
 	}
 }
@@ -138,13 +136,13 @@ function dispatch(event: EventName, props: EventProps, targets: AnalyticsProvide
 }
 
 function recordForInspection(event: EventName, props: EventProps): void {
-	(window.__tpEvents ??= []).push({ event, props: { ...props, ...context() } });
+	(window.__analyticsEvents ??= []).push({ event, props: { ...props, ...context() } });
 }
 
 function createProvider(name: string, options: ProviderOptions): AnalyticsProvider | undefined {
 	const factory = REGISTRY[name];
 	if (!factory) {
-		if (import.meta.env.DEV) console.warn(`[tp] unknown analytics provider "${name}"`);
+		if (import.meta.env.DEV) console.warn(`[analytics] unknown analytics provider "${name}"`);
 		return undefined;
 	}
 	return guarded(name, "setup", () => factory(options));
@@ -199,7 +197,7 @@ export function initAnalytics(): void {
 	discardQueueIfNoProviderMayStart();
 }
 
-export function track<E extends EventName>(event: E, props: TpEvents[E]): void {
+export function track<E extends EventName>(event: E, props: AnalyticsEvents[E]): void {
 	const { clean, violations } = sanitize(event, props);
 	violations.forEach(reportWithoutThrowing);
 	const queueIsUseful = !initialized || someProviderMayStillStart();

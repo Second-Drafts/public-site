@@ -22,7 +22,7 @@ Common to all activities: data is protected in transit by HTTPS (GitHub Pages), 
 ## Website analytics
 
 - **Purpose:** Understanding which tools and settings people use so we know what to improve.
-- **Data categories:** Events and session properties as listed on the privacy policy (tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Only the teleprompter sends events today; the word counter sends none. Never the text a visitor writes in any tool.
+- **Data categories:** Events and session properties as listed on the privacy policy (pages visited, tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Every page sends a page view; only the teleprompter sends tool events today. Never the text a visitor writes in any tool.
 - **Data subjects:** Visitors who accept analytics.
 - **Recipients:** Google Analytics (processor, once the processor items in `google-analytics.md` are ticked; deploys are blocked until then).
 - **Transfers:** To the United States under the EU–US Data Privacy Framework.

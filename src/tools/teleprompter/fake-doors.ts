@@ -1,5 +1,5 @@
-import { track } from "./lib/analytics";
-import type { FakeDoorFeature } from "./lib/analytics/events";
+import { track } from "../../lib/analytics";
+import type { FakeDoorFeature } from "../../lib/analytics/events";
 import { wireDialog } from "../../lib/dialog";
 import { required } from "../../lib/dom";
 import { EMAIL_CAPTURE_ENABLED, subscribe } from "./lib/interest";

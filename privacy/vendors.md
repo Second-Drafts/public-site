@@ -20,7 +20,7 @@ Last reviewed: 2026-10-11
 
 Last reviewed: 2026-10-11
 
-- **What it does for us:** Measures which tools and settings people use, only after the visitor accepts analytics. Only the teleprompter loads it today; the word counter sends nothing.
+- **What it does for us:** Measures which pages, tools and settings people use, only after the visitor accepts analytics. Every page loads it once accepted; only the teleprompter sends tool events today.
 - **Data involved:** The events and session properties listed on the privacy policy (tool settings, text length as a word-count range, how the visitor arrived, time spent, device type), plus what Google collects automatically (IP address, browser details), and the `_ga` and `_ga_<ID>` cookies. Never the text a visitor writes in any tool.
 - **Role:** processor, which the registry records and which lets a processor change skip re-consent. That holds only while Google's data processing terms are accepted, every Data sharing setting is off and no request goes to an ads or audiences endpoint; otherwise Google uses the data for its own purposes and is a controller. Those items are in `google-analytics.md`, and `scripts/privacy-records-check.ts` blocks deploys until they are ticked. Not yet confirmed.
 - **Terms accepted:** Google Analytics data processing terms. **To fill:** date accepted (ticket 14; production builds already enable GA, so deploys are blocked until this is done).

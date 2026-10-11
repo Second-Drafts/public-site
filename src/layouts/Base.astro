@@ -46,6 +46,10 @@ const fullTitle = seoTitle ?? (title ? `${siteName}: ${title}` : siteName);
 		<CookieSettingsDialog />
 		<script>
 			import "../components/privacy/consent-ui";
+			import { initAnalytics, trackPageView } from "../lib/analytics";
+
+			initAnalytics();
+			trackPageView(document.referrer);
 		</script>
 	</body>
 </html>
