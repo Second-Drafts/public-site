@@ -1,13 +1,15 @@
+import { stored } from "../../lib/privacy/storage";
 import { required } from "./lib/dom";
 import { isTouchOnly, shortcutsFor } from "./lib/keyboard";
 import type { ArrowKeyLayout } from "./lib/settings";
-import { KEYS, read, write } from "./lib/storage";
 
 export interface ShortcutHint {
 	show(options: { canFullscreen: boolean }): void;
 	dismiss(): void;
 	relabel(layout: ArrowKeyLayout): void;
 }
+
+const hintSeen = stored("tp:hintSeen");
 
 export function createShortcutHint(hint: HTMLElement, focusAfterDismiss: HTMLElement): ShortcutHint {
 	const part = (name: string) => required(hint, `[data-tpp="${name}"]`);
@@ -22,14 +24,14 @@ export function createShortcutHint(hint: HTMLElement, focusAfterDismiss: HTMLEle
 		const touchOnly = isTouchOnly((query) => window.matchMedia(query).matches);
 		keyList.hidden = touchOnly;
 		touchHint.hidden = !touchOnly;
-		hint.hidden = read(KEYS.hintSeen) !== null;
+		hint.hidden = hintSeen.read() !== null;
 	}
 
 	function dismiss() {
 		if (hint.hidden) return;
 		const hadFocus = hint.contains(document.activeElement);
 		hint.hidden = true;
-		write(KEYS.hintSeen, "1");
+		hintSeen.write("1");
 		if (hadFocus) focusAfterDismiss.focus({ preventScroll: true });
 	}
 

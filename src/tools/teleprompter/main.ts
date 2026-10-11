@@ -1,3 +1,4 @@
+import { stored } from "../../lib/privacy/storage";
 import { askConfirm } from "./confirm";
 import { mountEditPreview } from "./edit-preview";
 import { mountEditView } from "./edit-view";
@@ -7,7 +8,6 @@ import { debounce } from "./lib/debounce";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import { validateSettings, type Settings } from "./lib/settings";
 import { hasShareParam } from "./lib/share-hash";
-import { KEYS, read, readJSON, write, writeJSON } from "./lib/storage";
 import { createStore, type Store } from "./lib/store";
 import { mountPromptView } from "./prompt-view";
 import { mountSettingsPanel } from "./settings-panel";
@@ -22,8 +22,10 @@ declare global {
 initAnalytics();
 trackPageView({ referrer: document.referrer, hash: location.hash });
 
-const savedScript = read(KEYS.script);
-const savedSettings = readJSON(KEYS.settings);
+const storedScript = stored("tp:script");
+const storedSettings = stored("tp:settings:v1");
+const savedScript = storedScript.read();
+const savedSettings = storedSettings.readJSON();
 const store = createStore({
 	// Only a first visit gets the sample: an empty saved script was cleared on purpose.
 	script: savedScript ?? SAMPLE_SCRIPT,
@@ -44,8 +46,8 @@ openShareLink(store, usage, showNotice);
 addEventListener("hashchange", () => openShareLink(store, usage, showNotice));
 
 function persistChanges(store: Store) {
-	const saveScript = debounce((script: string) => write(KEYS.script, script), 500);
-	const saveSettings = debounce((settings: Settings) => writeJSON(KEYS.settings, settings), 300);
+	const saveScript = debounce((script: string) => storedScript.write(script), 500);
+	const saveSettings = debounce((settings: Settings) => storedSettings.writeJSON(settings), 300);
 	store.subscribe((state, previous) => {
 		if (state.script !== previous.script) saveScript(state.script);
 		if (state.settings !== previous.settings) saveSettings(state.settings);
