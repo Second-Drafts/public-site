@@ -3,6 +3,7 @@
 	"useTabs": true,
 	"printWidth": 120,
 	"ignorePatterns": [
+		"privacy/scan-report.json",
 		".claude/**",
 		".agents/**",
 		".impeccable/**",
