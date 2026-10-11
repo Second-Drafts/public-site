@@ -269,6 +269,7 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 	function enter() {
 		if (open) return;
 		open = true;
+		document.documentElement.dataset.immersive = "";
 		focusBeforeEnter = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 		const { script, settings: current } = store.get();
 
@@ -315,6 +316,7 @@ export function mountPromptView(store: Store, hooks: PromptHooks): void {
 		wakeLock.release();
 
 		root.hidden = true;
+		delete document.documentElement.dataset.immersive;
 		if (focusBeforeEnter?.isConnected) focusBeforeEnter.focus({ preventScroll: true });
 		focusBeforeEnter = null;
 	}

@@ -1,6 +1,9 @@
 ---
 import DesignSystemHead from "../components/DesignSystemHead.astro";
 import Header from "../components/Header.astro";
+import ConsentBanner from "../components/privacy/ConsentBanner.astro";
+import CookieSettingsDialog from "../components/privacy/CookieSettingsDialog.astro";
+import Footer from "../components/privacy/Footer.astro";
 
 interface Props {
 	title?: string;
@@ -34,10 +37,16 @@ const fullTitle = seoTitle ?? (title ? `${siteName}: ${title}` : siteName);
 		<slot name="head" />
 	</head>
 	<body class:list={{ "edge-to-edge": edgeToEdge }}>
+		<ConsentBanner />
 		<Header logo={headerLogo} />
 		<main class:list={["page", { wide }]}>
 			<slot />
 		</main>
+		<Footer />
+		<CookieSettingsDialog />
+		<script>
+			import "../components/privacy/consent-ui";
+		</script>
 	</body>
 </html>
 

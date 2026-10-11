@@ -1,0 +1,56 @@
+---
+import Link from "../Link.astro";
+---
+
+<footer class="sd-footer">
+	<ul>
+		<li><button type="button" class="sd-footer__settings" data-open-cookie-settings>Cookie settings</button></li>
+		<li><Link href="/cookie-policy">Cookie policy</Link></li>
+		<li><Link href="/privacy-policy">Privacy policy</Link></li>
+	</ul>
+</footer>
+
+<style>
+	.sd-footer {
+		padding: var(--space-6) var(--space-8);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+		background: var(--paper);
+	}
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-family: var(--font-display);
+		font-size: 15px;
+		line-height: 20px;
+	}
+	@media (pointer: coarse) {
+		li {
+			display: flex;
+			align-items: center;
+			min-block-size: 44px;
+		}
+	}
+	.sd-footer__settings {
+		padding: 0;
+		font: inherit;
+		color: var(--ink);
+		background: none;
+		border: 0;
+		text-decoration: underline;
+		text-decoration-color: var(--marker-green);
+		text-decoration-thickness: 3px;
+		text-underline-offset: 3px;
+		cursor: pointer;
+	}
+	.sd-footer__settings:focus-visible {
+		outline: none;
+		border-radius: var(--radius-sm);
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+</style>

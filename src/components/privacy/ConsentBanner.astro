@@ -1,0 +1,64 @@
+---
+import Button from "../Button.astro";
+import Link from "../Link.astro";
+---
+
+<section class="cb" aria-label="Analytics" data-consent-banner hidden>
+	<p class="cb__text">
+		We'd like to use Google Analytics to see which tools people use, so we know what to improve. It never sees what's
+		in your scripts, and saying no changes nothing about how the tools work.{" "}
+		<Link href="/cookie-policy">Cookie policy</Link>
+	</p>
+	<div class="cb__actions">
+		<Button variant="secondary" data-consent-accept>Accept</Button>
+		<Button variant="secondary" data-consent-reject>Reject</Button>
+		<Button variant="quiet" data-open-cookie-settings>Settings</Button>
+	</div>
+</section>
+<p class="sd-visually-hidden" role="status" data-consent-status></p>
+
+<style>
+	.cb {
+		position: fixed;
+		z-index: 100;
+		inset-inline: var(--space-4);
+		inset-block-end: max(var(--space-4), env(safe-area-inset-bottom, 0px));
+		box-sizing: border-box;
+		max-inline-size: 44rem;
+		margin-inline: auto;
+		display: grid;
+		gap: var(--space-3);
+		padding: var(--space-4) var(--space-6);
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+	}
+	.cb[hidden],
+	:global(html[data-immersive]) .cb {
+		display: none;
+	}
+	.cb__text {
+		margin: 0;
+	}
+	.cb__text {
+		font-family: var(--font-prose);
+		font-size: 16px;
+		line-height: 24px;
+	}
+	.cb__actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.cb:not([hidden]) {
+			animation: cb-in 120ms ease-out;
+		}
+	}
+	@keyframes cb-in {
+		from {
+			opacity: 0;
+		}
+	}
+</style>

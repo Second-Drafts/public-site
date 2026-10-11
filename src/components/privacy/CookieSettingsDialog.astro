@@ -1,0 +1,159 @@
+---
+import Button from "../Button.astro";
+import Dialog from "../Dialog.astro";
+import Link from "../Link.astro";
+import { CATEGORIES } from "../../lib/privacy/registry";
+import { consentSettingsModel } from "./consentSettingsModel";
+
+const categories = consentSettingsModel();
+---
+
+<Dialog aria-labelledby="cs-title" width="34rem" data-consent-settings>
+	<h2 id="cs-title" class="tpd__title sd-text-title">Cookie settings</h2>
+	<p class="tpd__text">Choose what we may store on your device. You can change this any time.</p>
+
+	<div class="cs__category">
+		<div class="cs__text">
+			<p class="cs__label sd-text-heading">{CATEGORIES.necessary.label}</p>
+			<p class="cs__description">{CATEGORIES.necessary.description}</p>
+		</div>
+		<p class="cs__always">Always on</p>
+	</div>
+
+	{
+		categories.map((category, index) => (
+			<div class="cs__category">
+				<div class="cs__text">
+					<label class="cs__label sd-text-heading" for={`cs-${category.id}`}>
+						{category.label}
+					</label>
+					<p class="cs__description" id={`cs-${category.id}-description`}>
+						{category.description}
+					</p>
+					<p class="cs__vendors">
+						Provided by{" "}
+						{category.vendors.map((vendor, index) => (
+							<>
+								{index > 0 && ", "}
+								<Link href={vendor.privacyUrl} target="_blank" rel="noopener noreferrer">
+									{vendor.name}
+								</Link>
+							</>
+						))}
+					</p>
+				</div>
+				<div class="cs__control">
+					<span class="cs__state" aria-hidden="true" data-consent-state>
+						Off
+					</span>
+					<input
+						id={`cs-${category.id}`}
+						class="cs__switch"
+						type="checkbox"
+						autofocus={index === 0}
+						role="switch"
+						aria-describedby={`cs-${category.id}-description`}
+						data-consent-category={category.id}
+					/>
+				</div>
+			</div>
+		))
+	}
+
+	<div class="tpd__actions cs__actions">
+		<Button variant="secondary" data-consent-cancel>Cancel</Button>
+		<Button variant="primary" data-consent-save>Save</Button>
+	</div>
+</Dialog>
+
+<style>
+	.cs__category {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--space-4);
+		padding-block-start: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+	.cs__text {
+		display: grid;
+		gap: var(--space-1);
+	}
+	.cs__label,
+	.cs__description,
+	.cs__vendors,
+	.cs__always {
+		margin: 0;
+	}
+	.cs__description,
+	.cs__vendors {
+		font-family: var(--font-prose);
+		font-size: 16px;
+		line-height: 24px;
+	}
+	.cs__vendors {
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.cs__always,
+	.cs__state {
+		flex: none;
+		font-family: var(--font-display);
+		font-size: 14px;
+		line-height: 20px;
+	}
+	.cs__control {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		flex: none;
+	}
+	.cs__state {
+		min-inline-size: 2.5ch;
+		text-align: end;
+	}
+	.cs__switch {
+		flex: none;
+		appearance: none;
+		position: relative;
+		inline-size: 44px;
+		block-size: 24px;
+		margin: 0;
+		background: var(--paper-sunken);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: 999px;
+		cursor: pointer;
+	}
+	.cs__switch::before {
+		content: "";
+		position: absolute;
+		inset-block-start: 2px;
+		inset-inline-start: 2px;
+		inline-size: 18px;
+		block-size: 18px;
+		background: var(--ink);
+		border-radius: 50%;
+	}
+	.cs__switch:checked {
+		background: var(--marker-blue);
+		border-color: var(--marker-blue);
+	}
+	.cs__switch:checked::before {
+		inset-inline-start: 22px;
+		background: var(--on-blue);
+	}
+	.cs__switch:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--paper-raised),
+			0 0 0 4px var(--focus);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.cs__switch::before {
+			transition: inset-inline-start 120ms ease-out;
+		}
+	}
+	.cs__actions {
+		justify-content: flex-end;
+	}
+</style>

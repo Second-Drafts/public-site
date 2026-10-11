@@ -1,5 +1,5 @@
 import { required } from "./lib/dom";
-import { wireDialog } from "./lib/dialog";
+import { wireDialog } from "../../lib/dialog";
 
 export interface ConfirmOptions {
 	title: string;
