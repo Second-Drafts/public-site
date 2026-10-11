@@ -78,8 +78,6 @@ export type StorageArea = "local" | "session" | "cookie";
 
 export type Retention = "until-tab-closed" | "until-cleared" | { months: number };
 
-type Owner = "site" | "teleprompter";
-
 interface StorageFacts {
 	category: CategoryId;
 	// A stable slug: rewording `purpose` keeps it, using the data for something new changes it.
@@ -90,7 +88,6 @@ interface StorageFacts {
 
 interface FirstPartyStorage extends StorageFacts {
 	setBy: "us";
-	owner: Owner;
 	area: Exclude<StorageArea, "cookie">;
 }
 
@@ -105,7 +102,6 @@ type StorageEntry = FirstPartyStorage | VendorStorage;
 export const STORAGE = {
 	"tp:script": {
 		setBy: "us",
-		owner: "teleprompter",
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-script",
@@ -114,7 +110,6 @@ export const STORAGE = {
 	},
 	"tp:settings:v1": {
 		setBy: "us",
-		owner: "teleprompter",
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-display-settings",
@@ -123,7 +118,6 @@ export const STORAGE = {
 	},
 	"tp:hintSeen": {
 		setBy: "us",
-		owner: "teleprompter",
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-dismissed-hint",
@@ -132,7 +126,6 @@ export const STORAGE = {
 	},
 	"privacy:consent": {
 		setBy: "us",
-		owner: "site",
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-consent-choice",

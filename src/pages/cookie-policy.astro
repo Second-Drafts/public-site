@@ -1,21 +1,16 @@
 ---
-import Base from "../layouts/Base.astro";
+import LegalPage from "../layouts/LegalPage.astro";
 import Button from "../components/Button.astro";
 import Link from "../components/Link.astro";
 import { cookieTableModel } from "../components/privacy/cookieTableModel";
-import { policyLastUpdated } from "../lib/privacy/policy-date";
 import { VENDORS } from "../lib/privacy/registry";
 import { CONTACT_EMAIL, DOMAIN, ORGANISATION } from "../lib/privacy/organisation";
 
 const analyticsVendor = VENDORS["google-analytics"];
 const categories = cookieTableModel().filter((category) => category.rows.length > 0);
-const lastUpdated = policyLastUpdated();
 ---
 
-<Base title="Cookie policy" description={`How ${DOMAIN} uses cookies and similar technologies, and how to change your choices.`}>
-	<h1 class="sd-text-headline">Cookie policy</h1>
-	<p class="updated">Last updated {lastUpdated}</p>
-
+<LegalPage title="Cookie policy" description={`How ${DOMAIN} uses cookies and similar technologies, and how to change your choices.`}>
 	<p>
 		This policy explains how {ORGANISATION} ("we", "us") uses cookies and similar technologies on {DOMAIN}, what each one
 		is for, and how to change your choices. For how we handle personal data more broadly, see our{" "}
@@ -107,26 +102,11 @@ const lastUpdated = policyLastUpdated();
 
 	<h2>Contact</h2>
 	<p>Questions about this policy? Email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>.</p>
-</Base>
+</LegalPage>
 
 <style>
-	h1 {
-		margin: 0 0 var(--space-2);
-		font-weight: 600;
-	}
-	h2 {
-		margin: var(--space-12) 0 var(--space-4);
-	}
 	h3 {
 		margin: var(--space-8) 0 var(--space-2);
-	}
-	p {
-		margin: 0 0 var(--space-6);
-		text-wrap: pretty;
-	}
-	.updated {
-		color: var(--ink-muted);
-		margin-bottom: var(--space-8);
 	}
 	.category-description {
 		margin-bottom: var(--space-4);

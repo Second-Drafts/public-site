@@ -9,8 +9,8 @@ const categories = consentSettingsModel();
 ---
 
 <Dialog aria-labelledby="cs-title" width="34rem" data-consent-settings>
-	<h2 id="cs-title" class="tpd__title sd-text-title">Cookie settings</h2>
-	<p class="tpd__text">Choose what we may store on your device. You can change this any time.</p>
+	<h2 id="cs-title" class="sd-dialog__title sd-text-title">Cookie settings</h2>
+	<p class="sd-dialog__text">Choose what we may store on your device. You can change this any time.</p>
 
 	<div class="cs__category">
 		<div class="cs__text">
@@ -59,7 +59,7 @@ const categories = consentSettingsModel();
 		))
 	}
 
-	<div class="tpd__actions cs__actions">
+	<div class="sd-dialog__actions cs__actions">
 		<Button variant="secondary" data-consent-cancel>Cancel</Button>
 		<Button variant="primary" data-consent-save>Save</Button>
 	</div>

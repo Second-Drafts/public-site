@@ -1,16 +1,7 @@
 import { consent } from "./consent";
-import { DOMAIN } from "./organisation";
+import { rawStored } from "./raw-storage";
 import { reportViolation } from "./violation";
-import { findStorageEntry, STORAGE, type CategoryId, type FirstPartyKey, type StorageArea } from "./registry";
-
-const COOKIE_DOMAIN = `.${DOMAIN}`;
-
-type WebStorageArea = Exclude<StorageArea, "cookie">;
-
-const webStorage: Record<WebStorageArea, () => Storage> = {
-	local: () => localStorage,
-	session: () => sessionStorage,
-};
+import { STORAGE, type FirstPartyKey } from "./registry";
 
 function isPermitted(key: FirstPartyKey): boolean {
 	const { category } = STORAGE[key];
@@ -19,88 +10,24 @@ function isPermitted(key: FirstPartyKey): boolean {
 	return false;
 }
 
-// The storage getter itself throws when storage is blocked, so access stays inside the try.
 export function stored(key: FirstPartyKey) {
-	const area = () => webStorage[STORAGE[key].area]();
+	const raw = rawStored(key);
 
 	function read(): string | null {
-		if (!isPermitted(key)) return null;
-		try {
-			return area().getItem(key);
-		} catch {
-			return null;
-		}
+		return isPermitted(key) ? raw.read() : null;
 	}
 
 	function readJSON(): unknown {
-		const raw = read();
-		if (raw === null) return undefined;
-		try {
-			return JSON.parse(raw);
-		} catch {
-			return undefined;
-		}
+		return isPermitted(key) ? raw.readJSON() : undefined;
 	}
 
 	function write(value: string): void {
-		if (!isPermitted(key)) return;
-		try {
-			area().setItem(key, value);
-		} catch {}
+		if (isPermitted(key)) raw.write(value);
 	}
 
 	function writeJSON(value: unknown): void {
-		write(JSON.stringify(value));
+		if (isPermitted(key)) raw.writeJSON(value);
 	}
 
-	function remove(): void {
-		try {
-			area().removeItem(key);
-		} catch {}
-	}
-
-	return { read, readJSON, write, writeJSON, remove };
-}
-
-function presentNames(area: WebStorageArea): string[] {
-	const storage = webStorage[area]();
-	return Array.from({ length: storage.length }, (_, index) => storage.key(index)).filter(
-		(name): name is string => name !== null,
-	);
-}
-
-function purgeWebStorage(area: WebStorageArea, category: CategoryId): void {
-	try {
-		const storage = webStorage[area]();
-		for (const name of presentNames(area)) {
-			if (findStorageEntry(area, name)?.category === category) storage.removeItem(name);
-		}
-	} catch {}
-}
-
-function presentCookieNames(): string[] {
-	return document.cookie
-		.split(";")
-		.map((pair) => pair.split("=")[0].trim())
-		.filter((name) => name !== "");
-}
-
-function expireCookie(name: string): void {
-	const expired = `${name}=; Max-Age=0; path=/`;
-	document.cookie = expired;
-	document.cookie = `${expired}; domain=${COOKIE_DOMAIN}`;
-}
-
-function purgeCookies(category: CategoryId): void {
-	try {
-		for (const name of presentCookieNames()) {
-			if (findStorageEntry("cookie", name)?.category === category) expireCookie(name);
-		}
-	} catch {}
-}
-
-export function purgeCategory(category: CategoryId): void {
-	purgeWebStorage("local", category);
-	purgeWebStorage("session", category);
-	purgeCookies(category);
+	return { read, readJSON, write, writeJSON, remove: raw.remove };
 }

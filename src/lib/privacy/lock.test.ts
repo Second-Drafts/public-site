@@ -77,11 +77,6 @@ describe("registry lock", () => {
 			"The registry disagrees with registry.lock.json. Run `npm run privacy:lock` and review the cookie policy.";
 		expect(snapshotOfRegistry(), message).toEqual(snapshotOf(lock as Snapshot));
 	});
-
-	it("leaves out internal-only fields", () => {
-		const entry = Object.values(snapshotOfRegistry().storage)[0];
-		expect(entry).not.toHaveProperty("owner");
-	});
 });
 
 describe("bump rules", () => {

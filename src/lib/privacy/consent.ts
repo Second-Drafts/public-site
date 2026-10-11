@@ -1,6 +1,6 @@
 import { CATEGORIES, CONSENT_CATEGORY_IDS, type CategoryId, type ConsentCategoryId } from "./registry";
 import { version as REGISTRY_VERSION } from "./registry.lock.json";
-import { purgeCategory, stored } from "./storage";
+import { purgeCategory, rawStored } from "./raw-storage";
 
 export const CONSENT_MAX_AGE = 6 * 30 * 24 * 60 * 60 * 1000;
 
@@ -50,7 +50,7 @@ function isCurrent(record: ConsentRecord): boolean {
 }
 
 function currentRecord(): ConsentRecord | undefined {
-	const record = stored("privacy:consent").readJSON();
+	const record = rawStored("privacy:consent").readJSON();
 	return isConsentRecord(record) && isCurrent(record) ? record : undefined;
 }
 
@@ -72,7 +72,7 @@ export const consent = {
 
 	set(choices: ConsentChoices, source: ConsentSource): void {
 		const previouslyGranted = CONSENT_CATEGORY_IDS.filter(isGranted);
-		stored("privacy:consent").writeJSON({
+		rawStored("privacy:consent").writeJSON({
 			id: crypto.randomUUID(),
 			registryVersion: REGISTRY_VERSION,
 			choices,

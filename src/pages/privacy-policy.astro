@@ -1,10 +1,9 @@
 ---
-import Base from "../layouts/Base.astro";
+import LegalPage from "../layouts/LegalPage.astro";
 import Button from "../components/Button.astro";
 import Link from "../components/Link.astro";
 import { analyticsEvents, sessionContextProperties, vendorSections } from "../components/privacy/privacyPolicyModel";
 import { CONTACT_EMAIL, DOMAIN, ORGANISATION, POSTAL_ADDRESS } from "../lib/privacy/organisation";
-import { policyLastUpdated } from "../lib/privacy/policy-date";
 import { VENDORS } from "../lib/privacy/registry";
 
 const vendors = vendorSections();
@@ -12,13 +11,9 @@ const hosting = VENDORS["github-pages"];
 const analytics = VENDORS["google-analytics"];
 const events = analyticsEvents();
 const contextProperties = sessionContextProperties();
-const lastUpdated = policyLastUpdated();
 ---
 
-<Base title="Privacy policy" description={`How ${DOMAIN} handles personal data, who we share it with, and your rights.`}>
-	<h1 class="sd-text-headline">Privacy policy</h1>
-	<p class="updated">Last updated {lastUpdated}</p>
-
+<LegalPage title="Privacy policy" description={`How ${DOMAIN} handles personal data, who we share it with, and your rights.`}>
 	<h2>Who we are</h2>
 	<p>
 		{ORGANISATION} ("we", "us") runs {DOMAIN}, a collection of free writing tools. To ask us anything about your data,
@@ -143,30 +138,15 @@ const lastUpdated = policyLastUpdated();
 
 	<h2>Changes to this policy</h2>
 	<p>We update this page when what we collect or who we share it with changes. The date at the top shows the latest change.</p>
-</Base>
+</LegalPage>
 
 <style>
-	h1 {
-		margin: 0 0 var(--space-2);
-		font-weight: 600;
-	}
-	h2 {
-		margin: var(--space-12) 0 var(--space-4);
-	}
-	p {
-		margin: 0 0 var(--space-6);
-		text-wrap: pretty;
-	}
 	ul {
 		margin: 0 0 var(--space-6);
 		padding-inline-start: var(--space-6);
 	}
 	li {
 		margin-block-end: var(--space-2);
-	}
-	.updated {
-		color: var(--ink-muted);
-		margin-bottom: var(--space-8);
 	}
 	details {
 		margin-block-end: var(--space-6);

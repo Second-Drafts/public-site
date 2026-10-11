@@ -4,7 +4,6 @@ import { fakeCookieJar, fakeWebStorage } from "./test-fakes";
 const analyticsStub = {
 	"tp:sessionProbe": {
 		setBy: "us",
-		owner: "teleprompter",
 		area: "session",
 		category: "analytics",
 		purposeId: "session-probe",
@@ -13,7 +12,6 @@ const analyticsStub = {
 	},
 	"tp:analyticsProbe": {
 		setBy: "us",
-		owner: "teleprompter",
 		area: "local",
 		category: "analytics",
 		purposeId: "probe",
@@ -125,7 +123,8 @@ describe("analytics keys", () => {
 
 describe("purgeCategory", () => {
 	it("removes analytics entries from every area and leaves necessary ones", async () => {
-		const { purgeCategory } = await loadStorage({ analyticsGranted: true });
+		await loadStorage({ analyticsGranted: true });
+		const { purgeCategory } = await import("./raw-storage");
 		local.setItem("tp:analyticsProbe", "1");
 		local.setItem("tp:script", "keep me");
 		session.setItem("tp:sessionProbe", "1");

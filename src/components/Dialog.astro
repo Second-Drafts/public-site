@@ -9,15 +9,15 @@ interface Props extends HTMLAttributes<"dialog"> {
 const { width = "26rem", class: className, style, ...rest } = Astro.props;
 ---
 
-<dialog {...rest} class:list={["tpd", className]} style={`--tpd-width: ${width}; ${style ?? ""}`}>
-	<div class="tpd__panel">
+<dialog {...rest} class:list={["sd-dialog", className]} style={`--sd-dialog-width: ${width}; ${style ?? ""}`}>
+	<div class="sd-dialog__panel">
 		<slot />
 	</div>
 </dialog>
 
 <style>
-	.tpd {
-		inline-size: min(var(--tpd-width), 100% - 2 * var(--space-6));
+	.sd-dialog {
+		inline-size: min(var(--sd-dialog-width), 100% - 2 * var(--space-6));
 		padding: 0;
 		color: var(--ink);
 		background: var(--paper-raised);
@@ -26,47 +26,47 @@ const { width = "26rem", class: className, style, ...rest } = Astro.props;
 		box-shadow: var(--shadow-lift);
 		opacity: 0;
 	}
-	.tpd[open] {
+	.sd-dialog[open] {
 		opacity: 1;
 	}
-	.tpd::backdrop {
+	.sd-dialog::backdrop {
 		background: oklch(0% 0 none / 0.4);
 		opacity: 0;
 	}
-	.tpd[open]::backdrop {
+	.sd-dialog[open]::backdrop {
 		opacity: 1;
 	}
 	@starting-style {
-		.tpd[open],
-		.tpd[open]::backdrop {
+		.sd-dialog[open],
+		.sd-dialog[open]::backdrop {
 			opacity: 0;
 		}
 	}
 	@media (prefers-reduced-motion: no-preference) {
-		.tpd,
-		.tpd::backdrop {
+		.sd-dialog,
+		.sd-dialog::backdrop {
 			transition:
 				opacity 200ms var(--ease-out, ease-out),
 				display 200ms allow-discrete,
 				overlay 200ms allow-discrete;
 		}
 	}
-	.tpd__panel {
+	.sd-dialog__panel {
 		display: grid;
 		gap: var(--space-4);
 		padding: var(--space-6);
 	}
 
-	:global(.tpd__title) {
+	:global(.sd-dialog__title) {
 		margin: 0;
 	}
-	:global(.tpd__text) {
+	:global(.sd-dialog__text) {
 		margin: 0;
 		font-family: var(--font-prose);
 		font-size: 17px;
 		line-height: 28px;
 	}
-	:global(.tpd__actions) {
+	:global(.sd-dialog__actions) {
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--space-2);

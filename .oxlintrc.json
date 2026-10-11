@@ -9,6 +9,12 @@
 			{ "name": "caches", "message": "Register the store in src/lib/privacy/registry first." },
 			{ "name": "cookieStore", "message": "Use stored() from src/lib/privacy/storage." }
 		],
+		"no-restricted-imports": [
+			"error",
+			{
+				"patterns": [{ "group": ["**/privacy/raw-storage"], "message": "Use stored() from src/lib/privacy/storage." }]
+			}
+		],
 		"no-restricted-properties": [
 			"error",
 			{ "object": "document", "property": "cookie" },
@@ -22,7 +28,7 @@
 	"overrides": [
 		{
 			"files": ["src/lib/privacy/**"],
-			"rules": { "no-restricted-globals": "off", "no-restricted-properties": "off" }
+			"rules": { "no-restricted-globals": "off", "no-restricted-imports": "off", "no-restricted-properties": "off" }
 		},
 		{ "files": ["src/pages/sandbox/**"], "rules": { "no-restricted-globals": "off" } }
 	]

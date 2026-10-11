@@ -33,8 +33,8 @@ const doors = [
 
 	<Dialog aria-labelledby="fd-dialog-title" data-fake-door-dialog width="28rem">
 		<div class="fd__body" data-fake-door-ask>
-			<h3 id="fd-dialog-title" class="tpd__title sd-text-title">Coming soon.</h3>
-			<p class="tpd__text">
+			<h3 id="fd-dialog-title" class="sd-dialog__title sd-text-title">Coming soon.</h3>
+			<p class="sd-dialog__text">
 				<span data-fake-door-name>This feature</span> isn't built yet. Would you use it?
 			</p>
 			{
@@ -48,14 +48,14 @@ const doors = [
 					/>
 				)
 			}
-			<div class="tpd__actions">
+			<div class="sd-dialog__actions">
 				<Button variant="primary" data-answer="yes">Yes, I want this</Button>
 				<Button variant="secondary" data-answer="no">Not really</Button>
 			</div>
 		</div>
 		<div class="fd__body" data-fake-door-done hidden>
-			<p class="tpd__text">Noted. Thanks for telling us.</p>
-			<div class="tpd__actions">
+			<p class="sd-dialog__text">Noted. Thanks for telling us.</p>
+			<div class="sd-dialog__actions">
 				<Button variant="secondary" data-close>Close</Button>
 			</div>
 		</div>
