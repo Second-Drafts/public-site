@@ -10,6 +10,7 @@ declare global {
 export function createGtagProvider(measurementId: string): AnalyticsProvider {
 	return {
 		name: "gtag",
+		vendor: "google-analytics",
 		init() {
 			if (typeof window === "undefined" || typeof document === "undefined") return;
 			window.dataLayer = window.dataLayer || [];

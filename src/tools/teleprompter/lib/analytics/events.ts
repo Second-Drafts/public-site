@@ -1,4 +1,5 @@
 // Privacy rule: no property may carry script text or anything derived from it beyond a word-count bucket.
+import type { VendorId } from "../../../../lib/privacy/registry";
 import type { ArrowKeyLayout, FontId, GuideColor, GuideMode, ThemeId } from "../settings";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "600+";
@@ -45,6 +46,7 @@ export interface SessionContext {
 
 export interface AnalyticsProvider {
 	readonly name: string;
+	readonly vendor: VendorId | null;
 	init?(): void;
 	track(event: EventName, props: EventProps): void;
 }

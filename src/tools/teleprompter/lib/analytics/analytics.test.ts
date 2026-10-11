@@ -5,7 +5,11 @@ import { hostnameOf, landingSource } from "./index";
 
 function fakeProvider(name = "fake") {
 	const calls: { event: EventName; props: EventProps }[] = [];
-	const provider: AnalyticsProvider = { name, track: (event, props) => void calls.push({ event, props }) };
+	const provider: AnalyticsProvider = {
+		name,
+		vendor: null,
+		track: (event, props) => void calls.push({ event, props }),
+	};
 	return { provider, calls };
 }
 
@@ -101,9 +105,47 @@ describe("resolveProviders", () => {
 	});
 });
 
+function fakeConsent({ granted = true, decided = true }: { granted?: boolean; decided?: boolean } = {}) {
+	const state = { granted, decided };
+	const listeners = new Set<() => void>();
+	const notify = () => listeners.forEach((listener) => listener());
+	return {
+		module: {
+			consent: {
+				get: (category: string) => category === "necessary" || state.granted,
+				decided: () => state.decided,
+				onChange: (listener: () => void) => {
+					listeners.add(listener);
+					return () => listeners.delete(listener);
+				},
+				whenGranted: (_category: string, run: () => void) => {
+					if (state.granted) return run();
+					const listener = () => {
+						if (!state.granted) return;
+						listeners.delete(listener);
+						run();
+					};
+					listeners.add(listener);
+				},
+			},
+		},
+		grant() {
+			Object.assign(state, { granted: true, decided: true });
+			notify();
+		},
+		reject() {
+			Object.assign(state, { granted: false, decided: true });
+			notify();
+		},
+	};
+}
+
 describe("track", () => {
+	let fake = fakeConsent();
+
 	async function loadAnalytics(providers: AnalyticsProvider[]) {
 		vi.resetModules();
+		vi.doMock("../../../../lib/privacy/consent", () => fake.module);
 		vi.doMock("./config", () => ({
 			readConfig: () => ({ providers: providers.map((p) => p.name), gaMeasurementId: "" }),
 		}));
@@ -114,6 +156,7 @@ describe("track", () => {
 	}
 
 	beforeEach(() => {
+		fake = fakeConsent();
 		vi.stubGlobal("window", {
 			matchMedia: () => ({ matches: false }),
 			screen: { width: 1440, height: 900 },
@@ -123,6 +166,7 @@ describe("track", () => {
 	afterEach(() => {
 		vi.doUnmock("./config");
 		vi.doUnmock("./providers");
+		vi.doUnmock("../../../../lib/privacy/consent");
 		vi.unstubAllGlobals();
 	});
 
@@ -184,12 +228,14 @@ describe("track", () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const bad: AnalyticsProvider = {
 			name: "bad",
+			vendor: null,
 			track() {
 				throw new Error("boom");
 			},
 		};
 		const badInit: AnalyticsProvider = {
 			name: "badInit",
+			vendor: null,
 			init() {
 				throw new Error("boom");
 			},
@@ -203,5 +249,74 @@ describe("track", () => {
 		expect(() => track("tp_share_link_opened", {})).not.toThrow();
 		expect(calls).toHaveLength(1);
 		warn.mockRestore();
+	});
+	describe("consent gate", () => {
+		it("does not start providers or dispatch while undecided", async () => {
+			fake = fakeConsent({ granted: false, decided: false });
+			const init = vi.fn();
+			const { provider, calls } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([{ ...provider, init }]);
+			initAnalytics();
+			track("tp_play", { word_bucket: "201-600", play_count: 1 });
+			expect(init).not.toHaveBeenCalled();
+			expect(calls).toHaveLength(0);
+		});
+
+		it("starts once on grant and flushes the queue in order", async () => {
+			fake = fakeConsent({ granted: false, decided: false });
+			const init = vi.fn();
+			const { provider, calls } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([{ ...provider, init }]);
+			initAnalytics();
+			track("tp_play", { word_bucket: "201-600", play_count: 1 });
+			track("tp_share_link_opened", {});
+			fake.grant();
+			fake.grant();
+			expect(init).toHaveBeenCalledTimes(1);
+			expect(calls.map((call) => call.event)).toEqual(["tp_play", "tp_share_link_opened"]);
+		});
+
+		it("starts immediately when already granted", async () => {
+			const init = vi.fn();
+			const { provider } = fakeProvider();
+			const { initAnalytics } = await loadAnalytics([{ ...provider, init }]);
+			initAnalytics();
+			expect(init).toHaveBeenCalledTimes(1);
+		});
+
+		it("clears the queue on rejection and drops later events", async () => {
+			fake = fakeConsent({ granted: false, decided: false });
+			const { provider, calls } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([provider]);
+			initAnalytics();
+			track("tp_play", { word_bucket: "201-600", play_count: 1 });
+			fake.reject();
+			track("tp_share_link_opened", {});
+			fake.grant();
+			expect(calls).toHaveLength(0);
+		});
+
+		it("sends nothing when Global Privacy Control applies at load", async () => {
+			fake = fakeConsent({ granted: false, decided: true });
+			const init = vi.fn();
+			const { provider, calls } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([{ ...provider, init }]);
+			track("tp_play", { word_bucket: "201-600", play_count: 1 });
+			initAnalytics();
+			track("tp_share_link_opened", {});
+			expect(init).not.toHaveBeenCalled();
+			fake.grant();
+			expect(calls).toHaveLength(0);
+		});
+
+		it("caps the pre-decision queue at 100 events", async () => {
+			fake = fakeConsent({ granted: false, decided: false });
+			const { provider, calls } = fakeProvider();
+			const { initAnalytics, track } = await loadAnalytics([provider]);
+			initAnalytics();
+			for (let i = 0; i < 150; i++) track("tp_share_link_opened", {});
+			fake.grant();
+			expect(calls).toHaveLength(100);
+		});
 	});
 });

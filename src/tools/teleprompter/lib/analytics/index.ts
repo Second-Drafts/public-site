@@ -10,6 +10,7 @@ import type {
 } from "./events";
 import { REGISTRY, type ProviderOptions } from "./providers";
 import { hasShareParam } from "../share-hash";
+import { consent } from "../../../../lib/privacy/consent";
 
 const MAX_STRING_LENGTH = 64;
 const MAX_QUEUE = 100;
@@ -22,6 +23,7 @@ declare global {
 
 let providers: AnalyticsProvider[] = [];
 let initialized = false;
+let providersStarted = false;
 let queue: { event: EventName; props: EventProps }[] = [];
 
 export function deviceType(): DeviceType {
@@ -121,9 +123,9 @@ function startProvider(name: string, options: ProviderOptions): AnalyticsProvide
 	});
 }
 
-export function initAnalytics(): void {
-	if (initialized) return;
-	initialized = true;
+function startProviders(): void {
+	if (providersStarted) return;
+	providersStarted = true;
 
 	const config = readConfig();
 	providers = config.providers
@@ -135,8 +137,25 @@ export function initAnalytics(): void {
 	for (const item of pending) dispatch(item.event, item.props);
 }
 
+function visitorDeclined(): boolean {
+	return consent.decided() && !consent.get("analytics");
+}
+
+function dropQueueIfDeclined(): void {
+	if (visitorDeclined()) queue = [];
+}
+
+export function initAnalytics(): void {
+	if (initialized) return;
+	initialized = true;
+	consent.whenGranted("analytics", startProviders);
+	consent.onChange(dropQueueIfDeclined);
+	dropQueueIfDeclined();
+}
+
 export function track<E extends EventName>(event: E, props: TpEvents[E]): void {
 	const clean = sanitize(props);
-	if (initialized) dispatch(event, clean);
+	if (providersStarted) dispatch(event, clean);
+	else if (visitorDeclined()) return;
 	else if (queue.length < MAX_QUEUE) queue.push({ event, props: clean });
 }
