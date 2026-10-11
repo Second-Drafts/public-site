@@ -1,5 +1,5 @@
 import { askConfirm } from "./confirm";
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import type { Store } from "./lib/store";
 import { countWords, formatReadTime, readTimeSeconds } from "./lib/timing";
 

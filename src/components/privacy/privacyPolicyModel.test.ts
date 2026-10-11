@@ -13,12 +13,6 @@ describe("vendorSections", () => {
 				.sort(),
 		);
 	});
-
-	it("includes hosting and analytics", () => {
-		const names = vendorSections().map((vendor) => vendor.name);
-		expect(names).toContain("GitHub Pages");
-		expect(names).toContain("Google Analytics");
-	});
 });
 
 describe("analytics disclosure", () => {

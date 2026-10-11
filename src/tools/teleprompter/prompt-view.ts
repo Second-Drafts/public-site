@@ -1,4 +1,5 @@
-import { inertOutside, required } from "./lib/dom";
+import { required } from "../../lib/dom";
+import { inertOutside } from "./lib/dom";
 import { createScrollEngine } from "./lib/engine";
 import type { ScrollEngine } from "./lib/engine";
 import type { PromptAction } from "./lib/keyboard";

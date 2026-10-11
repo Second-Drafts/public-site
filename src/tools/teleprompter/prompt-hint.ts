@@ -1,5 +1,5 @@
 import { stored } from "../../lib/privacy/storage";
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import { isTouchOnly, shortcutsFor } from "./lib/keyboard";
 import type { ArrowKeyLayout } from "./lib/settings";
 

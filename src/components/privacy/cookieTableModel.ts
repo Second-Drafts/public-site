@@ -1,5 +1,6 @@
 import {
 	CATEGORIES,
+	CATEGORY_IDS,
 	STORAGE,
 	VENDORS,
 	describeRetention,
@@ -48,7 +49,7 @@ function rowFor(name: StorageName): CookieTableRow {
 
 export function cookieTableModel(): CookieTableCategory[] {
 	const names = Object.keys(STORAGE) as StorageName[];
-	return (Object.keys(CATEGORIES) as CategoryId[]).map((id) => ({
+	return CATEGORY_IDS.map((id) => ({
 		id,
 		label: CATEGORIES[id].label,
 		description: CATEGORIES[id].description,

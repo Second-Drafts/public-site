@@ -1,12 +1,10 @@
 import { CATEGORIES, CONSENT_CATEGORY_IDS, type CategoryId, type ConsentCategoryId } from "./registry";
-import lock from "./registry.lock.json";
+import { version as REGISTRY_VERSION } from "./registry.lock.json";
 import { purgeCategory, stored } from "./storage";
 
 export const CONSENT_MAX_AGE = 6 * 30 * 24 * 60 * 60 * 1000;
 
-const REGISTRY_VERSION = lock.version;
-
-export type ConsentSource = "banner" | "settings" | "gpc";
+export type ConsentSource = "banner" | "settings";
 export type ConsentChoices = Record<ConsentCategoryId, boolean>;
 
 export interface ConsentRecord {
@@ -23,8 +21,8 @@ declare global {
 	}
 }
 
-export function buildChoices(isGranted: (category: ConsentCategoryId) => boolean): ConsentChoices {
-	return Object.fromEntries(CONSENT_CATEGORY_IDS.map((id) => [id, isGranted(id)])) as ConsentChoices;
+export function buildChoices(choiceFor: (category: ConsentCategoryId) => boolean): ConsentChoices {
+	return Object.fromEntries(CONSENT_CATEGORY_IDS.map((id) => [id, choiceFor(id)])) as ConsentChoices;
 }
 
 const listeners = new Set<() => void>();
@@ -56,10 +54,6 @@ function currentRecord(): ConsentRecord | undefined {
 	return isConsentRecord(record) && isCurrent(record) ? record : undefined;
 }
 
-function recordConsent(record: ConsentRecord): void {
-	stored("privacy:consent").writeJSON(record);
-}
-
 function gpcOptedOut(): boolean {
 	return navigator.globalPrivacyControl === true;
 }
@@ -78,7 +72,7 @@ export const consent = {
 
 	set(choices: ConsentChoices, source: ConsentSource): void {
 		const previouslyGranted = CONSENT_CATEGORY_IDS.filter(isGranted);
-		recordConsent({
+		stored("privacy:consent").writeJSON({
 			id: crypto.randomUUID(),
 			registryVersion: REGISTRY_VERSION,
 			choices,

@@ -3,19 +3,13 @@ import Base from "../layouts/Base.astro";
 import Button from "../components/Button.astro";
 import Link from "../components/Link.astro";
 import { cookieTableModel } from "../components/privacy/cookieTableModel";
-import lock from "../lib/privacy/registry.lock.json";
+import { policyLastUpdated } from "../lib/privacy/policy-date";
 import { VENDORS } from "../lib/privacy/registry";
 import { CONTACT_EMAIL, DOMAIN, ORGANISATION } from "../lib/privacy/organisation";
 
-
 const analyticsVendor = VENDORS["google-analytics"];
 const categories = cookieTableModel().filter((category) => category.rows.length > 0);
-const lastUpdated = new Date(`${lock.updated}T00:00:00Z`).toLocaleDateString("en-GB", {
-	day: "numeric",
-	month: "long",
-	year: "numeric",
-	timeZone: "UTC",
-});
+const lastUpdated = policyLastUpdated();
 ---
 
 <Base title="Cookie policy" description={`How ${DOMAIN} uses cookies and similar technologies, and how to change your choices.`}>

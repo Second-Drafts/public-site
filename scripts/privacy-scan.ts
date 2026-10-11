@@ -1,7 +1,7 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
-import { chromium, type BrowserContext, type Page } from "playwright";
+import { chromium, type Browser, type BrowserContext, type Page } from "playwright";
 import lzString from "lz-string";
 
 import lock from "../src/lib/privacy/registry.lock.json" with { type: "json" };
@@ -13,12 +13,13 @@ import {
 	type RecordedRequest,
 	type ScanState,
 } from "../src/lib/privacy/scan.ts";
+import { DOMAIN } from "../src/lib/privacy/organisation.ts";
 
 const { compressToEncodedURIComponent } = lzString;
 
 const DIST_DIR = "dist";
 const REPORT_PATH = "privacy/scan-report.json";
-const PRODUCTION_ORIGIN = "https://seconddrafts.com";
+const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
 const SENTINEL = "SENTINEL-do-not-leak-4f9a1c";
 
@@ -93,7 +94,7 @@ function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
 }
 
-async function newContext(browser: Awaited<ReturnType<typeof chromium.launch>>, state: ScanState) {
+async function newContext(browser: Browser, state: ScanState) {
 	const context = await browser.newContext(state === "gpc" ? { extraHTTPHeaders: { "Sec-GPC": "1" } } : {});
 	await context.route(isGoogleCollectRequest, (route) => route.abort());
 	await context.addInitScript(RECORD_CSP_VIOLATIONS);
@@ -145,7 +146,7 @@ function originsOf(requests: RecordedRequest[]): string[] {
 }
 
 async function scanPage(
-	browser: Awaited<ReturnType<typeof chromium.launch>>,
+	browser: Browser,
 	origin: string,
 	state: ScanState,
 	path: string,
@@ -171,10 +172,7 @@ async function scanPage(
 	return { report: { storage, origins }, violations };
 }
 
-async function checkShareLinkDoesNotLeave(
-	browser: Awaited<ReturnType<typeof chromium.launch>>,
-	origin: string,
-): Promise<string[]> {
+async function checkShareLinkDoesNotLeave(browser: Browser, origin: string): Promise<string[]> {
 	const context = await newContext(browser, "accepted");
 	const { requests } = trackRequests(context);
 	const page = await context.newPage();

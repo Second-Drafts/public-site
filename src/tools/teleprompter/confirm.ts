@@ -1,4 +1,4 @@
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import { wireDialog } from "../../lib/dialog";
 
 export interface ConfirmOptions {

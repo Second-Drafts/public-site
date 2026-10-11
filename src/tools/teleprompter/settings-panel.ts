@@ -1,6 +1,6 @@
 import { askConfirm } from "./confirm";
 import { defaultSettingsForViewport } from "./lib/defaults";
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import { loadFontPreviews } from "./lib/fonts";
 import { isThemeId, LIMITS, type CustomColors, type NumericSetting, type Settings } from "./lib/settings";
 import type { Store } from "./lib/store";

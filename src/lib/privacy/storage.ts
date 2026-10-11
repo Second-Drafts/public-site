@@ -1,8 +1,9 @@
 import { consent } from "./consent";
+import { DOMAIN } from "./organisation";
 import { reportViolation } from "./violation";
 import { findStorageEntry, STORAGE, type CategoryId, type FirstPartyKey, type StorageArea } from "./registry";
 
-const COOKIE_DOMAIN = ".seconddrafts.com";
+const COOKIE_DOMAIN = `.${DOMAIN}`;
 
 type WebStorageArea = Exclude<StorageArea, "cookie">;
 

@@ -1,7 +1,7 @@
 import { splitParagraphs } from "./lib/engine";
 import { fontStack, fontWeight, loadFont } from "./lib/fonts";
 import type { Align, GuideMode, Settings } from "./lib/settings";
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import { resolveTheme } from "./lib/themes";
 
 export interface Stage {

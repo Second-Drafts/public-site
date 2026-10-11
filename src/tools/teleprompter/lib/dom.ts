@@ -1,9 +1,3 @@
-export function required<T extends Element = HTMLElement>(root: ParentNode, selector: string): T {
-	const found = root.querySelector<T>(selector);
-	if (!found) throw new Error(`Teleprompter markup is missing ${selector}`);
-	return found;
-}
-
 export function inertOutside(element: HTMLElement): () => void {
 	const inerted: HTMLElement[] = [];
 	let node = element;

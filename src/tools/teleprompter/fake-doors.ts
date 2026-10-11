@@ -1,7 +1,7 @@
 import { track } from "./lib/analytics";
 import type { FakeDoorFeature } from "./lib/analytics/events";
 import { wireDialog } from "../../lib/dialog";
-import { required } from "./lib/dom";
+import { required } from "../../lib/dom";
 import { EMAIL_CAPTURE_ENABLED, subscribe } from "./lib/interest";
 
 const CONFIRM_MS = 2000;

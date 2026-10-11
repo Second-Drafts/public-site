@@ -130,6 +130,8 @@ function sameValue(a: unknown, b: unknown): boolean {
 	return JSON.stringify(a) === JSON.stringify(b);
 }
 
+const MINOR_ONLY = { added: (): Bump => "minor", changed: (): Bump => "minor" };
+
 function describeChange<T>(
 	kind: string,
 	previous: Record<string, T>,
@@ -137,7 +139,7 @@ function describeChange<T>(
 	rules: {
 		added: (value: T) => Bump;
 		changed: (before: T, after: T) => Bump;
-	},
+	} = MINOR_ONLY,
 ): Change[] {
 	const names = new Set([...Object.keys(previous), ...Object.keys(next)]);
 	const changes: Change[] = [];
@@ -165,14 +167,8 @@ export function diffSnapshots(previous: Snapshot, next: Snapshot): Change[] {
 			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),
 			changed: (before, after) => (movedInto(before.category, after.category) ? "major" : "minor"),
 		}),
-		...describeChange("analytics event", previous.analytics.events, next.analytics.events, {
-			added: () => "minor",
-			changed: () => "minor",
-		}),
-		...describeChange("session context property", previous.analytics.context, next.analytics.context, {
-			added: () => "minor",
-			changed: () => "minor",
-		}),
+		...describeChange("analytics event", previous.analytics.events, next.analytics.events),
+		...describeChange("session context property", previous.analytics.context, next.analytics.context),
 		...describeChange("storage", previous.storage, next.storage, {
 			added: ({ category }) => (requiresConsent(category) ? "major" : "minor"),
 			changed: (before, after) => {
