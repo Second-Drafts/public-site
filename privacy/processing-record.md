@@ -2,7 +2,7 @@
 
 Last reviewed: 2026-10-11
 
-**Controller:** The Department of Second Drafts, seconddrafts.com. **To fill:** registered entity name, postal address and contact email (placeholders live in `src/lib/privacy/organisation.ts`).
+**Controller:** The Department of Second Drafts, seconddrafts.com. Contact: privacy@seconddrafts.com. **To fill:** registered entity name and postal address (the address is still a placeholder in `src/lib/privacy/organisation.ts`).
 
 No data protection officer has been appointed. **To fill:** confirm whether one is required.
 
