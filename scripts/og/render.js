@@ -1,12 +1,12 @@
 // Renders each scripts/og/<name>.html to public/img/og/<name>.png at 1200×630.
 // Needs the agent-browser CLI on PATH.
-const { execFileSync } = require("node:child_process");
-const { readdirSync } = require("node:fs");
-const path = require("node:path");
+import { execFileSync } from "node:child_process";
+import { readdirSync } from "node:fs";
+import path from "node:path";
 
 const SESSION = "og-render";
-const templates = path.join(__dirname);
-const output = path.join(__dirname, "..", "..", "public", "img", "og");
+const templates = import.meta.dirname;
+const output = path.join(import.meta.dirname, "..", "..", "public", "img", "og");
 
 function browser(...args) {
 	return execFileSync("agent-browser", ["--session", SESSION, ...args], { encoding: "utf8" });
