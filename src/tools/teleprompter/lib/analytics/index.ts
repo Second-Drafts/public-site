@@ -9,12 +9,10 @@ import type {
 	TpEvents,
 } from "./events";
 import { REGISTRY, type ProviderOptions } from "./providers";
-import { KEYS, read, session, write } from "../storage";
 import { hasShareParam } from "../share-hash";
 
 const MAX_STRING_LENGTH = 64;
 const MAX_QUEUE = 100;
-const DAY_MS = 24 * 60 * 60 * 1000;
 
 declare global {
 	interface Window {
@@ -25,15 +23,6 @@ declare global {
 let providers: AnalyticsProvider[] = [];
 let initialized = false;
 let queue: { event: EventName; props: EventProps }[] = [];
-let sessionId: string | null = null;
-
-function getSessionId(): string {
-	if (sessionId) return sessionId;
-	const stored = read(KEYS.sessionId, session);
-	sessionId = stored ?? crypto.randomUUID();
-	if (stored === null) write(KEYS.sessionId, sessionId, session);
-	return sessionId;
-}
 
 export function deviceType(): DeviceType {
 	// iPadOS Safari reports itself as a Mac, but a Mac has no multi-touch screen.
@@ -74,20 +63,8 @@ export function landingSource(referrer: string, hash: string): LandingSource {
 	return "referral";
 }
 
-export function recordVisit(now: number = Date.now()): number | null {
-	if (read(KEYS.visitRecorded, session)) return null;
-	write(KEYS.visitRecorded, "1", session);
-	const lastVisit = read(KEYS.lastVisit);
-	write(KEYS.lastVisit, String(now));
-	const previous = lastVisit === null ? NaN : Number(lastVisit);
-	if (!Number.isFinite(previous)) return null;
-	return Math.max(0, Math.floor((now - previous) / DAY_MS));
-}
-
 export function trackPageView({ referrer, hash }: { referrer: string; hash: string }): void {
 	track("tp_page_view", { referrer_domain: hostnameOf(referrer), landing_source: landingSource(referrer, hash) });
-	const days = recordVisit();
-	if (days !== null) track("tp_return_visit", { days_since_last: days });
 }
 
 function sanitize(props: object): EventProps {
@@ -111,7 +88,7 @@ function sanitize(props: object): EventProps {
 }
 
 function context(): SessionContext {
-	return { session_id: getSessionId(), device_type: deviceType() };
+	return { device_type: deviceType() };
 }
 
 function guarded<T>(providerName: string, action: string, run: () => T): T | undefined {

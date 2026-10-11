@@ -34,14 +34,12 @@ export interface TpEvents {
 	tp_share_link_opened: Record<string, never>;
 	tp_fake_door_clicked: { feature: FakeDoorFeature };
 	tp_fake_door_interest: { feature: FakeDoorFeature; interested: boolean; email_provided: boolean };
-	tp_return_visit: { days_since_last: number };
 	tp_engaged: { word_bucket: WordBucket; duration_s: number };
 }
 
 export type EventName = keyof TpEvents;
 
 export interface SessionContext {
-	session_id: string;
 	device_type: DeviceType;
 }
 

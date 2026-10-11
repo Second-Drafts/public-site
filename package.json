@@ -9,6 +9,7 @@
 		"preview": "astro preview",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"typecheck": "tsc --noEmit",
 		"og": "node scripts/og/render.js",
 		"fonts": ".venv-fonts/bin/python -I scripts/fonts/build.py",
 		"predeploy": "npm run build",

@@ -1,21 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { resolveProviders } from "./config";
 import type { AnalyticsProvider, EventName, EventProps } from "./events";
-import { hostnameOf, landingSource, recordVisit } from "./index";
-
-function memoryStorage(): Storage {
-	const data = new Map<string, string>();
-	return {
-		get length() {
-			return data.size;
-		},
-		clear: () => data.clear(),
-		getItem: (k) => (data.has(k) ? data.get(k)! : null),
-		key: (i) => [...data.keys()][i] ?? null,
-		removeItem: (k) => void data.delete(k),
-		setItem: (k, v) => void data.set(k, String(v)),
-	};
-}
+import { hostnameOf, landingSource } from "./index";
 
 function fakeProvider(name = "fake") {
 	const calls: { event: EventName; props: EventProps }[] = [];
@@ -128,7 +114,6 @@ describe("track", () => {
 	}
 
 	beforeEach(() => {
-		vi.stubGlobal("sessionStorage", memoryStorage());
 		vi.stubGlobal("window", {
 			matchMedia: () => ({ matches: false }),
 			screen: { width: 1440, height: 900 },
@@ -141,7 +126,7 @@ describe("track", () => {
 		vi.unstubAllGlobals();
 	});
 
-	it("keeps primitives, drops objects and long strings, and merges session context", async () => {
+	it("keeps primitives, drops objects and long strings, and adds device type", async () => {
 		const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const { provider, calls } = fakeProvider();
 		const { initAnalytics, track } = await loadAnalytics([provider]);
@@ -162,7 +147,6 @@ describe("track", () => {
 		expect(props).not.toHaveProperty("list");
 		expect(props).not.toHaveProperty("leaked");
 		expect(props).not.toHaveProperty("fn");
-		expect(typeof props.session_id).toBe("string");
 		expect(props.device_type).toBe("desktop");
 		warn.mockRestore();
 	});
@@ -173,15 +157,6 @@ describe("track", () => {
 		initAnalytics();
 		track("tp_script_entered", { word_bucket: "0-50", source: "x".repeat(64) } as never);
 		expect(calls[0].props.source).toHaveLength(64);
-	});
-
-	it("uses a stable session id across events", async () => {
-		const { provider, calls } = fakeProvider();
-		const { initAnalytics, track } = await loadAnalytics([provider]);
-		initAnalytics();
-		track("tp_share_link_opened", {});
-		track("tp_share_link_opened", {});
-		expect(calls[0].props.session_id).toBe(calls[1].props.session_id);
 	});
 
 	it("queues events before init and flushes them on init", async () => {
@@ -228,37 +203,5 @@ describe("track", () => {
 		expect(() => track("tp_share_link_opened", {})).not.toThrow();
 		expect(calls).toHaveLength(1);
 		warn.mockRestore();
-	});
-});
-
-describe("recordVisit", () => {
-	const DAY = 24 * 60 * 60 * 1000;
-	beforeEach(() => {
-		vi.stubGlobal("localStorage", memoryStorage());
-		vi.stubGlobal("sessionStorage", memoryStorage());
-	});
-	afterEach(() => vi.unstubAllGlobals());
-
-	it("returns null on the first visit and stores the time", () => {
-		expect(recordVisit(1000)).toBeNull();
-		expect(localStorage.getItem("tp:lastVisit")).toBe("1000");
-	});
-
-	it("returns whole days since the previous visit", () => {
-		localStorage.setItem("tp:lastVisit", String(10 * DAY));
-		expect(recordVisit(10 * DAY + 3.9 * DAY)).toBe(3);
-		expect(localStorage.getItem("tp:lastVisit")).toBe(String(13.9 * DAY));
-	});
-
-	it("returns 0 for a new session on the same day", () => {
-		localStorage.setItem("tp:lastVisit", String(5 * DAY));
-		expect(recordVisit(5 * DAY + 1000)).toBe(0);
-	});
-
-	it("counts once per session; reloads return null and keep lastVisit", () => {
-		localStorage.setItem("tp:lastVisit", String(DAY));
-		expect(recordVisit(4 * DAY)).toBe(3);
-		expect(recordVisit(5 * DAY)).toBeNull();
-		expect(localStorage.getItem("tp:lastVisit")).toBe(String(4 * DAY));
 	});
 });

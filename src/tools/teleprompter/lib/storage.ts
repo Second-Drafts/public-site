@@ -1,10 +1,7 @@
 export const KEYS = {
 	script: "tp:script",
 	settings: "tp:settings:v1",
-	lastVisit: "tp:lastVisit",
 	hintSeen: "tp:hintSeen",
-	sessionId: "tp:sessionId",
-	visitRecorded: "tp:visitRecorded",
 } as const;
 
 type StorageArea = () => Storage;
