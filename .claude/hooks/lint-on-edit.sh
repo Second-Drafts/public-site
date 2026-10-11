@@ -16,7 +16,13 @@ esac
 cd "${CLAUDE_PROJECT_DIR:-.}"
 [ -x node_modules/.bin/oxlint ] || exit 0
 
-if ! lint_output=$(node_modules/.bin/oxlint --fix --quiet "$file_path" 2>&1); then
+lint_output=$(node_modules/.bin/oxlint --fix --quiet "$file_path" 2>&1)
+lint_status=$?
+
+# Format last so oxfmt normalizes what --fix wrote. Best-effort: a mid-edit syntax error shouldn't fail the hook.
+[ -x node_modules/.bin/oxfmt ] && node_modules/.bin/oxfmt "$file_path" >/dev/null 2>&1
+
+if [ "$lint_status" -ne 0 ]; then
   printf 'Lint errors remain in %s after auto-fix:\n\n%s\n' "$file_path" "$lint_output" >&2
   exit 2
 fi
