@@ -10,6 +10,3 @@ dist
 .env
 .env.*
 !public-env/.env.production
-
-# Rewritten by every pre-deploy privacy scan; registry.lock.json is the versioned record
-privacy/scan-report.json

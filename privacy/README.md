@@ -7,7 +7,7 @@ Records that sit alongside the code. The registry (`src/lib/privacy/registry.ts`
 | `vendors.md` | One section per vendor in the registry: role, terms accepted, transfer mechanism, last reviewed |
 | `google-analytics.md` | Property configuration checklist, completed when Google Analytics is turned on (ticket 14) |
 | `processing-record.md` | Art. 30 record of processing activities |
-| `scan-report.json` | Written by `npm run privacy:scan` before every deploy. Not committed: it describes your latest build, and `registry.lock.json` is the versioned record |
+| `scan-report.json` | Written by `npm run privacy:scan` before every deploy; commit it with each release |
 
 A test (`src/lib/privacy/records.test.ts`) fails if a vendor in the registry has no section in `vendors.md`, if a section disagrees with the registry on role, transfer or privacy link, or if a "Last reviewed" date is missing or in the future.
 
@@ -18,7 +18,7 @@ Every three months, in one commit:
 1. Re-read `vendors.md`, `google-analytics.md` and `processing-record.md` against how the site works now.
 2. Check each vendor's current terms and privacy statement, and whether its EU–US Data Privacy Framework certification is still active (https://www.dataprivacyframework.gov/list).
 3. Check the Google Analytics property still matches `google-analytics.md`.
-4. Run `npm run build && npm run privacy:scan` and skim `privacy/scan-report.json` for anything unexpected.
+4. Skim `privacy/scan-report.json` for anything unexpected.
 5. Update each file's "Last reviewed" date. If a registry fact changed, run `npm run privacy:lock` and follow the bump rules.
 
 The recurring calendar event for this review is set up by the owners; it is not automated in the repo.
