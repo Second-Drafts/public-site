@@ -7,7 +7,7 @@ Records that sit alongside the code. The registry (`src/lib/privacy/registry.ts`
 | `vendors.md` | One section per vendor in the registry: role, terms accepted, transfer mechanism, last reviewed |
 | `google-analytics.md` | Property configuration checklist, completed when Google Analytics is turned on (ticket 14) |
 | `processing-record.md` | Art. 30 record of processing activities |
-| `scan-report.json` | Written by `npm run privacy:scan` before every deploy; commit it with each release |
+| `scan-report.json` | Written by `npm run privacy:scan` before every deploy and committed by `npm run deploy` once the site is published, so history shows what each release did |
 
 A test (`src/lib/privacy/records.test.ts`) fails if a vendor in the registry has no section in `vendors.md`, if a section disagrees with the registry on role, transfer or privacy link, or if a "Last reviewed" date is missing or in the future.
 
