@@ -1,0 +1,351 @@
+{
+	"registryVersion": "1.1.0",
+	"states": {
+		"no-decision": {
+			"/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/about-us/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/blog/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/cookie-policy/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/privacy-policy/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/word-counter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/#s=<share link>": {
+				"storage": [
+					"local:tp:script",
+					"local:tp:settings:v1"
+				],
+				"origins": [
+					"self"
+				]
+			}
+		},
+		"rejected": {
+			"/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/about-us/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/blog/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/cookie-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/privacy-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/word-counter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/#s=<share link>": {
+				"storage": [
+					"local:privacy:consent",
+					"local:tp:script",
+					"local:tp:settings:v1"
+				],
+				"origins": [
+					"self"
+				]
+			}
+		},
+		"accepted": {
+			"/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/about-us/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/blog/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/cookie-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/privacy-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/word-counter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/#s=<share link>": {
+				"storage": [
+					"local:privacy:consent",
+					"local:tp:script",
+					"local:tp:settings:v1"
+				],
+				"origins": [
+					"self"
+				]
+			}
+		},
+		"gpc": {
+			"/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/about-us/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/blog/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/cookie-policy/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/privacy-policy/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/word-counter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/#s=<share link>": {
+				"storage": [
+					"local:tp:script",
+					"local:tp:settings:v1"
+				],
+				"origins": [
+					"self"
+				]
+			}
+		},
+		"withdrawn": {
+			"/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/about-us/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/blog/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/cookie-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/privacy-policy/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/word-counter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/teleprompter/#s=<share link>": {
+				"storage": [
+					"local:privacy:consent",
+					"local:tp:script",
+					"local:tp:settings:v1"
+				],
+				"origins": [
+					"self"
+				]
+			}
+		}
+	}
+}
