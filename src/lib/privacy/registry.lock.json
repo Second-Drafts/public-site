@@ -1,0 +1,94 @@
+{
+	"version": "1.0.0",
+	"updated": "2026-10-11",
+	"categories": {
+		"analytics": {
+			"requiresConsent": true,
+			"label": "Analytics",
+			"description": "Helps us understand which tools and settings people use, so we know what to improve. Never includes the text of your scripts."
+		},
+		"necessary": {
+			"requiresConsent": false,
+			"label": "Strictly necessary",
+			"description": "Makes the tools work the way you asked them to, like keeping the script you wrote. These stay on your device and are never sent to us."
+		}
+	},
+	"vendors": {
+		"github-pages": {
+			"name": "GitHub Pages",
+			"category": "necessary",
+			"role": "controller",
+			"transfer": "EU–US Data Privacy Framework",
+			"privacyUrl": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+			"origins": {
+				"scripts": [],
+				"data": []
+			}
+		},
+		"google-analytics": {
+			"name": "Google Analytics",
+			"category": "analytics",
+			"role": "processor",
+			"transfer": "EU–US Data Privacy Framework",
+			"privacyUrl": "https://policies.google.com/privacy",
+			"origins": {
+				"scripts": ["https://*.googletagmanager.com"],
+				"data": ["https://*.google-analytics.com", "https://*.analytics.google.com", "https://*.googletagmanager.com"]
+			}
+		}
+	},
+	"storage": {
+		"_ga": {
+			"setBy": "google-analytics",
+			"area": "cookie",
+			"category": "analytics",
+			"purposeId": "analytics-visitor-id",
+			"purpose": "A random ID that lets Google Analytics tell a returning browser apart from a new one.",
+			"retention": {
+				"months": 24
+			}
+		},
+		"_ga_*": {
+			"setBy": "google-analytics",
+			"area": "cookie",
+			"category": "analytics",
+			"purposeId": "analytics-session-state",
+			"purpose": "Lets Google Analytics group the pages you view into a single visit.",
+			"retention": {
+				"months": 24
+			}
+		},
+		"privacy:consent": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-consent-choice",
+			"purpose": "Remembers whether you accepted or rejected analytics, so we don't ask on every page.",
+			"retention": "until-cleared"
+		},
+		"tp:hintSeen": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-dismissed-hint",
+			"purpose": "Remembers that you've closed a tip, so it doesn't keep coming back.",
+			"retention": "until-cleared"
+		},
+		"tp:script": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-script",
+			"purpose": "Keeps the script you wrote in your browser, so it's still there when you come back.",
+			"retention": "until-cleared"
+		},
+		"tp:settings:v1": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-display-settings",
+			"purpose": "Remembers how you set up the teleprompter, such as font, text size and colours.",
+			"retention": "until-cleared"
+		}
+	}
+}

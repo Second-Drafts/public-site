@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeCookieJar, fakeWebStorage } from "./test-fakes";
+import lock from "./registry.lock.json";
 import { CONSENT_MAX_AGE, type ConsentRecord } from "./consent";
 
 const CONSENT_KEY = "privacy:consent";
@@ -9,7 +10,7 @@ const DENY = { analytics: false };
 function recordFrom(overrides: Partial<ConsentRecord> = {}): ConsentRecord {
 	return {
 		id: "record-id",
-		registryVersion: "1",
+		registryVersion: lock.version,
 		choices: GRANT,
 		decidedAt: new Date().toISOString(),
 		source: "banner",
@@ -75,7 +76,7 @@ describe("set", () => {
 		consent.set(GRANT, "banner");
 		expect(consent.get("analytics")).toBe(true);
 		expect(consent.decided()).toBe(true);
-		expect(storedRecord()).toMatchObject({ choices: GRANT, source: "banner", registryVersion: "1" });
+		expect(storedRecord()).toMatchObject({ choices: GRANT, source: "banner", registryVersion: lock.version });
 		expect(storedRecord().id).toBeTruthy();
 		expect(reload).not.toHaveBeenCalled();
 	});

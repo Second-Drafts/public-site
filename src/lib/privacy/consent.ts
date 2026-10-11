@@ -1,9 +1,10 @@
 import { CATEGORIES, CONSENT_CATEGORY_IDS, type CategoryId, type ConsentCategoryId } from "./registry";
+import lock from "./registry.lock.json";
 import { purgeCategory, stored } from "./storage";
 
 export const CONSENT_MAX_AGE = 6 * 30 * 24 * 60 * 60 * 1000;
 
-const REGISTRY_VERSION = "1";
+const REGISTRY_VERSION = lock.version;
 
 export type ConsentSource = "banner" | "settings" | "gpc";
 export type ConsentChoices = Record<ConsentCategoryId, boolean>;
