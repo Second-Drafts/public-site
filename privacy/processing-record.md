@@ -6,7 +6,7 @@ Last reviewed: 2026-10-11
 
 No data protection officer has been appointed. **To fill:** confirm whether one is required.
 
-Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, scripts a visitor writes stay on their device, and analytics only runs after consent.
+Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, text a visitor writes in any tool stays on their device (the teleprompter keeps it in the browser's local storage and puts it after the `#` of share links, which browsers never send to a server; the word counter doesn't save it), and analytics only runs after consent.
 
 ## Hosting the website
 
@@ -22,9 +22,9 @@ Common to all activities: data is protected in transit by HTTPS (GitHub Pages), 
 ## Website analytics
 
 - **Purpose:** Understanding which tools and settings people use so we know what to improve.
-- **Data categories:** Events and session properties as listed on the privacy policy (tool settings, script length range, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Never script text.
+- **Data categories:** Events and session properties as listed on the privacy policy (tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Only the teleprompter sends events today; the word counter sends none. Never the text a visitor writes in any tool.
 - **Data subjects:** Visitors who accept analytics.
-- **Recipients:** Google Analytics (processor).
+- **Recipients:** Google Analytics (processor, once the processor items in `google-analytics.md` are ticked; deploys are blocked until then).
 - **Transfers:** To the United States under the EU–US Data Privacy Framework.
 - **Retention:** Cookies last up to 24 months; analytics data kept for the property's configured retention (see `google-analytics.md`).
 - **Security measures:** Loaded only after consent; no data collected when consent is refused or withdrawn, or when Global Privacy Control is on; origins limited by the Content Security Policy.
