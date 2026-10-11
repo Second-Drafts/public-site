@@ -26,9 +26,10 @@
 		"format:check": "oxfmt --check",
 		"privacy:lock": "node scripts/privacy-lock.ts",
 		"privacy:scan": "node scripts/privacy-scan.ts",
+		"spacing:check": "node scripts/spacing-check.ts",
 		"og": "node scripts/og/render.js",
 		"fonts": ".venv-fonts/bin/python -I scripts/fonts/build.py",
-		"predeploy": "npm run lint && npm test && npm run build && npm run privacy:scan",
+		"predeploy": "npm run lint && npm test && npm run build && npm run spacing:check && npm run privacy:scan",
 		"deploy": "node scripts/deploy.js"
 	},
 	"dependencies": {
