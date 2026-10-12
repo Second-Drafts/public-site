@@ -1,6 +1,6 @@
 # 00 · Privacy and consent system (overview)
 
-Child tickets: 01–14.
+Child tickets: 01–14, 16.
 
 ## Goal
 
@@ -47,3 +47,7 @@ This is pre-work for adding Google Analytics (or another analytics provider). Go
 - 14 is last
 
 Not legal advice: have the policy text (#09, #10) reviewed before relying on it.
+
+## Outcome
+
+All child tickets are done. Google Analytics runs in production behind consent (#14), and the privacy scan checks every deploy against a separate GA test property (#16). Privacy for sign-in and payments continues in #15.

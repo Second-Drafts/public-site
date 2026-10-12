@@ -111,11 +111,27 @@ function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
 }
 
-async function newContext(browser: Browser, state: ScanState) {
-	const context = await browser.newContext(state === "gpc" ? { extraHTTPHeaders: { "Sec-GPC": "1" } } : {});
-	await context.addInitScript(RECORD_CSP_VIOLATIONS);
-	if (state === "gpc") await context.addInitScript(REPORT_GPC);
-	return context;
+type OpenContext = (state: ScanState) => Promise<BrowserContext>;
+
+// GA4 drops visits from a HeadlessChrome user agent as bot traffic, so the test property would never see the scan.
+async function nonHeadlessUserAgent(browser: Browser): Promise<string> {
+	const page = await browser.newPage();
+	const userAgent = await page.evaluate(() => navigator.userAgent);
+	await page.close();
+	return userAgent.replace("HeadlessChrome", "Chrome");
+}
+
+async function launchBrowser(): Promise<{ openContext: OpenContext; close: () => Promise<void> }> {
+	const browser = await chromium.launch();
+	const userAgent = await nonHeadlessUserAgent(browser);
+	const openContext: OpenContext = async (state) => {
+		const extraHTTPHeaders = state === "gpc" ? { "Sec-GPC": "1" } : undefined;
+		const context = await browser.newContext({ userAgent, extraHTTPHeaders });
+		await context.addInitScript(RECORD_CSP_VIOLATIONS);
+		if (state === "gpc") await context.addInitScript(REPORT_GPC);
+		return context;
+	};
+	return { openContext, close: () => browser.close() };
 }
 
 function trackRequests(context: BrowserContext): { requests: RecordedRequest[] } {
@@ -162,12 +178,12 @@ function originsOf(requests: RecordedRequest[]): string[] {
 }
 
 async function scanPage(
-	browser: Browser,
+	openContext: OpenContext,
 	origin: string,
 	state: ScanState,
 	path: string,
 ): Promise<{ report: PageReport; violations: string[] }> {
-	const context = await newContext(browser, state);
+	const context = await openContext(state);
 	const { requests } = trackRequests(context);
 	const page = await context.newPage();
 	await page.goto(origin + path);
@@ -271,8 +287,8 @@ async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exp
 	return async () => [...exposures, ...(await Promise.all(pending))];
 }
 
-async function checkToolDoesNotLeak(browser: Browser, origin: string, tool: WritingTool): Promise<string[]> {
-	const context = await newContext(browser, "accepted");
+async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, tool: WritingTool): Promise<string[]> {
+	const context = await openContext("accepted");
 	const collectExposures = await watchForLeaks(context);
 	const page = await context.newPage();
 	await page.goto(origin + tool.path);
@@ -296,7 +312,7 @@ async function main(): Promise<void> {
 	const revision = sourceRevision();
 	buildForScan();
 	const preview = await startPreview();
-	const browser = await chromium.launch();
+	const browser = await launchBrowser();
 	const paths = [...sitemapPaths(), shareLink()];
 	const violations: string[] = [];
 	const states: Record<string, Record<string, PageReport>> = {};
@@ -305,13 +321,13 @@ async function main(): Promise<void> {
 		for (const state of SCAN_STATES) {
 			states[state] = {};
 			for (const path of paths) {
-				const result = await scanPage(browser, preview.origin, state, path);
+				const result = await scanPage(browser.openContext, preview.origin, state, path);
 				states[state][path.split("#")[0] + (path.includes("#") ? "#s=<share link>" : "")] = result.report;
 				violations.push(...result.violations);
 			}
 		}
 		for (const tool of TOOLS_VISITORS_WRITE_IN) {
-			violations.push(...(await checkToolDoesNotLeak(browser, preview.origin, tool)));
+			violations.push(...(await checkToolDoesNotLeak(browser.openContext, preview.origin, tool)));
 		}
 	} finally {
 		await browser.close();

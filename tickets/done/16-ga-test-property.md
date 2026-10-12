@@ -17,11 +17,11 @@ Ticket 14 shipped with a single GA4 property (production). So the privacy scan n
 ## Acceptance criteria
 
 - [x] Scan passes against the test property with collect requests allowed.
-- [ ] The production property receives no scan traffic.
+- [x] The production property receives no scan traffic.
 - [x] `registry.lock.json` is unchanged.
 
-## Status
+## Outcome
 
-Test property `G-RPVQBR9DFV` created 2026-10-12. `scripts/privacy-scan.ts` builds into `dist-privacy-scan/` with `PUBLIC_GA_MEASUREMENT_ID` overridden to the test ID, and scans that, so the deployed `dist/` keeps the production ID. The collect-request block is gone and the scan passes. With collect allowed, the scan no longer sees requests to `https://www.google.com`, which confirms they were GA's fallback for blocked hits. It stays registered, since real visitors on flaky networks can trigger the fallback.
+Test property `G-RPVQBR9DFV` created 2026-10-12. `scripts/privacy-scan.ts` builds into `dist-privacy-scan/` with `PUBLIC_GA_MEASUREMENT_ID` overridden to the test ID, and scans that, so the deployed `dist/` keeps the production ID. The collect-request block is gone and the scan passes. GA4 drops visits from a `HeadlessChrome` user agent as bot traffic, so the scan's browser reports itself as plain `Chrome`; without that, Realtime showed nothing from the scan. With collect allowed, the scan no longer sees requests to `https://www.google.com`, which confirms they were GA's fallback for blocked hits. It stays registered, since real visitors on flaky networks can trigger the fallback.
 
-Still to do: check the test property's Realtime report shows scan visits and the production property shows none.
+Confirmed 2026-10-12: the scan's pages appear in the test property's Realtime report, and the scan build contains only the test ID. While debugging, one manual probe (not the scan) sent a single localhost page view to production by hitting a stray preview of `dist/` on port 4399.
