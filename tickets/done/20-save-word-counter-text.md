@@ -20,9 +20,16 @@ The text disappears on reload. People paste in drafts they care about, and losin
 
 ## Acceptance criteria
 
-- [ ] Type text, set a target, reload: both are restored.
-- [ ] Clear asks first, and after confirming, a reload shows an empty field.
-- [ ] Invalid saved settings fall back to defaults without errors.
-- [ ] The cookie policy lists `wc:text` and `wc:settings:v1`.
-- [ ] `npm run privacy:scan` passes and reports only registered keys.
-- [ ] No text reaches any network request (the scan already checks for this).
+- [x] Type text, set a target, reload: both are restored.
+- [x] Clear asks first, and after confirming, a reload shows an empty field.
+- [x] Invalid saved settings fall back to defaults without errors.
+- [x] The cookie policy lists `wc:text` and `wc:settings:v1`.
+- [x] `npm run privacy:scan` passes and reports only registered keys.
+- [x] No text reaches any network request (the scan already checks for this).
+
+## Outcome
+
+- `wc:text` and `wc:settings:v1` are registered (lock bumped to 2.1.0) and read and written through `stored()` by `src/tools/word-counter/persistence.ts`.
+- `validateSettings` in `lib/settings.ts` validates field by field. Settings hold `showTarget`, `target`, `presetId` and `rhythmOpen`, all now in `State`, so #25 and #30 only read and write them.
+- Clear sits under the text field and uses the shared confirm dialog.
+- Checked by unit tests, `privacy:scan` and the built cookie policy page. The reload round trip wasn't exercised in a browser.

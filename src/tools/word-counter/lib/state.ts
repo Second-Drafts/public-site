@@ -7,13 +7,21 @@ export interface State {
 	text: string;
 	showTarget: boolean;
 	target: Target;
+	presetId: string;
+	rhythmOpen: boolean;
 }
 
 export type Store = BaseStore<State>;
 
 export const DEFAULT_TARGET: Target = { unit: "words", value: 240, rule: "at-most" };
 
-export const INITIAL_STATE: State = { text: "", showTarget: false, target: DEFAULT_TARGET };
+export const INITIAL_STATE: State = {
+	text: "",
+	showTarget: false,
+	target: DEFAULT_TARGET,
+	presetId: "custom",
+	rhythmOpen: false,
+};
 
 /** The target the text is measured against, or null when it's switched off or has no usable value. */
 export function activeTarget(state: State): Target | null {

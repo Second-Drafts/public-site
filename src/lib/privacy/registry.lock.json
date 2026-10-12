@@ -1,122 +1,57 @@
 {
-	"version": "2.0.0",
-	"updated": "2026-10-11",
-	"reviews": [
-		{
-			"subject": "category analytics description",
-			"outcome": "accepted"
-		},
-		{
-			"subject": "analytics property page_view.landing_source",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property page_view.referrer_domain",
-			"outcome": "clear"
-		}
-	],
+	"version": "2.1.0",
+	"updated": "2026-10-12",
+	"reviews": [],
 	"analytics": {
 		"events": {
 			"page_view": {
-				"landing_source": [
-					"string"
-				],
-				"referrer_domain": [
-					"string"
-				]
+				"landing_source": ["string"],
+				"referrer_domain": ["string"]
 			},
 			"tp_completed": {
-				"duration_s": [
-					"number"
-				],
-				"reached_end": [
-					"boolean"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"duration_s": ["number"],
+				"reached_end": ["boolean"],
+				"word_bucket": ["string"]
 			},
 			"tp_engaged": {
-				"duration_s": [
-					"number"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"duration_s": ["number"],
+				"word_bucket": ["string"]
 			},
 			"tp_fake_door_clicked": {
-				"feature": [
-					"string"
-				]
+				"feature": ["string"]
 			},
 			"tp_fake_door_interest": {
-				"email_provided": [
-					"boolean"
-				],
-				"feature": [
-					"string"
-				],
-				"interested": [
-					"boolean"
-				]
+				"email_provided": ["boolean"],
+				"feature": ["string"],
+				"interested": ["boolean"]
 			},
 			"tp_play": {
-				"play_count": [
-					"number"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"play_count": ["number"],
+				"word_bucket": ["string"]
 			},
 			"tp_prompt_started": {
-				"font": [
-					"string"
-				],
-				"mirror": [
-					"boolean"
-				],
-				"speed": [
-					"number"
-				],
-				"theme": [
-					"string"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"font": ["string"],
+				"mirror": ["boolean"],
+				"speed": ["number"],
+				"theme": ["string"],
+				"word_bucket": ["string"]
 			},
 			"tp_script_entered": {
-				"source": [
-					"string"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"source": ["string"],
+				"word_bucket": ["string"]
 			},
 			"tp_setting_changed": {
-				"setting": [
-					"string"
-				],
-				"value": [
-					"string",
-					"number",
-					"boolean"
-				]
+				"setting": ["string"],
+				"value": ["string", "number", "boolean"]
 			},
 			"tp_share_link_copied": {
-				"too_long": [
-					"boolean"
-				],
-				"word_bucket": [
-					"string"
-				]
+				"too_long": ["boolean"],
+				"word_bucket": ["string"]
 			},
 			"tp_share_link_opened": {}
 		},
 		"context": {
-			"device_type": [
-				"string"
-			]
+			"device_type": ["string"]
 		}
 	},
 	"categories": {
@@ -150,9 +85,7 @@
 			"transfer": "EU–US Data Privacy Framework",
 			"privacyUrl": "https://policies.google.com/privacy",
 			"origins": {
-				"scripts": [
-					"https://*.googletagmanager.com"
-				],
+				"scripts": ["https://*.googletagmanager.com"],
 				"data": [
 					"https://*.google-analytics.com",
 					"https://*.analytics.google.com",
@@ -213,6 +146,22 @@
 			"category": "necessary",
 			"purposeId": "remember-display-settings",
 			"purpose": "Remembers how you set up the teleprompter, such as font, text size and colours.",
+			"retention": "until-cleared"
+		},
+		"wc:settings:v1": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-counter-target",
+			"purpose": "Remembers your word counter target and format.",
+			"retention": "until-cleared"
+		},
+		"wc:text": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-counted-text",
+			"purpose": "Keeps the text you're counting in your browser, so it's still there when you come back.",
 			"retention": "until-cleared"
 		}
 	}

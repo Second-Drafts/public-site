@@ -117,6 +117,22 @@ export const STORAGE = {
 		purpose: "Remembers how you set up the teleprompter, such as font, text size and colours.",
 		retention: "until-cleared",
 	},
+	"wc:text": {
+		setBy: "us",
+		area: "local",
+		category: "necessary",
+		purposeId: "remember-counted-text",
+		purpose: "Keeps the text you're counting in your browser, so it's still there when you come back.",
+		retention: "until-cleared",
+	},
+	"wc:settings:v1": {
+		setBy: "us",
+		area: "local",
+		category: "necessary",
+		purposeId: "remember-counter-target",
+		purpose: "Remembers your word counter target and format.",
+		retention: "until-cleared",
+	},
 	"tp:hintSeen": {
 		setBy: "us",
 		area: "local",
