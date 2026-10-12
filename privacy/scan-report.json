@@ -1,6 +1,6 @@
 {
 	"registryVersion": "2.0.0",
-	"sourceCommit": "112b645d7be150a5f99f74f8a56a3104cc009108",
+	"sourceCommit": "5d408c9fda1213b4a9df961c059b32f7dbee889c",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -156,124 +156,115 @@
 			"/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/about-us/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/blog/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/blog/hello-world/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/cookie-policy/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/privacy-policy/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/tools/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/tools/teleprompter/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/tools/word-counter/": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent"
 				],
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
 					"cookie:_ga",
-					"cookie:_ga_XMSE6Y7BFR",
+					"cookie:_ga_RPVQBR9DFV",
 					"local:privacy:consent",
 					"local:tp:script",
 					"local:tp:settings:v1"
@@ -281,7 +272,6 @@
 				"origins": [
 					"self",
 					"https://www.google-analytics.com",
-					"https://www.google.com",
 					"https://www.googletagmanager.com"
 				]
 			}
