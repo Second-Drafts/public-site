@@ -19,9 +19,9 @@ This is the payoff. Everything before this ticket assumed Google Analytics is pr
 
 ## Acceptance criteria
 
-- [ ] GA checklist complete and dated.
-- [ ] Scan passes with the real GA test property and `registry.lock.json` is unchanged.
-- [ ] Production deploy with GA on; a fresh visit sets no `_ga*` cookies until Accept.
+- [x] GA checklist complete and dated.
+- [x] Scan passes with GA on (collect requests blocked; the test property moved to #16). The registry gained `https://www.google.com` (minor bump, no re-consent).
+- [x] Production deploy with GA on; a fresh visit sets no `_ga*` cookies until Accept.
 
 ## Follow-up from #10
 
@@ -33,10 +33,4 @@ Confirm GA works with no CSP violations (same listener approach as #12), since #
 
 ## Status
 
-Done in code: build config in `public-env/.env.production` (provider `gtag`, measurement ID `G-XMSE6Y7BFR`), explicit `page_location` without the URL fragment, scan passes with GA on, and `https://www.google.com` was added to the registry (found by the scan; minor bump to 1.2.0, no re-consent). Because there is no test property yet, the scan blocks GA's `/collect` requests (see #16).
-
-Still to do:
-
-- [ ] GA admin checklist in `privacy/google-analytics.md`, with the date
-- [ ] State the chosen GA data retention on the privacy policy (Analytics section) and in `google-analytics.md`
-- [ ] Production deploy, then check a fresh visit sets no `_ga*` cookies until Accept
+Done. Build config in `public-env/.env.production` (provider `gtag`, measurement ID `G-XMSE6Y7BFR`), explicit `page_location` without the URL fragment, GA admin checklist complete 2026-10-12, and retention (event data 2 months, user data 14 months) stated on the privacy policy. The deploy scan for `112b645` shows no `_ga*` cookies before a choice and no CSP violations with GA on. The scan blocks GA's `/collect` requests until there is a test property (#16).

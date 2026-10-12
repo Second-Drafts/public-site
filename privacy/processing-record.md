@@ -26,7 +26,7 @@ Common to all activities: data is protected in transit by HTTPS (GitHub Pages), 
 - **Data subjects:** Visitors who accept analytics.
 - **Recipients:** Google Analytics (processor, once the processor items in `google-analytics.md` are ticked; deploys are blocked until then).
 - **Transfers:** To the United States under the EU–US Data Privacy Framework.
-- **Retention:** Cookies last up to 24 months; analytics data kept for the property's configured retention (see `google-analytics.md`).
+- **Retention:** Cookies last up to 24 months; GA keeps event data 2 months and user data 14 months (see `google-analytics.md`).
 - **Security measures:** Loaded only after consent; no data collected when consent is refused or withdrawn, or when Global Privacy Control is on; origins limited by the Content Security Policy.
 - **Legal basis:** Consent (Art. 6(1)(a), and ePrivacy Art. 5(3) for the cookies).
 
