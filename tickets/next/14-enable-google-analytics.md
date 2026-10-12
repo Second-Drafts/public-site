@@ -33,4 +33,4 @@ Confirm GA works with no CSP violations (same listener approach as #12), since #
 
 ## Status
 
-Done. Build config in `public-env/.env.production` (provider `gtag`, measurement ID `G-XMSE6Y7BFR`), explicit `page_location` without the URL fragment, GA admin checklist complete 2026-10-12, and retention (event data 2 months, user data 14 months) stated on the privacy policy. The deploy scan for `112b645` shows no `_ga*` cookies before a choice and no CSP violations with GA on. The scan blocks GA's `/collect` requests until there is a test property (#16).
+Done. Build config in `public-env/.env.production` (provider `gtag`, measurement ID `G-XMSE6Y7BFR`), explicit `page_location` without the URL fragment, GA admin checklist complete 2026-10-12, and retention (event data 2 months, user data 14 months) stated on the privacy policy. The deploy scan for `112b645` shows no `_ga*` cookies before a choice and no CSP violations with GA on. The scan now reports to a separate test property (#16).

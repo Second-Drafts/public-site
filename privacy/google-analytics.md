@@ -6,7 +6,7 @@ Complete in ticket 14. Production builds already set `PUBLIC_ANALYTICS_PROVIDER=
 
 The registry calls Google Analytics a processor, so swapping or adding it doesn't ask visitors again. The first three items are what make that true; `node scripts/privacy-records-check.ts` fails, and blocks deploys, until they are ticked.
 
-Status: production property set up 2026-10-12. The test property is still to do (ticket 16).
+Status: production property set up 2026-10-12. Test property `G-RPVQBR9DFV` created 2026-10-12 for the privacy scan.
 
 - [x] Accept Google's data processing terms in the GA account settings (Admin > Account settings > Data processing terms)
 - [x] Data sharing settings all off (Admin > Account settings > Account details > Data sharing settings): Google products & services, Modeling contributions & business insights, Technical support, Recommendations for your business, Google sales experts, and any other option listed. With sharing on, Google uses the data for its own purposes and acts as a controller, not our processor
@@ -18,6 +18,6 @@ Status: production property set up 2026-10-12. The test property is still to do 
 - [x] Granular location and device data collection off, at least for the EEA and UK
 - [x] No links to Google Ads or other Google products
 - [x] No user-provided data collection
-- [ ] A separate test property exists for the privacy scan (ticket 16). Until then the scan blocks GA's collect requests so it never sends hits to production
+- [x] A separate test property exists for the privacy scan (ticket 16). `scripts/privacy-scan.ts` builds its own copy of the site with the test ID, so scan visits never reach production
 
 Chosen retention (stated on the privacy policy, "How long we keep data"): event data 2 months, user data 14 months.

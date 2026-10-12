@@ -1,5 +1,5 @@
 import { execFileSync, spawn, type ChildProcess } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { chromium, type Browser, type BrowserContext, type ConsoleMessage, type Page } from "playwright";
 import lzString from "lz-string";
@@ -20,7 +20,9 @@ import { DOMAIN } from "../src/lib/privacy/organisation.ts";
 
 const { compressToEncodedURIComponent } = lzString;
 
-const DIST_DIR = "dist";
+// The scan builds its own copy that reports to the GA test property, so scan visits stay out of production data.
+const SCAN_DIST_DIR = "dist-privacy-scan";
+const GA_TEST_MEASUREMENT_ID = "G-RPVQBR9DFV";
 const REPORT_PATH = "privacy/scan-report.json";
 const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
@@ -32,9 +34,6 @@ document.addEventListener("securitypolicyviolation", (event) => {
 	window.__cspViolations.push(event.violatedDirective + " " + event.blockedURI);
 });
 `;
-// Until there is a separate test property (ticket 16), keep scan visits out of the production property's data.
-const isGoogleCollectRequest = (url: URL) =>
-	url.pathname.endsWith("/collect") && /google|doubleclick/.test(url.hostname);
 const REPORT_GPC = `Object.defineProperty(navigator, "globalPrivacyControl", { value: true });`;
 
 interface InPageStorage {
@@ -76,11 +75,20 @@ async function isServing(origin: string): Promise<boolean> {
 	}
 }
 
+function buildForScan(): void {
+	execFileSync("npx", ["astro", "build", "--outDir", SCAN_DIST_DIR], {
+		stdio: "inherit",
+		env: { ...process.env, PUBLIC_GA_MEASUREMENT_ID: GA_TEST_MEASUREMENT_ID },
+	});
+}
+
 async function startPreview(): Promise<{ origin: string; stop: () => void }> {
 	const port = await freePort();
-	const child: ChildProcess = spawn("npx", ["astro", "preview", "--port", String(port), "--ignore-lock"], {
-		stdio: "ignore",
-	});
+	const child: ChildProcess = spawn(
+		"npx",
+		["astro", "preview", "--outDir", SCAN_DIST_DIR, "--port", String(port), "--ignore-lock"],
+		{ stdio: "ignore" },
+	);
 	const origin = `http://localhost:${port}`;
 	for (let attempt = 0; attempt < 100; attempt++) {
 		if (await isServing(origin)) return { origin, stop: () => child.kill() };
@@ -91,7 +99,7 @@ async function startPreview(): Promise<{ origin: string; stop: () => void }> {
 }
 
 function sitemapPaths(): string[] {
-	const sitemap = readFileSync(`${DIST_DIR}/sitemap-0.xml`, "utf8");
+	const sitemap = readFileSync(`${SCAN_DIST_DIR}/sitemap-0.xml`, "utf8");
 	const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
 	return locations.map((location) => location.replace(PRODUCTION_ORIGIN, ""));
 }
@@ -105,7 +113,6 @@ function shareLink(): string {
 
 async function newContext(browser: Browser, state: ScanState) {
 	const context = await browser.newContext(state === "gpc" ? { extraHTTPHeaders: { "Sec-GPC": "1" } } : {});
-	await context.route(isGoogleCollectRequest, (route) => route.abort());
 	await context.addInitScript(RECORD_CSP_VIOLATIONS);
 	if (state === "gpc") await context.addInitScript(REPORT_GPC);
 	return context;
@@ -286,8 +293,8 @@ function sourceRevision(): { sourceCommit: string; sourceDirty: boolean } {
 }
 
 async function main(): Promise<void> {
-	if (!existsSync(`${DIST_DIR}/sitemap-0.xml`)) throw new Error(`No build in ${DIST_DIR}/. Run npm run build first.`);
 	const revision = sourceRevision();
+	buildForScan();
 	const preview = await startPreview();
 	const browser = await chromium.launch();
 	const paths = [...sitemapPaths(), shareLink()];

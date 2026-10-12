@@ -1,5 +1,6 @@
 node_modules
 dist
+dist-privacy-scan
 .astro
 
 # impeccable ships a per-platform binary; its launcher downloads one on first run

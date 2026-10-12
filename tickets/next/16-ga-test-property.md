@@ -16,6 +16,12 @@ Ticket 14 shipped with a single GA4 property (production). So the privacy scan n
 
 ## Acceptance criteria
 
-- [ ] Scan passes against the test property with collect requests allowed.
+- [x] Scan passes against the test property with collect requests allowed.
 - [ ] The production property receives no scan traffic.
-- [ ] `registry.lock.json` is unchanged.
+- [x] `registry.lock.json` is unchanged.
+
+## Status
+
+Test property `G-RPVQBR9DFV` created 2026-10-12. `scripts/privacy-scan.ts` builds into `dist-privacy-scan/` with `PUBLIC_GA_MEASUREMENT_ID` overridden to the test ID, and scans that, so the deployed `dist/` keeps the production ID. The collect-request block is gone and the scan passes. With collect allowed, the scan no longer sees requests to `https://www.google.com`, which confirms they were GA's fallback for blocked hits. It stays registered, since real visitors on flaky networks can trigger the fallback.
+
+Still to do: check the test property's Realtime report shows scan visits and the production property shows none.
