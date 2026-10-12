@@ -1,10 +1,10 @@
 import { track } from "../../lib/analytics";
 import type { AnalyticsEvents, ScriptSource, TrackedSetting, WordBucket } from "../../lib/analytics/events";
-import { debounce } from "./lib/debounce";
+import { debounce } from "../../lib/debounce";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import type { Settings } from "./lib/settings";
 import type { Store } from "./lib/store";
-import { countWords, wordBucket } from "./lib/timing";
+import { countWords, wordBucket } from "../../lib/text/measure";
 
 const SCRIPT_SETTLE_MS = 2000;
 const SETTING_SETTLE_MS = 1000;

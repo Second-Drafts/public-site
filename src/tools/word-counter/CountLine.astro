@@ -1,0 +1,41 @@
+---
+import { INITIAL_STATE, summarize } from "./lib/state";
+
+const { count } = summarize(INITIAL_STATE);
+---
+
+<div class="wc-count-line" id="wc-count-line">
+	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span></p>
+	<p id="wc-announcement" class="sd-visually-hidden" aria-live="polite"></p>
+</div>
+
+<style>
+	.wc-count-line {
+		margin: var(--space-4) 0 var(--space-8);
+	}
+	/* numbers about writing are set in mono */
+	.wc-count {
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 20px;
+		line-height: 28px;
+		font-weight: 500;
+		color: var(--ink);
+	}
+	.wc-status {
+		font-family: var(--font-prose);
+		font-size: 17px;
+		font-weight: 400;
+		color: var(--ink-muted);
+	}
+	.wc-count-line[data-state="met"] #wc-count {
+		color: var(--green-ink);
+	}
+	.wc-count-line[data-state="over"] #wc-count {
+		color: var(--red-pen);
+	}
+</style>

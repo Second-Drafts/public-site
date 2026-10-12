@@ -1,4 +1,4 @@
-import { askConfirm } from "./confirm";
+import { askConfirm } from "../../lib/confirm";
 import { defaultSettingsForViewport } from "./lib/defaults";
 import { required } from "../../lib/dom";
 import { loadFontPreviews } from "./lib/fonts";

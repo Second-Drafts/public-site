@@ -1,7 +1,7 @@
-import { askConfirm } from "./confirm";
+import { askConfirm } from "../../lib/confirm";
 import { required } from "../../lib/dom";
 import type { Store } from "./lib/store";
-import { countWords, formatReadTime, readTimeSeconds } from "./lib/timing";
+import { countWords, formatSpeakingTime, speakingSeconds } from "../../lib/text/measure";
 
 export interface EditHooks {
 	onScriptInput(source: "paste" | "typed"): void;
@@ -14,7 +14,7 @@ function statsText(script: string): string {
 	const words = countWords(script);
 	if (words === 0) return "No words yet. Paste or type a script to begin.";
 	const count = `${wordCountFormat.format(words)} ${words === 1 ? "word" : "words"}`;
-	const time = formatReadTime(readTimeSeconds(words));
+	const time = formatSpeakingTime(speakingSeconds(words));
 	return `${count} · ${time} to read`;
 }
 

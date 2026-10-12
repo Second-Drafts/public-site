@@ -1,9 +1,9 @@
 import { stored } from "../../lib/privacy/storage";
-import { askConfirm } from "./confirm";
+import { askConfirm } from "../../lib/confirm";
 import { mountEditPreview } from "./edit-preview";
 import { mountEditView } from "./edit-view";
 import { defaultSettingsForViewport } from "./lib/defaults";
-import { debounce } from "./lib/debounce";
+import { debounce } from "../../lib/debounce";
 import { removeRetiredStorage } from "./lib/retired-storage";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import { validateSettings, type Settings } from "./lib/settings";

@@ -1,5 +1,5 @@
-import { required } from "../../lib/dom";
-import { wireDialog } from "../../lib/dialog";
+import { required } from "./dom";
+import { wireDialog } from "./dialog";
 
 export interface ConfirmOptions {
 	title: string;
@@ -24,9 +24,9 @@ let settle: ((confirmed: boolean) => void) | null = null;
 
 function mount(): Parts {
 	if (parts) return parts;
-	const dialog = required<HTMLDialogElement>(document, "[data-tp-confirm]");
+	const dialog = required<HTMLDialogElement>(document, "[data-confirm]");
 
-	const part = (name: string) => required(dialog, `[data-tpc="${name}"]`);
+	const part = (name: string) => required(dialog, `[data-confirm-part="${name}"]`);
 	const confirmButton = part("confirm");
 	const cancelButton = part("cancel");
 	const answer = (confirmed: boolean) => {

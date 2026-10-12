@@ -1,0 +1,90 @@
+---
+import TextField from "../../components/TextField.astro";
+import type { Unit } from "../../lib/text/measure";
+import { DEFAULT_TARGET } from "./lib/state";
+import { RULES, UNITS, type Rule } from "./lib/target";
+
+const RULE_LABELS: Record<Rule, string> = {
+	"at-most": "At most",
+	"at-least": "At least",
+	exactly: "Exactly",
+	around: "Around",
+};
+const UNIT_LABELS: Record<Unit, string> = {
+	words: "Words",
+	characters: "Characters",
+	seconds: "Seconds aloud",
+};
+---
+
+<fieldset class="wc-targets">
+	<legend class="sd-text-label">Target</legend>
+	<label class="wc-check" for="wc-show-target">
+		<input type="checkbox" id="wc-show-target" />
+		Show target
+	</label>
+	<div class="wc-select">
+		<label class="sd-text-label" for="wc-rule">Rule</label>
+		<select id="wc-rule">
+			{RULES.map((rule) => <option value={rule} selected={rule === DEFAULT_TARGET.rule}>{RULE_LABELS[rule]}</option>)}
+		</select>
+	</div>
+	<TextField id="wc-target" label="Target" type="number" inputmode="numeric" min="1" value={String(DEFAULT_TARGET.value)} />
+	<div class="wc-select">
+		<label class="sd-text-label" for="wc-unit">Unit</label>
+		<select id="wc-unit">
+			{UNITS.map((unit) => <option value={unit} selected={unit === DEFAULT_TARGET.unit}>{UNIT_LABELS[unit]}</option>)}
+		</select>
+	</div>
+</fieldset>
+
+<style>
+	.wc-targets {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+		gap: var(--space-6);
+		margin: 0;
+		padding: var(--space-4) var(--space-6) var(--space-6);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+		background: var(--paper-raised);
+	}
+	.wc-targets legend {
+		padding: 0 var(--space-2);
+	}
+	.wc-check {
+		grid-column: 1 / -1;
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+	.wc-check input {
+		width: 18px;
+		height: 18px;
+		margin: 0;
+		accent-color: var(--marker-blue);
+	}
+	.wc-select {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	/* matches TextField's input */
+	select {
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		padding: 6px var(--space-3);
+	}
+	select:focus-visible,
+	.wc-check input:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+</style>

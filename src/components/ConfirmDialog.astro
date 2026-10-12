@@ -1,0 +1,22 @@
+---
+import Button from "./Button.astro";
+import Dialog from "./Dialog.astro";
+---
+
+<Dialog aria-labelledby="confirm-title" aria-describedby="confirm-body" data-confirm>
+	<h3 id="confirm-title" class="sd-dialog__title sd-text-title" data-confirm-part="title"></h3>
+	<p id="confirm-body" class="sd-dialog__text confirm__body" data-confirm-part="body"></p>
+	<div class="sd-dialog__actions confirm__actions">
+		<Button variant="secondary" data-confirm-part="cancel">Cancel</Button>
+		<Button variant="primary" data-confirm-part="confirm">Confirm</Button>
+	</div>
+</Dialog>
+
+<style>
+	.confirm__body:empty {
+		display: none;
+	}
+	.confirm__actions {
+		justify-content: flex-end;
+	}
+</style>

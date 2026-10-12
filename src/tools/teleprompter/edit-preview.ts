@@ -1,4 +1,4 @@
-import { debounce } from "./lib/debounce";
+import { debounce } from "../../lib/debounce";
 import { required } from "../../lib/dom";
 import type { Settings } from "./lib/settings";
 import type { Store } from "./lib/store";

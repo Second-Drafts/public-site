@@ -1,3 +1,4 @@
+import { createStore as createBaseStore, type Store as BaseStore } from "../../../lib/store";
 import type { Settings } from "./settings";
 
 export type View = "edit" | "prompt";
@@ -8,34 +9,18 @@ export interface State {
 	view: View;
 }
 
-export type ChangeSource = "user" | "system";
+export type Patch = Partial<Omit<State, "settings">> & { settings?: Partial<Settings> };
 
-export type Listener = (state: Readonly<State>, previous: Readonly<State>, source: ChangeSource) => void;
-
-export interface Store {
-	get(): Readonly<State>;
-	set(patch: Partial<Omit<State, "settings">> & { settings?: Partial<Settings> }, source?: ChangeSource): void;
-	subscribe(listener: Listener): () => void;
-}
+export type Store = BaseStore<State, Patch>;
 
 export function createStore(initial: State): Store {
-	let state: State = initial;
-	const listeners = new Set<Listener>();
+	return createBaseStore(initial, applyPatch);
+}
 
+function applyPatch(state: State, patch: Patch): State {
 	return {
-		get: () => state,
-		set(patch, source = "user") {
-			const previous = state;
-			state = {
-				...state,
-				...patch,
-				settings: patch.settings ? { ...state.settings, ...patch.settings } : state.settings,
-			};
-			for (const listener of listeners) listener(state, previous, source);
-		},
-		subscribe(listener) {
-			listeners.add(listener);
-			return () => listeners.delete(listener);
-		},
+		...state,
+		...patch,
+		settings: patch.settings ? { ...state.settings, ...patch.settings } : state.settings,
 	};
 }

@@ -2,7 +2,7 @@
 import type { VendorId } from "../privacy/registry";
 import type { FontId, ThemeId } from "../../tools/teleprompter/lib/settings";
 
-export type WordBucket = "0-50" | "51-200" | "201-600" | "600+";
+export type WordBucket = "0-50" | "51-200" | "201-600" | "601-2000" | "2001-10000" | "10000+";
 export type DeviceType = "phone" | "tablet" | "desktop";
 export type LandingSource = "organic" | "direct" | "referral";
 export type ScriptSource = "paste" | "typed" | "sample" | "share_link";
