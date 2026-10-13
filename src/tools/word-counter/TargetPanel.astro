@@ -94,16 +94,32 @@ const UNIT_LABELS: Record<Unit, string> = {
 		flex-direction: column;
 		gap: var(--space-2);
 	}
-	/* matches TextField's input */
+	/* matches TextField's input; the drawn chevron keeps the same inset as the text, which the native arrow doesn't */
 	select {
+		appearance: none;
 		font-family: var(--font-prose);
 		font-size: 17px;
 		line-height: 28px;
 		color: var(--ink);
-		background: var(--paper-raised);
+		background-color: var(--paper-raised);
+		background-image:
+			linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%),
+			linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
+		background-position:
+			right calc(var(--space-3) + 5px) center,
+			right var(--space-3) center;
+		background-size: 5px 5px;
+		background-repeat: no-repeat;
 		border: var(--stroke-hairline) solid var(--rule-strong);
 		border-radius: var(--radius-sm);
-		padding: 6px var(--space-3);
+		padding-block: 6px;
+		padding-inline: var(--space-3) calc(var(--space-3) * 2 + 10px);
+	}
+	@media (forced-colors: active) {
+		select {
+			appearance: auto;
+			background-image: none;
+		}
 	}
 	select:focus-visible,
 	.wc-check input:focus-visible {
