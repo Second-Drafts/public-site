@@ -7,18 +7,39 @@ import Editor from "../../tools/word-counter/Editor.astro";
 import SelectionLine from "../../tools/word-counter/SelectionLine.astro";
 import SessionProgress from "../../tools/word-counter/SessionProgress.astro";
 import TargetPanel from "../../tools/word-counter/TargetPanel.astro";
+import ToolColumn from "../../components/ToolColumn.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import SeoContent from "../../tools/word-counter/SeoContent.astro";
+import { faq } from "../../tools/word-counter/faq";
+
+const pageTitle = "Free Word Counter: Words, Characters and Speaking Time";
+const pageDescription =
+	"Count words and characters, check a limit for an essay, story or post, and see how long your text takes to read aloud. Free, and your text stays in your browser.";
+const ogImageAlt = "The number 712 words in large type, About 5 min aloud, and a red-pen mark under 62 words to cut against a limit of 650.";
 ---
 
-<Base title="Word Counter">
-	<PageHeader title="Word Counter" compact>
-		Type or paste some text to quickly check its word or character count
-	</PageHeader>
-	<Editor />
-	<CountLine />
-	<SelectionLine />
-	<TargetPanel />
-	<CutLine />
-	<SessionProgress />
+<Base title="Word Counter" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		appName="Free online word counter"
+		ogImage="word-counter"
+		ogImageAlt={ogImageAlt}
+		faq={faq}
+	/>
+	<ToolColumn>
+		<PageHeader title="Word Counter" compact>
+			Type or paste some text to quickly check its word or character count
+		</PageHeader>
+		<Editor />
+		<CountLine />
+		<SelectionLine />
+		<TargetPanel />
+		<CutLine />
+		<SessionProgress />
+	</ToolColumn>
+	<SeoContent />
 </Base>
 
 <script>

@@ -1,0 +1,45 @@
+---
+import SeoArticle from "../../components/SeoArticle.astro";
+import { WORDS_PER_MINUTE } from "../../lib/text/measure";
+import { faq } from "./faq";
+---
+
+<SeoArticle idPrefix="wc-seo" {faq}>
+	<section aria-labelledby="wc-seo-counting">
+		<h2 id="wc-seo-counting" class="sd-text-title">How words and characters are counted</h2>
+		<p>
+			A word is any run of letters or numbers between spaces. A single hyphen joins words, so well-known is one word. Em dashes, en dashes, double hyphens and ellipses separate them. Languages written without spaces, such as Chinese, Japanese and Thai, are split into words the way your browser's text tools split them.
+		</p>
+		<p>
+			Characters include spaces, punctuation and line breaks. An emoji or a letter with an accent counts as one character, however it is stored.
+		</p>
+	</section>
+
+	<section aria-labelledby="wc-seo-speaking">
+		<h2 id="wc-seo-speaking" class="sd-text-title">How speaking time is estimated</h2>
+		<p>
+			Speaking time is your word count divided by {WORDS_PER_MINUTE} words per minute, rounded to the nearest five seconds below a minute and to the nearest minute above it. It is a guide for talks, voiceovers and scripts. Slow, dramatic reading takes longer, and a quick conversational read takes less.
+		</p>
+	</section>
+
+	<section aria-labelledby="wc-seo-limits">
+		<h2 id="wc-seo-limits" class="sd-text-title">Setting a limit</h2>
+		<ul>
+			<li>At most: stay under a ceiling, such as 650 words for a college essay or 280 characters for a post on X.</li>
+			<li>At least: reach a minimum.</li>
+			<li>Exactly: land on a number, as a six-word story or a 100-word drabble does.</li>
+			<li>Around: come within 10% of a number, as for a 300-word query letter or a one-minute script.</li>
+			<li>Between: stay inside a range, such as 250 to 650 words.</li>
+		</ul>
+		<p>
+			Formats fill in the limit for you: fiction from six-word stories to short stories, query letters, synopses and loglines, the Common App essay, posts on X, Bluesky and Threads, and spoken scripts from 30 seconds to five minutes. When you go over, the words past the limit are marked, so you can see what to cut.
+		</p>
+	</section>
+
+	<section aria-labelledby="wc-seo-privacy">
+		<h2 id="wc-seo-privacy" class="sd-text-title">Your text stays in your browser</h2>
+		<p>
+			The counting happens on your device. Your text is saved in your browser so it is waiting when you come back, and it is never sent to our servers.
+		</p>
+	</section>
+</SeoArticle>

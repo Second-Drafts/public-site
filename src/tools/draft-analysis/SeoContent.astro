@@ -1,0 +1,33 @@
+---
+import SeoArticle from "../../components/SeoArticle.astro";
+import { faq } from "./faq";
+import { LONG_SENTENCE_WORDS } from "./lib/rhythm";
+---
+
+<SeoArticle idPrefix="da-seo" {faq}>
+	<section aria-labelledby="da-seo-how">
+		<h2 id="da-seo-how" class="sd-text-title">How to read the rhythm view</h2>
+		<p>
+			Paste or type a draft. Each bar is one sentence, in the order you wrote them, and a taller bar is a longer sentence. The summary gives the number of sentences, the average length and the longest, in words.
+		</p>
+		<p>
+			Sentences of more than {LONG_SENTENCE_WORDS} words rise past the dashed line and carry a mark above. Move along the strip with the left and right arrow keys, or point at a bar, to see which sentence it is and how long it runs.
+		</p>
+	</section>
+
+	<section aria-labelledby="da-seo-tips">
+		<h2 id="da-seo-tips" class="sd-text-title">Using it on a second draft</h2>
+		<ul>
+			<li>Look for long stretches of bars the same height. They usually sound flat when read aloud.</li>
+			<li>Check each marked sentence. If it holds more than one idea, split it. If it builds to something, leave it.</li>
+			<li>Follow a long sentence with a short one when you want a point to land.</li>
+		</ul>
+	</section>
+
+	<section aria-labelledby="da-seo-privacy">
+		<h2 id="da-seo-privacy" class="sd-text-title">Your draft stays in your browser</h2>
+		<p>
+			The analysis happens on your device. Your draft is saved in your browser so it is waiting when you come back, and it is never sent to our servers.
+		</p>
+	</section>
+</SeoArticle>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			@font-face {
+				font-family: Inter;
+				font-weight: 700;
+				src: url(../../public/fonts/inter-700.woff2);
+			}
+			@font-face {
+				font-family: "Josefin Sans";
+				font-weight: 300 700;
+				src: url(../../public/fonts/josefin-sans.woff2);
+			}
+			@font-face {
+				font-family: "JetBrains Mono";
+				font-weight: 700;
+				src: url(../../public/fonts/jetbrains-mono-700.woff2);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+			}
+			body {
+				width: 1200px;
+				height: 630px;
+				background: #000;
+				color: #fff;
+				font-family: Inter, sans-serif;
+				position: relative;
+				overflow: clip;
+			}
+			.strip {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 116px;
+				background: #111;
+				border-top: 2px solid #2a2a2a;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 56px;
+			}
+			.cap {
+				white-space: nowrap;
+				font-family: "Josefin Sans", sans-serif;
+				font-weight: 600;
+				font-size: 32px;
+				color: #fff;
+				padding-top: 4px;
+			}
+			.cap span {
+				color: #ffd400;
+				margin: 0 0.35em;
+			}
+			.strip img {
+				height: 40px;
+				width: 475px;
+				flex: none;
+			}
+			.stage {
+				position: absolute;
+				left: 100px;
+				right: 100px;
+				top: 70px;
+				font-family: "JetBrains Mono", monospace;
+				font-weight: 700;
+			}
+			.clock {
+				font-size: 230px;
+				line-height: 240px;
+			}
+			.clock small {
+				font-size: 56px;
+				color: #888;
+				margin-left: 20px;
+			}
+			.words {
+				font-size: 56px;
+				line-height: 72px;
+				color: #ffd400;
+			}
+			.track {
+				margin-top: 36px;
+				height: 14px;
+				background: #2a2a2a;
+				border-radius: 7px;
+			}
+			.track div {
+				width: 62%;
+				height: 100%;
+				background: #ffd400;
+				border-radius: 7px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="clock">14:32<small>left</small></div>
+			<div class="words">312 words</div>
+			<div class="track"><div></div></div>
+		</div>
+		<div class="strip">
+			<div class="cap">Free writing sprint<span>·</span>No sign-up</div>
+			<img src="../../public/img/sd-word-single_line-marked-night.svg" alt="" />
+		</div>
+	</body>
+</html>

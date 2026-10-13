@@ -1,0 +1,129 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			@font-face {
+				font-family: Inter;
+				font-weight: 700;
+				src: url(../../public/fonts/inter-700.woff2);
+			}
+			@font-face {
+				font-family: "Josefin Sans";
+				font-weight: 300 700;
+				src: url(../../public/fonts/josefin-sans.woff2);
+			}
+			@font-face {
+				font-family: "JetBrains Mono";
+				font-weight: 700;
+				src: url(../../public/fonts/jetbrains-mono-700.woff2);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+			}
+			body {
+				width: 1200px;
+				height: 630px;
+				background: #000;
+				color: #fff;
+				font-family: Inter, sans-serif;
+				position: relative;
+				overflow: clip;
+			}
+			.strip {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 116px;
+				background: #111;
+				border-top: 2px solid #2a2a2a;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 56px;
+			}
+			.cap {
+				white-space: nowrap;
+				font-family: "Josefin Sans", sans-serif;
+				font-weight: 600;
+				font-size: 32px;
+				color: #fff;
+				padding-top: 4px;
+			}
+			.cap span {
+				color: #ffd400;
+				margin: 0 0.35em;
+			}
+			.strip img {
+				height: 40px;
+				width: 475px;
+				flex: none;
+			}
+			.stage {
+				position: absolute;
+				left: 100px;
+				right: 100px;
+				top: 70px;
+				height: 420px;
+			}
+			.bars {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 330px;
+				display: flex;
+				align-items: flex-end;
+				gap: 14px;
+				border-bottom: 2px solid #2a2a2a;
+			}
+			.bars i {
+				flex: 1;
+				background: #fff;
+				opacity: 0.55;
+			}
+			.bars i.long {
+				background: #ffd400;
+				opacity: 1;
+			}
+			.line {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 98px;
+				border-top: 3px dashed #888;
+			}
+			.label {
+				position: absolute;
+				top: 40px;
+				right: 0;
+				font-family: "JetBrains Mono", monospace;
+				font-weight: 700;
+				font-size: 32px;
+				color: #888;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="label">over 30 words</div>
+			<div class="line"></div>
+			<div class="bars">
+				<i class="" style="height: 52px"></i><i class="" style="height: 91px"></i><i class="" style="height: 33px"></i
+				><i class="" style="height: 144px"></i><i class="" style="height: 72px"></i><i class="" style="height: 43px"></i
+				><i class="long" style="height: 230px"></i><i class="" style="height: 62px"></i
+				><i class="" style="height: 28px"></i><i class="" style="height: 105px"></i><i class="" style="height: 48px"></i
+				><i class="" style="height: 81px"></i><i class="long" style="height: 268px"></i
+				><i class="" style="height: 38px"></i><i class="" style="height: 67px"></i><i class="" style="height: 24px"></i
+				><i class="" style="height: 124px"></i><i class="" style="height: 57px"></i><i class="" style="height: 86px"></i
+				><i class="" style="height: 43px"></i>
+			</div>
+		</div>
+		<div class="strip">
+			<div class="cap">Free sentence checker<span>·</span>See your rhythm</div>
+			<img src="../../public/img/sd-word-single_line-marked-night.svg" alt="" />
+		</div>
+	</body>
+</html>

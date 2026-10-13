@@ -1,0 +1,59 @@
+---
+import type { FaqItem } from "../lib/seo/faq";
+
+interface Props {
+	title: string;
+	description: string;
+	appName: string;
+	ogImage: string;
+	ogImageAlt: string;
+	faq?: FaqItem[];
+}
+
+const { title, description, appName, ogImage, ogImageAlt, faq = [] } = Astro.props;
+const siteName = "The Department of Second Drafts";
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImageUrl = new URL(`/img/og/${ogImage}.png`, Astro.site).href;
+
+const faqJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "FAQPage",
+	mainEntity: faq.map((item) => ({
+		"@type": "Question",
+		name: item.question,
+		acceptedAnswer: { "@type": "Answer", text: item.answer },
+	})),
+};
+
+const appJsonLd = {
+	"@context": "https://schema.org",
+	"@type": "WebApplication",
+	name: appName,
+	url: canonical,
+	description,
+	applicationCategory: "UtilitiesApplication",
+	operatingSystem: "Any",
+	browserRequirements: "Requires a modern browser with JavaScript enabled.",
+	isAccessibleForFree: true,
+	offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+	publisher: { "@type": "Organization", name: siteName, url: Astro.site?.href },
+};
+---
+
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={siteName} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageUrl} />
+<meta name="twitter:image:alt" content={ogImageAlt} />
+{faq.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}
+<script type="application/ld+json" set:html={JSON.stringify(appJsonLd)} />

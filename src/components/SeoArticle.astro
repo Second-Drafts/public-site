@@ -1,0 +1,89 @@
+---
+import type { FaqItem } from "../lib/seo/faq";
+import HighlightedBand from "./HighlightedBand.astro";
+import Link from "./Link.astro";
+
+interface Props {
+	idPrefix: string;
+	faq: FaqItem[];
+}
+
+const { idPrefix, faq } = Astro.props;
+---
+
+<div class="seo">
+	<article class="seo__measure">
+		<slot />
+
+		<section aria-labelledby={`${idPrefix}-faq`}>
+			<h2 id={`${idPrefix}-faq`} class="sd-text-title">Questions</h2>
+			{
+				faq.map((item) => (
+					<div class="seo__qa">
+						<h3 class="sd-text-heading">{item.question}</h3>
+						<p>{item.answer}</p>
+					</div>
+				))
+			}
+		</section>
+	</article>
+
+	<HighlightedBand as="aside" aria-labelledby={`${idPrefix}-more`}>
+		<div class="seo__measure">
+			<h2 id={`${idPrefix}-more`} class="sd-text-title">A tool from the Department</h2>
+			<p>
+				We make tools for writers and storytellers. See the rest on the{" "}
+				<Link href="/tools">tools page</Link>.
+			</p>
+		</div>
+	</HighlightedBand>
+</div>
+
+<style>
+	.seo__measure {
+		max-width: 34em;
+		margin-inline: auto;
+	}
+	article.seo__measure {
+		padding: var(--space-12) var(--space-6) var(--space-16);
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-12);
+	}
+	.seo :global(section) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.seo :global(h2),
+	.seo :global(h3),
+	.seo :global(p),
+	.seo :global(ol),
+	.seo :global(ul) {
+		margin: 0;
+	}
+	.seo :global(h2),
+	.seo :global(h3) {
+		text-wrap: balance;
+	}
+	.seo :global(p),
+	.seo :global(li) {
+		text-wrap: pretty;
+	}
+	.seo :global(ol),
+	.seo :global(ul) {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding-inline-start: 1.5em;
+	}
+	.seo__qa {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	.seo__qa + .seo__qa {
+		padding-block-start: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule);
+	}
+</style>

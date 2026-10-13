@@ -3,12 +3,33 @@ import PageHeader from "../../components/PageHeader.astro";
 import Base from "../../layouts/Base.astro";
 import Editor from "../../tools/draft-analysis/Editor.astro";
 import RhythmView from "../../tools/draft-analysis/RhythmView.astro";
+import ToolColumn from "../../components/ToolColumn.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import SeoContent from "../../tools/draft-analysis/SeoContent.astro";
+import { faq } from "../../tools/draft-analysis/faq";
+
+const pageTitle = "Free Sentence Length Checker: See Your Draft's Rhythm";
+const pageDescription =
+	"Paste your draft and see the length of every sentence at a glance, with long sentences flagged. Free, and your draft stays in your browser.";
+const ogImageAlt = "A row of bars, one per sentence, with two long sentences in yellow rising past a dashed line.";
 ---
 
-<Base title="Draft Analysis">
-	<PageHeader title="Draft Analysis" compact>See how your draft reads, one sentence at a time</PageHeader>
-	<Editor />
-	<RhythmView />
+<Base title="Draft Analysis" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		appName="Free sentence length checker"
+		ogImage="draft-analysis"
+		ogImageAlt={ogImageAlt}
+		faq={faq}
+	/>
+	<ToolColumn>
+		<PageHeader title="Draft Analysis" compact>See how your draft reads, one sentence at a time</PageHeader>
+		<Editor />
+		<RhythmView />
+	</ToolColumn>
+	<SeoContent />
 </Base>
 
 <script>

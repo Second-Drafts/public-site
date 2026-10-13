@@ -1,7 +1,4 @@
-export interface FaqItem {
-	question: string;
-	answer: string;
-}
+import type { FaqItem } from "../../lib/seo/faq";
 
 export const faq: FaqItem[] = [
 	{

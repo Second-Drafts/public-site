@@ -5,16 +5,37 @@ import Editor from "../../tools/writing-sprint/Editor.astro";
 import SprintBar from "../../tools/writing-sprint/SprintBar.astro";
 import SprintSetup from "../../tools/writing-sprint/SprintSetup.astro";
 import WordCount from "../../tools/writing-sprint/WordCount.astro";
+import ToolColumn from "../../components/ToolColumn.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import SeoContent from "../../tools/writing-sprint/SeoContent.astro";
+import { faq } from "../../tools/writing-sprint/faq";
+
+const pageTitle = "Free Writing Sprint Timer: Write Without Stopping";
+const pageDescription =
+	"Set a timer for 10, 15, 25 minutes or your own, write without stopping, and see how many words you got down. Free, with no account, and your draft stays in your browser.";
+const ogImageAlt = "A sprint timer reading 14:32 left, 312 words written and a progress bar, on black.";
 ---
 
-<Base title="Writing Sprint">
-	<PageHeader title="Writing Sprint" compact>
-		Set a timer, write without stopping, and see how many words you got down
-	</PageHeader>
-	<SprintSetup />
-	<SprintBar />
-	<Editor />
-	<WordCount />
+<Base title="Writing Sprint" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		appName="Free writing sprint timer"
+		ogImage="writing-sprint"
+		ogImageAlt={ogImageAlt}
+		faq={faq}
+	/>
+	<ToolColumn>
+		<PageHeader title="Writing Sprint" compact>
+			Set a timer, write without stopping, and see how many words you got down
+		</PageHeader>
+		<SprintSetup />
+		<SprintBar />
+		<Editor />
+		<WordCount />
+	</ToolColumn>
+	<SeoContent />
 </Base>
 
 <script>
