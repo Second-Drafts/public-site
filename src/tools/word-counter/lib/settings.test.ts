@@ -11,7 +11,6 @@ describe("validateSettings", () => {
 			showTarget: true,
 			target: { unit: "characters", rule: "around", value: 280, min: 200 },
 			presetId: "tweet",
-			rhythmOpen: true,
 		};
 		expect(validateSettings(saved)).toEqual(saved);
 	});
@@ -21,12 +20,10 @@ describe("validateSettings", () => {
 			showTarget: "yes",
 			target: { unit: "pages", rule: "exactly", value: -4 },
 			presetId: "essay",
-			rhythmOpen: true,
 		});
 		expect(result.showTarget).toBe(false);
 		expect(result.target).toEqual({ ...DEFAULT_SETTINGS.target, rule: "exactly" });
 		expect(result.presetId).toBe("essay");
-		expect(result.rhythmOpen).toBe(true);
 	});
 
 	it("drops a range minimum that isn't below the value", () => {

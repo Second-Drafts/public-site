@@ -15,8 +15,6 @@ export interface UsageHooks {
 	onOpenedInTeleprompter(): void;
 	onCutLineShown(): void;
 	onSelectionCounted(): void;
-	onRhythmOpened(): void;
-	onRhythmSentenceClicked(): void;
 }
 
 export function trackUsage(store: Store): UsageHooks {
@@ -43,8 +41,6 @@ export function trackUsage(store: Store): UsageHooks {
 			track("wc_cut_line_shown", { rule, unit });
 		}),
 		onSelectionCounted: onceAVisit(() => track("wc_selection_counted", {})),
-		onRhythmOpened: () => track("wc_rhythm_opened", {}),
-		onRhythmSentenceClicked: () => track("wc_rhythm_sentence_clicked", {}),
 	};
 }
 

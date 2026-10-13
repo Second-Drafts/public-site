@@ -8,7 +8,6 @@ export interface State {
 	showTarget: boolean;
 	target: Target;
 	presetId: string;
-	rhythmOpen: boolean;
 }
 
 export type Store = BaseStore<State>;
@@ -20,7 +19,6 @@ export const INITIAL_STATE: State = {
 	showTarget: false,
 	target: DEFAULT_TARGET,
 	presetId: "custom",
-	rhythmOpen: false,
 };
 
 /** The target the text is measured against, or null when it's switched off or has no usable value. */

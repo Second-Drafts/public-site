@@ -26,12 +26,6 @@ export interface HighlightSegment extends HighlightSpan {
 export interface TextHighlights {
 	/** Replaces the spans of one kind, leaving the other kinds' spans as they are. Offsets index the textarea's value. */
 	paint(kind: string, spans: readonly HighlightSpan[]): void;
-	/**
-	 * Scrolls the textarea just far enough to show the first span of a kind, or to put its top at the top of a span
-	 * taller than the textarea. A textarea can't scroll to a range itself, and browsers disagree on whether moving the
-	 * selection does, so this measures the mirror's rendered span instead.
-	 */
-	reveal(kind: string): void;
 }
 
 export interface MirrorLine {
@@ -129,26 +123,12 @@ export function attachTextHighlights(textarea: HTMLTextAreaElement): TextHighlig
 	void document.fonts.ready.then(copyLayout);
 	copyLayout();
 
-	function reveal(kind: string) {
-		render();
-		const span = mirror.querySelector(`[data-highlight~="${kind}"]`);
-		if (!span) return;
-		const view = textarea.getBoundingClientRect();
-		const { top, bottom } = span.getBoundingClientRect();
-		const margin = parseFloat(getComputedStyle(textarea).lineHeight) || 0;
-		const hiddenAbove = view.top + margin - top;
-		const hiddenBelow = bottom - (view.bottom - margin);
-		if (hiddenAbove > 0 || bottom - top > view.height - 2 * margin) textarea.scrollTop -= hiddenAbove;
-		else if (hiddenBelow > 0) textarea.scrollTop += hiddenBelow;
-	}
-
 	return {
 		paint(kind, spans) {
 			if (spans.length === 0) spansByKind.delete(kind);
 			else spansByKind.set(kind, spans);
 			renderNextFrame();
 		},
-		reveal,
 	};
 }
 

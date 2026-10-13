@@ -5,20 +5,18 @@ import { RULES, UNITS, type Rule, type Target } from "./target";
 
 export const CUSTOM_PRESET = "custom";
 
-export type Settings = Pick<State, "showTarget" | "target" | "presetId" | "rhythmOpen">;
+export type Settings = Pick<State, "showTarget" | "target" | "presetId">;
 
 export const DEFAULT_SETTINGS: Readonly<Settings> = {
 	showTarget: false,
 	target: DEFAULT_TARGET,
 	presetId: CUSTOM_PRESET,
-	rhythmOpen: false,
 };
 
-export const pickSettings = ({ showTarget, target, presetId, rhythmOpen }: State): Settings => ({
+export const pickSettings = ({ showTarget, target, presetId }: State): Settings => ({
 	showTarget,
 	target,
 	presetId,
-	rhythmOpen,
 });
 
 export function validateSettings(input: unknown): Settings {
@@ -27,7 +25,6 @@ export function validateSettings(input: unknown): Settings {
 		showTarget: pickBool(raw.showTarget, DEFAULT_SETTINGS.showTarget),
 		target: validateTarget(raw.target),
 		presetId: typeof raw.presetId === "string" && raw.presetId !== "" ? raw.presetId : DEFAULT_SETTINGS.presetId,
-		rhythmOpen: pickBool(raw.rhythmOpen, DEFAULT_SETTINGS.rhythmOpen),
 	};
 }
 

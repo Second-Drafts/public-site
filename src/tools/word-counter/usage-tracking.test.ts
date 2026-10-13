@@ -109,14 +109,10 @@ describe("trackUsage", () => {
 		usage.onCutLineShown();
 		usage.onSelectionCounted();
 		usage.onSelectionCounted();
-		usage.onRhythmOpened();
-		usage.onRhythmSentenceClicked();
 		usage.onOpenedInTeleprompter();
 		expect(tracked.mock.calls).toEqual([
 			["wc_cut_line_shown", { rule: "at-most", unit: "words" }],
 			["wc_selection_counted", {}],
-			["wc_rhythm_opened", {}],
-			["wc_rhythm_sentence_clicked", {}],
 			["wc_opened_in_teleprompter", { word_bucket: "0-50" }],
 		]);
 	});
