@@ -1,6 +1,6 @@
 {
-	"registryVersion": "2.4.0",
-	"sourceCommit": "93d6eed538580926b8a79770bb3efef0a3900aac",
+	"registryVersion": "2.5.0",
+	"sourceCommit": "f6a7bbfa1f0def826757bc4cdd52f348af1d8e7e",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -47,6 +47,12 @@
 				]
 			},
 			"/tools/draft-analysis/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/magic-8-ball/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -138,6 +144,14 @@
 				]
 			},
 			"/tools/draft-analysis/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/magic-8-ball/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -277,6 +291,18 @@
 					"https://www.googletagmanager.com"
 				]
 			},
+			"/tools/magic-8-ball/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				]
+			},
 			"/tools/teleprompter/": {
 				"storage": [
 					"cookie:_ga",
@@ -377,6 +403,12 @@
 					"self"
 				]
 			},
+			"/tools/magic-8-ball/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
 			"/tools/teleprompter/": {
 				"storage": [],
 				"origins": [
@@ -463,6 +495,14 @@
 				]
 			},
 			"/tools/draft-analysis/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/magic-8-ball/": {
 				"storage": [
 					"local:privacy:consent"
 				],
