@@ -1,0 +1,1 @@
+function e(e){return typeof e==`object`&&!!e&&!Array.isArray(e)}function t(e,t,n){return typeof t==`string`&&e.includes(t)?t:n}function n(e,t){return typeof e==`boolean`?e:t}function r(t){return e(t)?t:{}}export{t as i,e as n,n as r,r as t};

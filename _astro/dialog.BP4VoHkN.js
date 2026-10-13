@@ -1,0 +1,1 @@
+function e(e,{onClose:t}={}){e.addEventListener(`click`,t=>{t.target===e&&e.close()}),e.addEventListener(`close`,()=>{e.open||t?.()})}export{e as t};
