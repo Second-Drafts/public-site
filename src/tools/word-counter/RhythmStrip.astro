@@ -1,0 +1,148 @@
+---
+import { LONG_SENTENCE_WORDS } from "./lib/rhythm";
+---
+
+<section class="wc-rhythm" aria-labelledby="wc-rhythm-heading">
+	<h2 class="wc-rhythm__heading sd-text-label" id="wc-rhythm-heading">
+		<button type="button" id="wc-rhythm-toggle" aria-expanded="false" aria-controls="wc-rhythm-panel">
+			Sentence rhythm
+		</button>
+	</h2>
+	<div id="wc-rhythm-panel" hidden>
+		<p class="wc-rhythm__summary" id="wc-rhythm-summary"></p>
+		<div
+			class="wc-rhythm__strip"
+			id="wc-rhythm-strip"
+			role="group"
+			tabindex="0"
+			aria-label="Sentence lengths, one bar per sentence. Use the left and right arrow keys to move, and Enter to select a sentence."
+		>
+			<svg class="wc-rhythm__bars" preserveAspectRatio="none" aria-hidden="true">
+				<line class="wc-rhythm__threshold" x1="0" x2="100%" vector-effect="non-scaling-stroke" style="display: none"></line>
+				<path class="wc-rhythm__bar"></path>
+				<path class="wc-rhythm__bar wc-rhythm__bar--long"></path>
+				<path class="wc-rhythm__mark"></path>
+			</svg>
+			<div class="wc-rhythm__cursor" hidden></div>
+		</div>
+		<p class="wc-rhythm__detail" id="wc-rhythm-detail" aria-live="polite"></p>
+		<p class="wc-rhythm__key">Long sentences (over {LONG_SENTENCE_WORDS} words) rise past the dashed line and carry a mark above.</p>
+	</div>
+</section>
+
+<style>
+	.wc-rhythm {
+		margin: var(--space-8) 0;
+	}
+	.wc-rhythm__heading {
+		margin: 0;
+	}
+	#wc-rhythm-toggle {
+		all: unset;
+		cursor: pointer;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-1) 0;
+	}
+	#wc-rhythm-toggle::before {
+		content: "";
+		width: 0;
+		height: 0;
+		border-left: 6px solid currentColor;
+		border-block: 5px solid transparent;
+		transition: rotate 0.15s;
+	}
+	#wc-rhythm-toggle[aria-expanded="true"]::before {
+		rotate: 90deg;
+	}
+	#wc-rhythm-toggle:focus-visible,
+	.wc-rhythm__strip:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+	.wc-rhythm__summary {
+		margin: var(--space-2) 0 var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+	}
+	.wc-rhythm__strip {
+		position: relative;
+		height: 88px;
+		cursor: pointer;
+		touch-action: manipulation;
+		background: var(--paper-sunken);
+		border-bottom: var(--stroke-pen) solid var(--rule-strong);
+		border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+	}
+	.wc-rhythm__bars {
+		display: block;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	.wc-rhythm__bar {
+		fill: var(--ink-muted);
+	}
+	.wc-rhythm__bar--long {
+		fill: var(--red-pen);
+	}
+	.wc-rhythm__mark {
+		fill: var(--red-pen);
+	}
+	.wc-rhythm__threshold {
+		stroke: var(--red-pen);
+		stroke-width: 1.5px;
+		stroke-dasharray: 5 4;
+	}
+	.wc-rhythm__cursor {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		min-width: 3px;
+		box-shadow: 0 0 0 1.5px var(--marker-blue);
+		background: color-mix(in srgb, var(--marker-blue) 22%, transparent);
+		pointer-events: none;
+	}
+	.wc-rhythm__detail {
+		min-height: 24px;
+		margin: var(--space-2) 0 0;
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+	.wc-rhythm__key {
+		margin: var(--space-1) 0 0;
+		font-size: 14px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	/* the sentence picked in the strip, marked in the text with a tint and a blue underline */
+	:global([data-highlight~="sentence"]) {
+		background: color-mix(in srgb, var(--marker-blue) 20%, transparent);
+		box-shadow: inset 0 -2px var(--marker-blue);
+	}
+	@media (forced-colors: active) {
+		.wc-rhythm__bar,
+		.wc-rhythm__bar--long,
+		.wc-rhythm__mark {
+			fill: CanvasText;
+		}
+		.wc-rhythm__threshold {
+			stroke: CanvasText;
+		}
+		.wc-rhythm__cursor {
+			background: transparent;
+			box-shadow: 0 0 0 2px Highlight;
+		}
+		:global([data-highlight~="sentence"]) {
+			background: transparent;
+			box-shadow: none;
+			text-decoration: underline 2px CanvasText;
+		}
+	}
+</style>

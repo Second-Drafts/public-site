@@ -3,9 +3,10 @@ import { mountCountLine } from "./count-line";
 import { mountCutLine } from "./cut-line";
 import { mountEditor } from "./editor";
 import type { State, Store } from "./lib/state";
-import { mountSessionPanel } from "./session-panel";
 import { persistChanges, restoreState } from "./persistence";
+import { mountRhythmStrip } from "./rhythm-strip";
 import { mountSelectionLine } from "./selection-line";
+import { mountSessionPanel } from "./session-panel";
 import { trackUsage } from "./usage-tracking";
 import { mountTargetPanel } from "./target-panel";
 
@@ -26,4 +27,5 @@ mountCountLine(store);
 mountSelectionLine(store, usage);
 mountCutLine(store, editor.highlights, usage);
 mountTargetPanel(store);
+mountRhythmStrip(store, editor.highlights, usage);
 mountSessionPanel(store, usage);
