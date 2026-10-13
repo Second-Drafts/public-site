@@ -1,4 +1,3 @@
-import { CUSTOM_PRESET } from "./settings";
 import type { Target } from "./target";
 
 export const NO_PRESET = "none";
@@ -127,15 +126,4 @@ export function presetGroups(): { name: string; presets: Preset[] }[] {
 	const groups = new Map<string, Preset[]>();
 	for (const preset of PRESETS) groups.set(preset.group, [...(groups.get(preset.group) ?? []), preset]);
 	return [...groups].map(([name, presets]) => ({ name, presets }));
-}
-
-/** A saved id no longer in the list reads as Custom, since its target is still there. */
-export function pickerValue(presetId: string): string {
-	return presetId === NO_PRESET || findPreset(presetId) ? presetId : CUSTOM_PRESET;
-}
-
-/** Editing a preset's target makes it Custom. A range's minimum goes too, since no field shows it. */
-export function customTarget(target: Target, patch: Partial<Target>): Target {
-	const { min: _min, ...rest } = target;
-	return { ...rest, ...patch };
 }

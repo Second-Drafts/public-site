@@ -1,131 +1,189 @@
 ---
-import TextField from "../../components/TextField.astro";
-import type { Unit } from "../../lib/text/measure";
-import { DEFAULT_TARGET } from "./lib/state";
-import { NO_PRESET, presetGroups } from "./lib/presets";
-import { CUSTOM_PRESET } from "./lib/settings";
-import { RULES, UNITS, type Rule } from "./lib/target";
-
-const RULE_LABELS: Record<Rule, string> = {
-	"at-most": "At most",
-	"at-least": "At least",
-	exactly: "Exactly",
-	around: "Around",
-};
-const UNIT_LABELS: Record<Unit, string> = {
-	words: "Words",
-	characters: "Characters",
-	seconds: "Seconds aloud",
-};
+import { presetGroups } from "./lib/presets";
 ---
 
-<fieldset class="wc-targets">
-	<legend class="sd-text-label">Target</legend>
-	<label class="wc-check" for="wc-show-target">
-		<input type="checkbox" id="wc-show-target" />
-		Show target
-	</label>
-	<div class="wc-select wc-preset">
-		<label class="sd-text-label" for="wc-preset">Format</label>
-		<select id="wc-preset">
-			<option value={NO_PRESET}>None</option>
-			{
-				presetGroups().map((group) => (
-					<optgroup label={group.name}>
-						{group.presets.map((preset) => <option value={preset.id}>{preset.name}</option>)}
-					</optgroup>
-				))
-			}
-			<option value={CUSTOM_PRESET} selected>Custom</option>
+<div class="wc-target-drawer" id="wc-target-drawer" hidden>
+	<p class="wc-sentence">
+		<span>Aim for</span>
+		<select class="wc-blank" id="wc-rule" aria-label="Limit">
+			<option value="at-most">at most</option>
+			<option value="at-least">at least</option>
+			<option value="exactly">exactly</option>
+			<option value="around">around</option>
+			<option value="between">between</option>
 		</select>
-		<p class="wc-preset-description" id="wc-preset-description" aria-live="polite"></p>
-	</div>
-	<div class="wc-select">
-		<label class="sd-text-label" for="wc-rule">Rule</label>
-		<select id="wc-rule">
-			{RULES.map((rule) => <option value={rule} selected={rule === DEFAULT_TARGET.rule}>{RULE_LABELS[rule]}</option>)}
+		<span class="wc-range" id="wc-range" hidden>
+			<input class="wc-blank wc-number" id="wc-min" type="number" inputmode="numeric" min="1" aria-label="Minimum" />
+			<span>and</span>
+		</span>
+		<input class="wc-blank wc-number" id="wc-target" type="number" inputmode="numeric" min="1" aria-label="Target" />
+		<select class="wc-blank" id="wc-unit" aria-label="Unit">
+			<option value="words">words</option>
+			<option value="characters">characters</option>
+			<option value="seconds">seconds aloud</option>
 		</select>
+	</p>
+	<div class="wc-formats" role="group" aria-label="Formats">
+		{
+			presetGroups().map((group) => (
+				<div class="wc-format-row">
+					<span class="sd-text-label">{group.name}</span>
+					<span class="wc-format-list">
+						{group.presets.map((preset) => (
+							<button type="button" class="wc-format" data-preset={preset.id} aria-pressed="false">
+								{preset.name}
+							</button>
+						))}
+					</span>
+				</div>
+			))
+		}
 	</div>
-	<TextField id="wc-target" label="Target" type="number" inputmode="numeric" min="1" value={String(DEFAULT_TARGET.value)} />
-	<div class="wc-select">
-		<label class="sd-text-label" for="wc-unit">Unit</label>
-		<select id="wc-unit">
-			{UNITS.map((unit) => <option value={unit} selected={unit === DEFAULT_TARGET.unit}>{UNIT_LABELS[unit]}</option>)}
-		</select>
-	</div>
-</fieldset>
+	<p class="wc-format-description" id="wc-preset-description"></p>
+</div>
 
 <style>
-	.wc-targets {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
-		gap: var(--space-6);
-		margin: 0;
-		padding: var(--space-4) var(--space-6) var(--space-6);
-		border: var(--stroke-hairline) solid var(--rule);
-		border-radius: var(--radius-md);
-		background: var(--paper-raised);
-	}
-	.wc-targets legend {
-		padding: 0 var(--space-2);
-	}
-	.wc-check {
-		grid-column: 1 / -1;
-		display: flex;
-		align-items: center;
-		gap: var(--space-2);
-	}
-	.wc-check input {
-		width: 18px;
-		height: 18px;
-		margin: 0;
-		accent-color: var(--marker-blue);
-	}
-	.wc-preset {
-		grid-column: 1 / -1;
-	}
-	.wc-preset-description {
-		margin: 0;
-		min-height: 1lh;
-		color: var(--ink-muted);
-	}
-	.wc-select {
+	.wc-target-drawer {
 		display: flex;
 		flex-direction: column;
+		gap: var(--space-4);
+		margin: calc(-1 * var(--space-4)) 0 var(--space-8);
+		padding: var(--space-6);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+	}
+	.wc-target-drawer[hidden] {
+		display: none;
+	}
+	p {
+		margin: 0;
+	}
+
+	/* the target as one sentence with blanks to fill in */
+	.wc-sentence {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-2);
+		font-family: var(--font-prose);
+		font-size: 22px;
+		line-height: 36px;
+		color: var(--ink);
+	}
+	.wc-range {
+		display: inline-flex;
+		align-items: baseline;
 		gap: var(--space-2);
 	}
-	/* matches TextField's input; the drawn chevron keeps the same inset as the text, which the native arrow doesn't */
-	select {
+	.wc-range[hidden] {
+		display: none;
+	}
+	.wc-blank {
+		field-sizing: content;
 		appearance: none;
-		font-family: var(--font-prose);
-		font-size: 17px;
-		line-height: 28px;
+		font: inherit;
 		color: var(--ink);
-		background-color: var(--paper-raised);
+		background: transparent;
+		border: 0;
+		border-block-end: var(--stroke-pen) solid var(--rule-strong);
+		border-radius: 0;
+		padding: 0 var(--space-1);
+	}
+	select.wc-blank {
+		padding-inline-end: calc(var(--space-1) + 16px);
 		background-image:
 			linear-gradient(45deg, transparent 50%, var(--ink-muted) 50%),
 			linear-gradient(135deg, var(--ink-muted) 50%, transparent 50%);
 		background-position:
-			right calc(var(--space-3) + 5px) center,
-			right var(--space-3) center;
+			right calc(var(--space-1) + 5px) center,
+			right var(--space-1) center;
 		background-size: 5px 5px;
 		background-repeat: no-repeat;
-		border: var(--stroke-hairline) solid var(--rule-strong);
-		border-radius: var(--radius-sm);
-		padding-block: 6px;
-		padding-inline: var(--space-3) calc(var(--space-3) * 2 + 10px);
+		cursor: pointer;
+	}
+	.wc-number {
+		min-inline-size: 3ch;
+		inline-size: 4.5ch;
+		text-align: center;
+		appearance: textfield;
+	}
+	.wc-number::-webkit-inner-spin-button,
+	.wc-number::-webkit-outer-spin-button {
+		appearance: none;
+		margin: 0;
+	}
+	.wc-blank:focus-visible {
+		outline: none;
+		border-color: var(--focus);
+		box-shadow: 0 1px 0 var(--focus);
 	}
 	@media (forced-colors: active) {
-		select {
+		select.wc-blank {
 			appearance: auto;
 			background-image: none;
 		}
 	}
-	select:focus-visible,
-	.wc-check input:focus-visible {
+
+	/* formats fill the sentence in */
+	.wc-formats {
+		display: grid;
+		gap: var(--space-2);
+	}
+	.wc-format-row {
+		display: grid;
+		grid-template-columns: 7.5rem 1fr;
+		align-items: baseline;
+		gap: var(--space-3);
+	}
+	.wc-format-list {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: var(--space-4);
+		row-gap: var(--space-1);
+	}
+	.wc-format {
+		all: unset;
+		cursor: pointer;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+		text-decoration: underline var(--stroke-hairline) var(--rule-strong);
+		text-underline-offset: 4px;
+	}
+	.wc-format[aria-pressed="true"] {
+		text-decoration: underline 3px var(--marker-blue);
+	}
+	.wc-format:focus-visible {
 		outline: none;
+		border-radius: var(--radius-sm);
 		box-shadow:
 			0 0 0 2px var(--paper),
 			0 0 0 4px var(--focus);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.wc-format:hover {
+			text-decoration-color: var(--ink);
+		}
+	}
+	.wc-format-description {
+		min-height: 24px;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+	@media (max-width: 30rem) {
+		.wc-target-drawer {
+			padding: var(--space-4);
+		}
+		.wc-format-row {
+			grid-template-columns: 1fr;
+			gap: var(--space-1);
+		}
+		.wc-sentence {
+			font-size: 19px;
+		}
 	}
 </style>

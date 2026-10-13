@@ -1,53 +1,86 @@
 import { required } from "../../lib/dom";
 import type { Unit } from "../../lib/text/measure";
-import type { State, Store } from "./lib/state";
-import { customTarget, findPreset, NO_PRESET, pickerValue } from "./lib/presets";
+import { findPreset, NO_PRESET } from "./lib/presets";
 import { CUSTOM_PRESET } from "./lib/settings";
-import type { Rule, Target } from "./lib/target";
+import type { State, Store } from "./lib/state";
+import { isUsable, type Target } from "./lib/target";
+import { fieldsFromTarget, sameTarget, targetFromFields, type FieldRule, type TargetFields } from "./lib/target-fields";
 
 export function mountTargetPanel(store: Store): void {
-	const showTarget = required<HTMLInputElement>(document, "#wc-show-target");
-	const preset = required<HTMLSelectElement>(document, "#wc-preset");
-	const presetDescription = required<HTMLElement>(document, "#wc-preset-description");
-	const rule = required<HTMLSelectElement>(document, "#wc-rule");
-	const value = required<HTMLInputElement>(document, "#wc-target");
-	const unit = required<HTMLSelectElement>(document, "#wc-unit");
+	const toggle = required<HTMLButtonElement>(document, "#wc-target-toggle");
+	const remove = required<HTMLButtonElement>(document, "#wc-target-remove");
+	const drawer = required(document, "#wc-target-drawer");
+	const range = required(drawer, "#wc-range");
+	const rule = required<HTMLSelectElement>(drawer, "#wc-rule");
+	const min = required<HTMLInputElement>(drawer, "#wc-min");
+	const value = required<HTMLInputElement>(drawer, "#wc-target");
+	const unit = required<HTMLSelectElement>(drawer, "#wc-unit");
+	const description = required(drawer, "#wc-preset-description");
+	const formats = Array.from(drawer.querySelectorAll<HTMLButtonElement>("[data-preset]"));
 
-	const setTarget = (patch: Partial<Target>) =>
-		store.set({ target: customTarget(store.get().target, patch), presetId: CUSTOM_PRESET });
-
-	function choosePreset(id: string) {
-		const chosen = findPreset(id);
-		if (chosen) return store.set({ presetId: id, target: chosen.target, showTarget: true });
-		if (id === NO_PRESET) return store.set({ presetId: id, showTarget: false });
-		store.set({ presetId: CUSTOM_PRESET, showTarget: true });
+	function readFields(): TargetFields {
+		return {
+			rule: rule.value as FieldRule,
+			min: min.valueAsNumber,
+			value: value.valueAsNumber,
+			unit: unit.value as Unit,
+		};
 	}
 
-	preset.addEventListener("change", () => choosePreset(preset.value));
-	showTarget.addEventListener("change", () => {
-		const hadNoPreset = store.get().presetId === NO_PRESET;
-		store.set({
-			showTarget: showTarget.checked,
-			...(showTarget.checked && hadNoPreset && { presetId: CUSTOM_PRESET }),
-		});
-	});
-	rule.addEventListener("change", () => setTarget({ rule: rule.value as Rule }));
-	unit.addEventListener("change", () => setTarget({ unit: unit.value as Unit }));
-	// An empty or partly typed number reads as NaN; 0 stands for "no target" without putting NaN in the store.
-	value.addEventListener("input", () =>
-		setTarget({ value: Number.isFinite(value.valueAsNumber) ? value.valueAsNumber : 0 }),
-	);
+	function writeFields(fields: TargetFields) {
+		rule.value = fields.rule;
+		unit.value = fields.unit;
+		writeNumber(min, fields.min);
+		writeNumber(value, fields.value);
+	}
 
-	function render({ showTarget: shown, target, presetId }: Readonly<State>) {
-		showTarget.checked = shown;
-		preset.value = pickerValue(presetId);
-		presetDescription.textContent = findPreset(presetId)?.description ?? "";
-		rule.value = target.rule;
-		unit.value = target.unit;
-		const typed = Number.isFinite(value.valueAsNumber) ? value.valueAsNumber : 0;
-		if (typed !== target.value) value.value = target.value > 0 ? String(target.value) : "";
+	function applyFields() {
+		const target = targetFromFields(readFields());
+		store.set({ target, showTarget: isUsable(target), presetId: CUSTOM_PRESET });
+	}
+
+	function setOpen(open: boolean) {
+		drawer.hidden = !open;
+		toggle.setAttribute("aria-expanded", String(open));
+		if (open) value.focus();
+	}
+
+	toggle.addEventListener("click", () => setOpen(toggle.getAttribute("aria-expanded") !== "true"));
+	remove.addEventListener("click", () => {
+		store.set({ showTarget: false, presetId: NO_PRESET });
+		setOpen(false);
+		toggle.focus();
+	});
+	for (const format of formats) {
+		format.addEventListener("click", () => {
+			const preset = findPreset(format.dataset.preset!)!;
+			store.set({ presetId: preset.id, target: preset.target, showTarget: true });
+		});
+	}
+	rule.addEventListener("change", applyFields);
+	unit.addEventListener("change", applyFields);
+	min.addEventListener("input", applyFields);
+	value.addEventListener("input", applyFields);
+
+	function render({ showTarget, target, presetId }: Readonly<State>) {
+		const active = showTarget && isUsable(target);
+		const preset = active ? findPreset(presetId) : undefined;
+		toggle.textContent = active ? (preset?.name ?? "Edit target") : "Set a target";
+		remove.hidden = !active;
+		for (const format of formats) format.setAttribute("aria-pressed", String(format.dataset.preset === preset?.id));
+		description.textContent = preset?.description ?? "";
+
+		// The fields lead while they already describe the target, so a half-filled range or a cleared number isn't overwritten.
+		const shown: Target = active ? target : { ...target, value: 0 };
+		if (!sameTarget(targetFromFields(readFields()), shown)) writeFields(fieldsFromTarget(shown));
+		range.hidden = rule.value !== "between";
 	}
 
 	render(store.get());
 	store.subscribe(render);
+}
+
+function writeNumber(input: HTMLInputElement, amount: number) {
+	const typed = Number.isFinite(input.valueAsNumber) ? input.valueAsNumber : 0;
+	if (typed !== amount) input.value = amount > 0 ? String(amount) : "";
 }

@@ -85,3 +85,4 @@ Sources (checked 2026-10-13, via web search; official pages were not directly fe
 - Spoken presets use the shared speaking-time measure; nothing external to check.
 
 Not verified: the official X, Bluesky, Threads and Common App pages. `npm run typecheck` reports three pre-existing errors in `src/lib/blog.ts` that this change doesn't touch.
+- Later redesigned after use: the Show target checkbox and the grouped Format dropdown were replaced. A "Set a target" link in the count line opens a drawer with the target as one sentence ("Aim for at most 240 words") and the formats as links underneath. No target is the default, and an empty number means none. A "between" rule shows a range's minimum, so editing Common App keeps it instead of dropping it. It was chosen from four prototypes (a fill-in sentence, a shelf of formats, a search field, and a link in the count line); the shipped design combines the first and last.
