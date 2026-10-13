@@ -38,8 +38,16 @@ Also add `word_counter` to `ScriptSource` for #22's `tp_script_entered`.
 
 ## Acceptance criteria
 
-- [ ] All events above fire with the correct properties (unit tests, like `usage-tracking.test.ts`).
-- [ ] Every event for #22 and #27–#30 is in the schema with a hook, so those tickets don't touch the schema or lock file.
-- [ ] No event fires before analytics consent.
-- [ ] `npm run privacy:lock` run; the lock test passes.
-- [ ] The privacy policy's analytics description covers the word counter.
+- [x] All events above fire with the correct properties (unit tests, like `usage-tracking.test.ts`).
+- [x] Every event for #22 and #27–#30 is in the schema with a hook, so those tickets don't touch the schema or lock file.
+- [x] No event fires before analytics consent.
+- [x] `npm run privacy:lock` run; the lock test passes.
+- [x] The privacy policy's analytics description covers the word counter.
+
+## Outcome
+
+- All eleven `wc_*` events are in `EVENT_SCHEMA` and the lock (2.2.0), and `ScriptSource` gains `word_counter`. Jev flagged `wc_text_entered.word_bucket` (0.42); it is the same six-value `WordBucket` as `tp_script_entered`, and the lock was confirmed.
+- `src/tools/word-counter/usage-tracking.ts` fires the first five from the store. `UsageHooks` carries `onOpenedInTeleprompter`, `onCutLineShown`, `onSelectionCounted`, `onSprintStarted`, `onSprintFinished`, `onRhythmOpened` and `onRhythmSentenceClicked` for #22 and #27–#30.
+- `wc_target_reached` ignores empty text and restored state, so "at most" doesn't fire trivially. `wc_engaged` counts from the first edit.
+- The privacy policy lists events from the schema, so it needed no copy change.
+- No fake doors: #26, #29 and #30 stay real tickets.

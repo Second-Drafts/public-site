@@ -1,8 +1,9 @@
 import { askConfirm } from "../../lib/confirm";
 import { required } from "../../lib/dom";
 import type { State, Store } from "./lib/state";
+import type { UsageHooks } from "./usage-tracking";
 
-export function mountEditor(store: Store): void {
+export function mountEditor(store: Store, usage: UsageHooks): void {
 	const textarea = required<HTMLTextAreaElement>(document, "#wc-text");
 
 	const clear = required<HTMLButtonElement>(document, "#wc-clear");
@@ -13,7 +14,10 @@ export function mountEditor(store: Store): void {
 		clear.disabled = text === "";
 	}
 
-	textarea.addEventListener("input", () => store.set({ text: textarea.value }));
+	textarea.addEventListener("input", (event) => {
+		store.set({ text: textarea.value });
+		usage.onTextInput((event as InputEvent).inputType === "insertFromPaste" ? "paste" : "typed");
+	});
 	clear.addEventListener("click", async () => {
 		const confirmed = await askConfirm({
 			title: "Clear your text?",

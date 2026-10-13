@@ -1,7 +1,68 @@
 {
-	"version": "2.1.0",
-	"updated": "2026-10-12",
-	"reviews": [],
+	"version": "2.2.0",
+	"updated": "2026-10-13",
+	"reviews": [
+		{
+			"subject": "analytics property wc_cut_line_shown.rule",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_cut_line_shown.unit",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_engaged.duration_s",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_engaged.word_bucket",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_opened_in_teleprompter.word_bucket",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_sprint_finished.minutes",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_sprint_finished.word_bucket",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_sprint_started.minutes",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_target_reached.preset",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_target_reached.rule",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_target_set.preset",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_target_set.rule",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_target_set.unit",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_text_entered.source",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property wc_text_entered.word_bucket",
+			"outcome": "clear"
+		}
+	],
 	"analytics": {
 		"events": {
 			"page_view": {
@@ -48,7 +109,41 @@
 				"too_long": ["boolean"],
 				"word_bucket": ["string"]
 			},
-			"tp_share_link_opened": {}
+			"tp_share_link_opened": {},
+			"wc_cut_line_shown": {
+				"rule": ["string"],
+				"unit": ["string"]
+			},
+			"wc_engaged": {
+				"duration_s": ["number"],
+				"word_bucket": ["string"]
+			},
+			"wc_opened_in_teleprompter": {
+				"word_bucket": ["string"]
+			},
+			"wc_rhythm_opened": {},
+			"wc_rhythm_sentence_clicked": {},
+			"wc_selection_counted": {},
+			"wc_sprint_finished": {
+				"minutes": ["number"],
+				"word_bucket": ["string"]
+			},
+			"wc_sprint_started": {
+				"minutes": ["number"]
+			},
+			"wc_target_reached": {
+				"preset": ["string"],
+				"rule": ["string"]
+			},
+			"wc_target_set": {
+				"preset": ["string"],
+				"rule": ["string"],
+				"unit": ["string"]
+			},
+			"wc_text_entered": {
+				"source": ["string"],
+				"word_bucket": ["string"]
+			}
 		},
 		"context": {
 			"device_type": ["string"]

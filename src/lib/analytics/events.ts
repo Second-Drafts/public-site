@@ -1,11 +1,14 @@
 // Privacy rule: no property may carry text a visitor writes or anything derived from it beyond a word-count bucket.
 import type { VendorId } from "../privacy/registry";
 import type { FontId, ThemeId } from "../../tools/teleprompter/lib/settings";
+import type { Rule } from "../../tools/word-counter/lib/target";
+import type { Unit } from "../text/measure";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "601-2000" | "2001-10000" | "10000+";
 export type DeviceType = "phone" | "tablet" | "desktop";
 export type LandingSource = "organic" | "direct" | "referral";
-export type ScriptSource = "paste" | "typed" | "sample" | "share_link";
+export type ScriptSource = "paste" | "typed" | "sample" | "share_link" | "word_counter";
+export type CounterTextSource = "paste" | "typed" | "restored";
 export type FakeDoorFeature = "voice_scroll" | "record_video" | "phone_remote";
 export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "arrowKeys" | "guideColor";
 
@@ -46,6 +49,17 @@ export const EVENT_SCHEMA = {
 	tp_fake_door_clicked: { feature: text<FakeDoorFeature>() },
 	tp_fake_door_interest: { feature: text<FakeDoorFeature>(), interested: flag(), email_provided: flag() },
 	tp_engaged: { word_bucket: text<WordBucket>(), duration_s: num() },
+	wc_text_entered: { word_bucket: text<WordBucket>(), source: text<CounterTextSource>() },
+	wc_target_set: { preset: text(), unit: text<Unit>(), rule: text<Rule>() },
+	wc_target_reached: { preset: text(), rule: text<Rule>() },
+	wc_opened_in_teleprompter: { word_bucket: text<WordBucket>() },
+	wc_engaged: { word_bucket: text<WordBucket>(), duration_s: num() },
+	wc_cut_line_shown: { rule: text<Rule>(), unit: text<Unit>() },
+	wc_selection_counted: {},
+	wc_sprint_started: { minutes: num() },
+	wc_sprint_finished: { minutes: num(), word_bucket: text<WordBucket>() },
+	wc_rhythm_opened: {},
+	wc_rhythm_sentence_clicked: {},
 } satisfies Record<string, PropSchema>;
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;
