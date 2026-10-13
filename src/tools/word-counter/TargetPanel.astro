@@ -2,6 +2,8 @@
 import TextField from "../../components/TextField.astro";
 import type { Unit } from "../../lib/text/measure";
 import { DEFAULT_TARGET } from "./lib/state";
+import { NO_PRESET, presetGroups } from "./lib/presets";
+import { CUSTOM_PRESET } from "./lib/settings";
 import { RULES, UNITS, type Rule } from "./lib/target";
 
 const RULE_LABELS: Record<Rule, string> = {
@@ -23,6 +25,21 @@ const UNIT_LABELS: Record<Unit, string> = {
 		<input type="checkbox" id="wc-show-target" />
 		Show target
 	</label>
+	<div class="wc-select wc-preset">
+		<label class="sd-text-label" for="wc-preset">Format</label>
+		<select id="wc-preset">
+			<option value={NO_PRESET}>None</option>
+			{
+				presetGroups().map((group) => (
+					<optgroup label={group.name}>
+						{group.presets.map((preset) => <option value={preset.id}>{preset.name}</option>)}
+					</optgroup>
+				))
+			}
+			<option value={CUSTOM_PRESET} selected>Custom</option>
+		</select>
+		<p class="wc-preset-description" id="wc-preset-description" aria-live="polite"></p>
+	</div>
 	<div class="wc-select">
 		<label class="sd-text-label" for="wc-rule">Rule</label>
 		<select id="wc-rule">
@@ -63,6 +80,14 @@ const UNIT_LABELS: Record<Unit, string> = {
 		height: 18px;
 		margin: 0;
 		accent-color: var(--marker-blue);
+	}
+	.wc-preset {
+		grid-column: 1 / -1;
+	}
+	.wc-preset-description {
+		margin: 0;
+		min-height: 1lh;
+		color: var(--ink-muted);
 	}
 	.wc-select {
 		display: flex;
