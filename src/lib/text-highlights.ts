@@ -10,6 +10,10 @@
  *
  * The mirror holds one block per line and replaces only the lines that changed, so a keystroke in a long text
  * lays out one paragraph again rather than the whole text.
+ *
+ * Painting only writes. The textarea's geometry is read when it resizes or its fonts load, and its scroll offset when
+ * it scrolls; the mirror follows the scroll with a transform, which unlike scrollTop needs no layout to set. Reading
+ * layout after a write would make the browser lay the page out again mid-frame, once per keystroke.
  */
 
 export interface HighlightSpan {
@@ -79,59 +83,71 @@ const MIRRORED_PROPERTIES = [
 // An empty line still takes its height in the textarea; a zero-width space gives its block the same line box.
 const EMPTY_LINE_HOLDER = "\u200b";
 
+interface TextareaLayout {
+	properties: [property: string, value: string][];
+	/** The textarea's right padding plus its scrollbar, which the mirror lacks, so both wrap lines at the same width. */
+	paddingRight: string;
+}
+
+/** Runs on resize, font load and mount, never per keystroke. A scrollbar appearing resizes the content box too. */
+function readLayout(textarea: HTMLTextAreaElement): TextareaLayout {
+	// oxlint-disable-next-line no-restricted-globals -- read once per resize, before any write
+	const style = getComputedStyle(textarea);
+	const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
+	// oxlint-disable-next-line no-restricted-properties -- read once per resize, before any write
+	const scrollbar = textarea.offsetWidth - textarea.clientWidth - borders;
+	return {
+		properties: MIRRORED_PROPERTIES.map((property) => [property, style.getPropertyValue(property)]),
+		paddingRight: `${parseFloat(style.paddingRight) + scrollbar}px`,
+	};
+}
+
 export function attachTextHighlights(textarea: HTMLTextAreaElement): TextHighlights {
-	const mirror = createMirror(textarea);
+	const { mirror, content } = createMirror(textarea);
 	const spansByKind = new Map<string, readonly HighlightSpan[]>();
 	let rendered: RenderedLine[] = [];
-	let paddingRight = 0;
 	let frame = 0;
 
 	function copyLayout() {
-		const style = getComputedStyle(textarea);
-		for (const property of MIRRORED_PROPERTIES) mirror.style.setProperty(property, style.getPropertyValue(property));
-		paddingRight = parseFloat(style.paddingRight);
+		const { properties, paddingRight } = readLayout(textarea);
+		for (const [property, value] of properties) mirror.style.setProperty(property, value);
+		mirror.style.paddingRight = paddingRight;
 		render();
 	}
 
-	function fitScrollbar() {
-		const style = getComputedStyle(textarea);
-		const borders = parseFloat(style.borderLeftWidth) + parseFloat(style.borderRightWidth);
-		const scrollbar = textarea.offsetWidth - textarea.clientWidth - borders;
-		mirror.style.paddingRight = `${paddingRight + scrollbar}px`;
-	}
-
-	function syncScroll() {
-		mirror.scrollTop = textarea.scrollTop;
+	function followScroll() {
+		// oxlint-disable-next-line no-restricted-properties -- the scroll offset has no other source; nothing reads after the write below
+		content.style.transform = `translateY(${-textarea.scrollTop}px)`;
 	}
 
 	function render() {
 		frame = 0;
 		const segments = highlightSegments(spansByKind);
 		if (segments.length === 0) {
-			mirror.replaceChildren();
+			content.replaceChildren();
 			rendered = [];
 			return;
 		}
-		rendered = replaceChangedLines(mirror, rendered, mirrorLines(textarea.value, segments));
-		fitScrollbar();
-		syncScroll();
+		rendered = replaceChangedLines(content, rendered, mirrorLines(textarea.value, segments));
 	}
 
 	function renderNextFrame() {
 		if (!frame) frame = requestAnimationFrame(render);
 	}
 
-	textarea.addEventListener("scroll", syncScroll);
+	textarea.addEventListener("scroll", followScroll);
 	textarea.addEventListener("input", () => {
 		if (spansByKind.size > 0) renderNextFrame();
 	});
 	new ResizeObserver(copyLayout).observe(textarea);
 	void document.fonts.ready.then(copyLayout);
 	copyLayout();
+	followScroll();
 
+	/* oxlint-disable no-restricted-properties, no-restricted-globals -- a deliberate measure on request: every read comes before the one write */
 	function reveal(kind: string) {
 		render();
-		const span = mirror.querySelector(`[data-highlight~="${kind}"]`);
+		const span = content.querySelector(`[data-highlight~="${kind}"]`);
 		if (!span) return;
 		const view = textarea.getBoundingClientRect();
 		const { top, bottom } = span.getBoundingClientRect();
@@ -141,6 +157,7 @@ export function attachTextHighlights(textarea: HTMLTextAreaElement): TextHighlig
 		if (hiddenAbove > 0 || bottom - top > view.height - 2 * margin) textarea.scrollTop -= hiddenAbove;
 		else if (hiddenBelow > 0) textarea.scrollTop += hiddenBelow;
 	}
+	/* oxlint-enable no-restricted-properties, no-restricted-globals */
 
 	return {
 		paint(kind, spans) {
@@ -152,7 +169,7 @@ export function attachTextHighlights(textarea: HTMLTextAreaElement): TextHighlig
 	};
 }
 
-function createMirror(textarea: HTMLTextAreaElement): HTMLElement {
+function createMirror(textarea: HTMLTextAreaElement): { mirror: HTMLElement; content: HTMLElement } {
 	const stack = document.createElement("div");
 	Object.assign(stack.style, { display: "grid", position: "relative", minWidth: "0" });
 	const mirror = document.createElement("div");
@@ -169,13 +186,15 @@ function createMirror(textarea: HTMLTextAreaElement): HTMLElement {
 		borderStyle: "solid",
 		borderColor: "transparent",
 	});
+	const content = document.createElement("div");
+	mirror.append(content);
 	textarea.before(stack);
 	stack.append(textarea, mirror);
-	return mirror;
+	return { mirror, content };
 }
 
 /** Keeps the rendered lines shared at the start and end, and replaces the ones between them. */
-function replaceChangedLines(mirror: HTMLElement, previous: RenderedLine[], next: MirrorLine[]): RenderedLine[] {
+function replaceChangedLines(content: HTMLElement, previous: RenderedLine[], next: MirrorLine[]): RenderedLine[] {
 	let head = 0;
 	while (head < previous.length && head < next.length && previous[head].key === next[head].key) head++;
 	let tail = 0;
@@ -190,7 +209,7 @@ function replaceChangedLines(mirror: HTMLElement, previous: RenderedLine[], next
 	for (const { element } of previous.slice(head, kept)) element.remove();
 	const fresh = next.slice(head, next.length - tail).map((line) => ({ key: line.key, element: lineElement(line) }));
 	const after = previous[kept]?.element ?? null;
-	for (const { element } of fresh) mirror.insertBefore(element, after);
+	for (const { element } of fresh) content.insertBefore(element, after);
 	return [...previous.slice(0, head), ...fresh, ...previous.slice(kept)];
 }
 

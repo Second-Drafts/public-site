@@ -1,39 +1,155 @@
 {
-	"categories": { "correctness": "off" },
+	"categories": {
+		"correctness": "off"
+	},
 	"rules": {
 		"no-restricted-globals": [
 			"error",
-			{ "name": "localStorage", "message": "Use stored() from src/lib/privacy/storage." },
-			{ "name": "sessionStorage", "message": "Use stored() from src/lib/privacy/storage." },
-			{ "name": "indexedDB", "message": "Register the store in src/lib/privacy/registry first." },
-			{ "name": "caches", "message": "Register the store in src/lib/privacy/registry first." },
-			{ "name": "cookieStore", "message": "Use stored() from src/lib/privacy/storage." }
+			{
+				"name": "localStorage",
+				"message": "Use stored() from src/lib/privacy/storage."
+			},
+			{
+				"name": "sessionStorage",
+				"message": "Use stored() from src/lib/privacy/storage."
+			},
+			{
+				"name": "indexedDB",
+				"message": "Register the store in src/lib/privacy/registry first."
+			},
+			{
+				"name": "caches",
+				"message": "Register the store in src/lib/privacy/registry first."
+			},
+			{
+				"name": "cookieStore",
+				"message": "Use stored() from src/lib/privacy/storage."
+			},
+			{
+				"name": "getComputedStyle",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			}
 		],
 		"no-restricted-imports": [
 			"error",
 			{
-				"patterns": [{ "group": ["**/privacy/raw-storage"], "message": "Use stored() from src/lib/privacy/storage." }]
+				"patterns": [
+					{
+						"group": ["**/privacy/raw-storage"],
+						"message": "Use stored() from src/lib/privacy/storage."
+					}
+				]
 			}
 		],
 		"no-restricted-properties": [
 			"error",
-			{ "object": "document", "property": "cookie" },
-			{ "object": "window", "property": "localStorage" },
-			{ "object": "window", "property": "sessionStorage" },
-			{ "object": "window", "property": "indexedDB" },
-			{ "object": "globalThis", "property": "localStorage" },
-			{ "object": "globalThis", "property": "sessionStorage" }
+			{
+				"object": "document",
+				"property": "cookie"
+			},
+			{
+				"object": "window",
+				"property": "localStorage"
+			},
+			{
+				"object": "window",
+				"property": "sessionStorage"
+			},
+			{
+				"object": "window",
+				"property": "indexedDB"
+			},
+			{
+				"object": "globalThis",
+				"property": "localStorage"
+			},
+			{
+				"object": "globalThis",
+				"property": "sessionStorage"
+			},
+			{
+				"object": "window",
+				"property": "getComputedStyle",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "offsetTop",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "offsetLeft",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "offsetWidth",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "offsetHeight",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "clientTop",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "clientLeft",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "clientWidth",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "clientHeight",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "scrollTop",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "scrollLeft",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "scrollWidth",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "scrollHeight",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "getBoundingClientRect",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			},
+			{
+				"property": "getClientRects",
+				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
+			}
 		]
 	},
 	"overrides": [
 		{
 			"files": ["src/lib/privacy/**"],
-			"rules": { "no-restricted-globals": "off", "no-restricted-imports": "off", "no-restricted-properties": "off" }
+			"rules": {
+				"no-restricted-globals": "off",
+				"no-restricted-imports": "off",
+				"no-restricted-properties": "off"
+			}
 		},
 		{
 			"files": ["src/tools/teleprompter/lib/retired-storage.ts"],
-			"rules": { "no-restricted-globals": "off" }
+			"rules": {
+				"no-restricted-globals": "off"
+			}
 		},
-		{ "files": ["src/pages/sandbox/**"], "rules": { "no-restricted-globals": "off" } }
+		{
+			"files": ["src/pages/sandbox/**"],
+			"rules": {
+				"no-restricted-globals": "off"
+			}
+		}
 	]
 }

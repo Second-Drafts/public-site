@@ -80,6 +80,7 @@ export function mountRhythmView(store: Store, { textarea, highlights }: Editor, 
 	}
 
 	function barUnder(event: PointerEvent): number {
+		// oxlint-disable-next-line no-restricted-properties -- pointer events arrive at the start of a frame, after the last one's layout
 		const { left, width } = strip.getBoundingClientRect();
 		return barAt((event.clientX - left) / width, measured.length);
 	}

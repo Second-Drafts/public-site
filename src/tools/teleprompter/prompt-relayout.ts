@@ -19,6 +19,7 @@ export function createRelayout(
 	let measuredSizes = "";
 	let awaitedFont: Promise<void> | null = null;
 
+	// oxlint-disable-next-line no-restricted-properties -- read in ResizeObserver callbacks, after layout, and straight after engine.relayout() measures
 	const sizes = () => `${scroller.clientWidth}x${scroller.clientHeight} ${text.offsetWidth}x${text.offsetHeight}`;
 
 	function now() {

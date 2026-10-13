@@ -134,11 +134,13 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 	// floor(pos) to scrollTop and the remainder as a sub-pixel transform on the text.
 	function write() {
 		const { top, frac } = splitPosition(pos);
+		// oxlint-disable-next-line no-restricted-properties -- each frame reads the scroller before it writes
 		if (scroller.scrollTop !== top) scroller.scrollTop = top;
 		lastWritten = top;
 		setFrac(frac);
 	}
 
+	/* oxlint-disable no-restricted-properties -- each frame and scroll event reads the scroller before it writes */
 	function adopt() {
 		pos = clamp(scroller.scrollTop, 0, max);
 		lastWritten = scroller.scrollTop;
@@ -153,6 +155,7 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 		jump = null;
 		return true;
 	}
+	/* oxlint-enable no-restricted-properties */
 
 	function onScroll() {
 		if (recordHandScroll()) adopt();
@@ -217,6 +220,7 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 		if (playing || jump) frameId = requestAnimationFrame(frame);
 	}
 
+	/* oxlint-disable no-restricted-properties -- runs only on relayout, and reads everything before anything writes */
 	function measure() {
 		const paragraphs = text.children;
 		paragraphTops = [];
@@ -226,6 +230,7 @@ export function createScrollEngine(options: EngineOptions): ScrollEngine {
 		textHeight = text.offsetHeight;
 		max = Math.max(0, scroller.scrollHeight - scroller.clientHeight);
 	}
+	/* oxlint-enable no-restricted-properties */
 
 	// No measure() here: the host mounts hidden, and its first relayout() measures.
 	return {
