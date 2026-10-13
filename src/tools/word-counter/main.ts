@@ -5,6 +5,7 @@ import { mountEditor } from "./editor";
 import type { State, Store } from "./lib/state";
 import { mountSessionPanel } from "./session-panel";
 import { persistChanges, restoreState } from "./persistence";
+import { mountSelectionLine } from "./selection-line";
 import { trackUsage } from "./usage-tracking";
 import { mountTargetPanel } from "./target-panel";
 
@@ -22,6 +23,7 @@ const usage = trackUsage(store);
 
 const editor = mountEditor(store, usage);
 mountCountLine(store);
+mountSelectionLine(store, usage);
 mountCutLine(store, editor.highlights, usage);
 mountTargetPanel(store);
 mountSessionPanel(store, usage);

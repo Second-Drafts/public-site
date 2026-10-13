@@ -10,13 +10,16 @@ const UNIT_LABELS: Record<Unit, { one: string; other: string }> = {
 
 /** "1,240 words", or with a target "1,240 / 1,000 words". The label agrees with the last number shown. */
 export function countText(amount: number, unit: Unit, targetValue?: number): string {
-	const last = targetValue ?? amount;
-	const label = last === 1 ? UNIT_LABELS[unit].one : UNIT_LABELS[unit].other;
+	const label = unitLabel(targetValue ?? amount, unit);
 	const shown =
 		targetValue === undefined
 			? formatAmount(amount, unit)
 			: `${formatAmount(amount, unit)} / ${formatAmount(targetValue, unit)}`;
 	return `${shown} ${label}`;
+}
+
+export function unitLabel(amount: number, unit: Unit): string {
+	return amount === 1 ? UNIT_LABELS[unit].one : UNIT_LABELS[unit].other;
 }
 
 export function formatAmount(amount: number, unit: Unit): string {

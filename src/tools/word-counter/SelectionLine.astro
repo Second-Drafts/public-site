@@ -1,0 +1,33 @@
+<div class="wc-selection-line" id="wc-selection-line" hidden>
+	<p class="wc-selection" id="wc-selection"></p>
+	<p class="wc-selection-cut" id="wc-selection-cut" hidden>
+		Cut these to land at <span id="wc-selection-landing"></span>{" "}
+		<span id="wc-selection-status" class="wc-selection-status"></span>
+	</p>
+</div>
+
+<style>
+	.wc-selection-line {
+		margin: calc(-1 * var(--space-4)) 0 var(--space-8);
+		font-family: var(--font-mono);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+	.wc-selection-line[hidden] {
+		display: none;
+	}
+	.wc-selection,
+	.wc-selection-cut {
+		margin: 0;
+	}
+	.wc-selection-status {
+		font-family: var(--font-prose);
+	}
+	.wc-selection-cut[data-state="met"] #wc-selection-landing {
+		color: var(--green-ink);
+	}
+	.wc-selection-cut[data-state="over"] #wc-selection-landing {
+		color: var(--red-pen);
+	}
+</style>
