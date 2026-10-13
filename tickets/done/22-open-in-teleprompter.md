@@ -17,9 +17,16 @@ Someone checking the length of a script is often about to read it aloud. A one-c
 
 ## Acceptance criteria
 
-- [ ] Clicking the link opens the teleprompter with the text loaded.
-- [ ] If the teleprompter already holds a different script, the existing confirm appears; "Keep mine" leaves it untouched.
-- [ ] The visitor's saved teleprompter font, theme and other settings are unchanged after a handoff.
-- [ ] Existing share links still open with their settings.
-- [ ] `tp_script_entered` fires with `source: "word_counter"` for a handoff.
-- [ ] Share-link tests cover the script-only payload.
+- [x] Clicking the link opens the teleprompter with the text loaded.
+- [x] If the teleprompter already holds a different script, the existing confirm appears; "Keep mine" leaves it untouched.
+- [x] The visitor's saved teleprompter font, theme and other settings are unchanged after a handoff.
+- [x] Existing share links still open with their settings.
+- [x] `tp_script_entered` fires with `source: "word_counter"` for a handoff.
+- [x] Share-link tests cover the script-only payload.
+
+## Outcome
+
+- The link sits in the count line, since #21 (speaking time) isn't built yet. Move it beside the speaking time when that lands.
+- A script-only link has no `s` field and carries `o: "word_counter"`. Opening it leaves the visitor's teleprompter settings alone. Links with `s` apply their settings as before. A link without `s` used to decode to default settings; it now decodes to none.
+- A handoff gets its own confirm wording ("Open this text in the teleprompter?"), reports `tp_script_entered` with `source: "word_counter"`, and does not fire `tp_share_link_opened`.
+- The link's `href` is built on hover, focus and click rather than per keystroke, so open-in-new-tab works.

@@ -5,7 +5,9 @@ const { count } = summarize(INITIAL_STATE);
 ---
 
 <div class="wc-count-line" id="wc-count-line">
-	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span></p>
+	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span>
+		<a id="wc-open-teleprompter" class="wc-open-teleprompter" href="/tools/teleprompter" hidden>Open in Teleprompter</a>
+	</p>
 	<p id="wc-announcement" class="sd-visually-hidden" aria-live="polite"></p>
 </div>
 
@@ -31,6 +33,23 @@ const { count } = summarize(INITIAL_STATE);
 		font-size: 17px;
 		font-weight: 400;
 		color: var(--ink-muted);
+	}
+	.wc-open-teleprompter {
+		margin-inline-start: auto;
+		font-family: var(--font-prose);
+		font-size: 17px;
+		font-weight: 400;
+		color: var(--ink-muted);
+		text-decoration: underline var(--stroke-hairline) var(--rule-strong);
+		text-underline-offset: 4px;
+	}
+	.wc-open-teleprompter[hidden] {
+		display: none;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.wc-open-teleprompter:hover {
+			color: var(--ink);
+		}
 	}
 	.wc-count-line[data-state="met"] #wc-count {
 		color: var(--green-ink);

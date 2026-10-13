@@ -36,6 +36,28 @@ function longScript(): string {
 	return paragraphs.join("\n\n");
 }
 
+describe("script-only links", () => {
+	it("omit settings, so opening one has nothing to apply", () => {
+		const { url } = buildShareUrl(BASE, { script: "Hello there" });
+		expect(decodeShareHash(hashOf(url))).toEqual({ script: "Hello there" });
+	});
+
+	it("carry their origin", () => {
+		const { url } = buildShareUrl(BASE, { script: "Hello", origin: "word_counter" });
+		expect(decodeShareHash(hashOf(url))).toEqual({ script: "Hello", origin: "word_counter" });
+	});
+
+	it("drop an origin they don't know", () => {
+		const hash = `#${SHARE_HASH_KEY}=${encodeRaw({ v: 1, t: "Hello", o: "elsewhere" })}`;
+		expect(decodeShareHash(hash)).toEqual({ script: "Hello" });
+	});
+
+	it("leave links with settings applying them in full", () => {
+		const { url } = buildShareUrl(BASE, { script: "Hello", settings: defaults() });
+		expect(decodeShareHash(hashOf(url))?.settings).toEqual(defaults());
+	});
+});
+
 describe("buildShareUrl / decodeShareHash", () => {
 	it("round-trips a long script with unicode and special characters plus non-default settings", () => {
 		const script = longScript();
@@ -160,15 +182,15 @@ describe("buildShareUrl / decodeShareHash", () => {
 		};
 		const decoded = decodeShareHash(`#s=${encodeRaw(hostile)}`);
 		expect(decoded).not.toBeNull();
-		expect(decoded!.settings.fontSize).toBe(120);
-		expect(decoded!.settings.theme).toBe(DEFAULT_SETTINGS.theme);
-		expect(decoded!.settings.speed).toBe(DEFAULT_SETTINGS.speed);
-		expect(decoded!.settings.custom).toEqual({ text: DEFAULT_SETTINGS.custom.text, background: "#ffffff" });
+		expect(decoded!.settings!.fontSize).toBe(120);
+		expect(decoded!.settings!.theme).toBe(DEFAULT_SETTINGS.theme);
+		expect(decoded!.settings!.speed).toBe(DEFAULT_SETTINGS.speed);
+		expect(decoded!.settings!.custom).toEqual({ text: DEFAULT_SETTINGS.custom.text, background: "#ffffff" });
 		expect(decoded!.settings).not.toHaveProperty("injected");
 	});
 
-	it("tolerates missing or non-object settings", () => {
-		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x" })}`)).toEqual({ script: "x", settings: defaults() });
+	it("reads missing settings as script-only, and non-object settings as defaults", () => {
+		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x" })}`)).toEqual({ script: "x" });
 		expect(decodeShareHash(`#s=${encodeRaw({ v: 1, t: "x", s: "nope" })}`)).toEqual({
 			script: "x",
 			settings: defaults(),

@@ -68,13 +68,14 @@ async function openShareLink(store: Store, usage: UsageHooks, showNotice: (messa
 		showNotice("That share link couldn't be opened. It may have been cut short when it was copied.");
 		return;
 	}
-	usage.onShareLinkOpened();
+	const fromWordCounter = shared.origin === "word_counter";
+	if (!fromWordCounter) usage.onShareLinkOpened();
 
 	const current = store.get().script;
 	const overwrites = current.trim() !== "" && current !== shared.script && current !== SAMPLE_SCRIPT;
 	if (overwrites) {
 		const replace = await askConfirm({
-			title: "Open the shared script?",
+			title: fromWordCounter ? "Open this text in the teleprompter?" : "Open the shared script?",
 			body: "It will replace the script saved in this browser. Your current script can't be recovered after this.",
 			confirmLabel: "Replace my script",
 			cancelLabel: "Keep mine",
@@ -82,6 +83,6 @@ async function openShareLink(store: Store, usage: UsageHooks, showNotice: (messa
 		});
 		if (!replace) return;
 	}
-	store.set({ script: shared.script, settings: shared.settings }, "system");
-	usage.onShareScriptApplied();
+	store.set({ script: shared.script, ...(shared.settings && { settings: shared.settings }) }, "system");
+	usage.onSharedScriptApplied(fromWordCounter ? "word_counter" : "share_link");
 }

@@ -19,7 +19,7 @@ export interface UsageHooks {
 	onScriptInput(source: "paste" | "typed"): void;
 	onShareCopied(tooLong: boolean): void;
 	onShareLinkOpened(): void;
-	onShareScriptApplied(): void;
+	onSharedScriptApplied(source: ScriptSource): void;
 }
 
 export function trackUsage(store: Store): UsageHooks {
@@ -34,7 +34,7 @@ export function trackUsage(store: Store): UsageHooks {
 		onScriptInput: scriptEntry.input,
 		onShareCopied: (tooLong) => track("tp_share_link_copied", { word_bucket: currentWordBucket(), too_long: tooLong }),
 		onShareLinkOpened: () => track("tp_share_link_opened", {}),
-		onShareScriptApplied: () => scriptEntry.report("share_link"),
+		onSharedScriptApplied: scriptEntry.report,
 	};
 }
 

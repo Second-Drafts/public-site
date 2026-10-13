@@ -5,9 +5,13 @@ import { findHashParam, SHARE_HASH_KEY } from "./share-hash";
 
 export { SHARE_HASH_KEY };
 
+export type ShareOrigin = "word_counter";
+
+/** Without `settings` the link carries the script only, and opening it keeps the visitor's own settings. */
 export interface SharePayload {
 	script: string;
-	settings: Settings;
+	settings?: Settings;
+	origin?: ShareOrigin;
 }
 
 export const SHARE_URL_WARN_LENGTH = 8000;
@@ -17,7 +21,12 @@ const PAYLOAD_VERSION = 1;
 export const MAX_SHARED_SCRIPT_LENGTH = 200_000;
 
 export function buildShareUrl(base: string, payload: SharePayload): { url: string; tooLong: boolean } {
-	const body = { v: PAYLOAD_VERSION, t: payload.script, s: diffFromDefaults(validateSettings(payload.settings)) };
+	const body = {
+		v: PAYLOAD_VERSION,
+		t: payload.script,
+		...(payload.settings && { s: diffFromDefaults(validateSettings(payload.settings)) }),
+		...(payload.origin && { o: payload.origin }),
+	};
 	const url = `${base}#${SHARE_HASH_KEY}=${compressToEncodedURIComponent(JSON.stringify(body))}`;
 	return { url, tooLong: url.length > SHARE_URL_WARN_LENGTH };
 }
@@ -32,10 +41,14 @@ export function decodeShareHash(hash: string): SharePayload | null {
 
 		const data: unknown = JSON.parse(json);
 		if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
-		const { v, t, s } = data as Record<string, unknown>;
+		const { v, t, s, o } = data as Record<string, unknown>;
 		if (v !== PAYLOAD_VERSION || typeof t !== "string") return null;
 
-		return { script: capScript(t), settings: validateSettings(mergeOverDefaults(s)) };
+		return {
+			script: capScript(t),
+			...(s !== undefined && { settings: validateSettings(mergeOverDefaults(s)) }),
+			...(o === "word_counter" && { origin: o }),
+		};
 	} catch {
 		return null;
 	}
