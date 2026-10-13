@@ -13,14 +13,14 @@ import { presetGroups } from "./lib/presets";
 			<option value="between">between</option>
 		</select>
 		<span class="wc-range" id="wc-range" hidden>
-			<input class="wc-blank wc-number" id="wc-min" type="number" inputmode="numeric" min="1" aria-label="Minimum" />
+			<input class="wc-blank wc-number" id="wc-min" type="number" inputmode="decimal" min="0" step="any" aria-label="Minimum" />
 			<span>and</span>
 		</span>
-		<input class="wc-blank wc-number" id="wc-target" type="number" inputmode="numeric" min="1" aria-label="Target" />
+		<input class="wc-blank wc-number" id="wc-target" type="number" inputmode="decimal" min="0" step="any" aria-label="Target" />
 		<select class="wc-blank" id="wc-unit" aria-label="Unit">
 			<option value="words">words</option>
 			<option value="characters">characters</option>
-			<option value="seconds">seconds aloud</option>
+			<option value="seconds">minutes aloud</option>
 		</select>
 	</p>
 	<div class="wc-formats" role="group" aria-label="Formats">

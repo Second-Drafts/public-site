@@ -28,6 +28,26 @@ describe("targetFromFields", () => {
 	});
 });
 
+describe("spoken targets", () => {
+	it("types minutes and stores seconds, so half a minute is 30", () => {
+		expect(targetFromFields({ rule: "around", min: 0, value: 0.5, unit: "seconds" }).value).toBe(30);
+		expect(targetFromFields({ rule: "around", min: 0, value: 5, unit: "seconds" }).value).toBe(300);
+	});
+
+	it("shows stored seconds as minutes", () => {
+		expect(fieldsFromTarget({ unit: "seconds", rule: "around", value: 30 }).value).toBe(0.5);
+		expect(fieldsFromTarget({ unit: "seconds", rule: "at-most", value: 300, min: 180 })).toMatchObject({
+			value: 5,
+			min: 3,
+		});
+	});
+
+	it("round-trips a fraction of a minute", () => {
+		const target = { unit: "seconds", rule: "around", value: 45 } as const;
+		expect(sameTarget(targetFromFields(fieldsFromTarget(target)), target)).toBe(true);
+	});
+});
+
 describe("fieldsFromTarget", () => {
 	it("shows a range as between, and round-trips", () => {
 		const target = { unit: "words", rule: "at-most", value: 650, min: 250 } as const;
