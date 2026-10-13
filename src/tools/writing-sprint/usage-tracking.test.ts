@@ -3,7 +3,7 @@ import { createStore, mergeShallow } from "../../lib/store";
 import { track } from "../../lib/usage-reports";
 import { startSprint } from "./lib/sprint";
 import { INITIAL_STATE, type State, type Store } from "./lib/state";
-import { trackUsage } from "./usage-tracking";
+import { trackUsage, type UsageHooks } from "./usage-tracking";
 
 vi.mock("../../lib/usage-reports", () => ({ track: vi.fn() }));
 
@@ -11,12 +11,13 @@ const tracked = vi.mocked(track);
 
 describe("trackUsage", () => {
 	let store: Store;
+	let usage: UsageHooks;
 	const sprint = startSprint(25, 0, 0);
 
 	beforeEach(() => {
 		tracked.mockClear();
 		store = createStore(INITIAL_STATE, mergeShallow<State>);
-		trackUsage(store);
+		usage = trackUsage(store);
 	});
 
 	it("reports a sprint starting once, with its length", () => {
@@ -42,5 +43,11 @@ describe("trackUsage", () => {
 		store.set({ sprint });
 		store.set({ sprint: null, finished: null });
 		expect(tracked).toHaveBeenCalledTimes(1);
+	});
+
+	it("reports opening the analysis with the length of the draft, never its text", () => {
+		store.set({ text: "one two three" });
+		usage.onOpenedAnalysis();
+		expect(tracked).toHaveBeenLastCalledWith("ws_opened_analysis", { word_bucket: "0-50" });
 	});
 });

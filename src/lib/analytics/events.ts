@@ -9,6 +9,7 @@ export type DeviceType = "phone" | "tablet" | "desktop";
 export type LandingSource = "organic" | "direct" | "referral";
 export type ScriptSource = "paste" | "typed" | "sample" | "share_link" | "word_counter";
 export type CounterTextSource = "paste" | "typed" | "restored";
+export type DraftTextSource = CounterTextSource | "writing_sprint";
 export type FakeDoorFeature = "voice_scroll" | "record_video" | "phone_remote";
 export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "arrowKeys" | "guideColor";
 
@@ -58,8 +59,9 @@ export const EVENT_SCHEMA = {
 	wc_selection_counted: {},
 	ws_sprint_started: { minutes: num() },
 	ws_sprint_finished: { minutes: num(), word_bucket: text<WordBucket>() },
-	wc_rhythm_opened: {},
-	wc_rhythm_sentence_clicked: {},
+	ws_opened_analysis: { word_bucket: text<WordBucket>() },
+	da_text_entered: { word_bucket: text<WordBucket>(), source: text<DraftTextSource>() },
+	da_rhythm_sentence_clicked: {},
 } satisfies Record<string, PropSchema>;
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;

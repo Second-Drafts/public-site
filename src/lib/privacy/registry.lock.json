@@ -1,22 +1,27 @@
 {
-	"version": "2.3.0",
+	"version": "2.4.0",
 	"updated": "2026-10-13",
 	"reviews": [
 		{
-			"subject": "analytics property ws_sprint_finished.minutes",
+			"subject": "analytics property da_text_entered.source",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property ws_sprint_finished.word_bucket",
-			"outcome": "clear"
+			"subject": "analytics property da_text_entered.word_bucket",
+			"outcome": "accepted"
 		},
 		{
-			"subject": "analytics property ws_sprint_started.minutes",
+			"subject": "analytics property ws_opened_analysis.word_bucket",
 			"outcome": "clear"
 		}
 	],
 	"analytics": {
 		"events": {
+			"da_rhythm_sentence_clicked": {},
+			"da_text_entered": {
+				"source": ["string"],
+				"word_bucket": ["string"]
+			},
 			"page_view": {
 				"landing_source": ["string"],
 				"referrer_domain": ["string"]
@@ -73,8 +78,6 @@
 			"wc_opened_in_teleprompter": {
 				"word_bucket": ["string"]
 			},
-			"wc_rhythm_opened": {},
-			"wc_rhythm_sentence_clicked": {},
 			"wc_selection_counted": {},
 			"wc_target_reached": {
 				"preset": ["string"],
@@ -87,6 +90,9 @@
 			},
 			"wc_text_entered": {
 				"source": ["string"],
+				"word_bucket": ["string"]
+			},
+			"ws_opened_analysis": {
 				"word_bucket": ["string"]
 			},
 			"ws_sprint_finished": {
@@ -162,6 +168,14 @@
 			"retention": {
 				"months": 24
 			}
+		},
+		"da:text": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-analysed-draft",
+			"purpose": "Keeps the draft you're analysing in your browser, so it's still there when you come back.",
+			"retention": "until-cleared"
 		},
 		"privacy:consent": {
 			"setBy": "us",

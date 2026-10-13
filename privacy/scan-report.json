@@ -1,6 +1,6 @@
 {
-	"registryVersion": "2.3.0",
-	"sourceCommit": "3c55a7cfbe26daefb7c4527e394c12aa828eb090",
+	"registryVersion": "2.4.0",
+	"sourceCommit": "f9edd96e4589b28d781b79d628614fca553e16c3",
 	"sourceDirty": true,
 	"states": {
 		"no-decision": {
@@ -41,6 +41,12 @@
 				]
 			},
 			"/tools/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/draft-analysis/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -124,6 +130,14 @@
 				]
 			},
 			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/draft-analysis/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -251,6 +265,18 @@
 					"https://www.googletagmanager.com"
 				]
 			},
+			"/tools/draft-analysis/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				]
+			},
 			"/tools/teleprompter/": {
 				"storage": [
 					"cookie:_ga",
@@ -345,6 +371,12 @@
 					"self"
 				]
 			},
+			"/tools/draft-analysis/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
 			"/tools/teleprompter/": {
 				"storage": [],
 				"origins": [
@@ -423,6 +455,14 @@
 				]
 			},
 			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/draft-analysis/": {
 				"storage": [
 					"local:privacy:consent"
 				],

@@ -1,0 +1,124 @@
+---
+import { LONG_SENTENCE_WORDS } from "./lib/rhythm";
+---
+
+<section class="da-rhythm" aria-labelledby="da-rhythm-heading">
+	<h2 class="da-rhythm__heading sd-text-label" id="da-rhythm-heading">Sentence rhythm</h2>
+	<div>
+		<p class="da-rhythm__summary" id="da-rhythm-summary"></p>
+		<div
+			class="da-rhythm__strip"
+			id="da-rhythm-strip"
+			role="group"
+			tabindex="0"
+			aria-label="Sentence lengths, one bar per sentence. Use the left and right arrow keys to move, and Enter to select a sentence."
+		>
+			<svg class="da-rhythm__bars" preserveAspectRatio="none" aria-hidden="true">
+				<line class="da-rhythm__threshold" x1="0" x2="100%" vector-effect="non-scaling-stroke" style="display: none"></line>
+				<path class="da-rhythm__bar"></path>
+				<path class="da-rhythm__bar da-rhythm__bar--long"></path>
+				<path class="da-rhythm__mark"></path>
+			</svg>
+			<div class="da-rhythm__cursor" hidden></div>
+		</div>
+		<p class="da-rhythm__detail" id="da-rhythm-detail" aria-live="polite"></p>
+		<p class="da-rhythm__key">Long sentences (over {LONG_SENTENCE_WORDS} words) rise past the dashed line and carry a mark above.</p>
+	</div>
+</section>
+
+<style>
+	.da-rhythm {
+		margin: var(--space-8) 0;
+	}
+	.da-rhythm__heading {
+		margin: 0;
+	}
+	.da-rhythm__strip:focus-visible {
+		outline: none;
+		box-shadow:
+			0 0 0 2px var(--paper),
+			0 0 0 4px var(--focus);
+	}
+	.da-rhythm__summary {
+		margin: var(--space-2) 0 var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+	}
+	.da-rhythm__strip {
+		position: relative;
+		height: 88px;
+		cursor: pointer;
+		touch-action: manipulation;
+		background: var(--paper-sunken);
+		border-bottom: var(--stroke-pen) solid var(--rule-strong);
+		border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+	}
+	.da-rhythm__bars {
+		display: block;
+		width: 100%;
+		height: 100%;
+		overflow: hidden;
+	}
+	.da-rhythm__bar {
+		fill: var(--ink-muted);
+	}
+	.da-rhythm__bar--long {
+		fill: var(--red-pen);
+	}
+	.da-rhythm__mark {
+		fill: var(--red-pen);
+	}
+	.da-rhythm__threshold {
+		stroke: var(--red-pen);
+		stroke-width: 1.5px;
+		stroke-dasharray: 5 4;
+	}
+	.da-rhythm__cursor {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		min-width: 3px;
+		box-shadow: 0 0 0 1.5px var(--marker-blue);
+		background: color-mix(in srgb, var(--marker-blue) 22%, transparent);
+		pointer-events: none;
+	}
+	.da-rhythm__detail {
+		min-height: 24px;
+		margin: var(--space-2) 0 0;
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink-muted);
+	}
+	.da-rhythm__key {
+		margin: var(--space-1) 0 0;
+		font-size: 14px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	/* the sentence picked in the strip, marked in the text with a tint and a blue underline */
+	:global([data-highlight~="sentence"]) {
+		background: color-mix(in srgb, var(--marker-blue) 20%, transparent);
+		box-shadow: inset 0 -2px var(--marker-blue);
+	}
+	@media (forced-colors: active) {
+		.da-rhythm__bar,
+		.da-rhythm__bar--long,
+		.da-rhythm__mark {
+			fill: CanvasText;
+		}
+		.da-rhythm__threshold {
+			stroke: CanvasText;
+		}
+		.da-rhythm__cursor {
+			background: transparent;
+			box-shadow: 0 0 0 2px Highlight;
+		}
+		:global([data-highlight~="sentence"]) {
+			background: transparent;
+			box-shadow: none;
+			text-decoration: underline 2px CanvasText;
+		}
+	}
+</style>

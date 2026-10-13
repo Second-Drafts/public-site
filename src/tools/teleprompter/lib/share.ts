@@ -5,7 +5,11 @@ import { findHashParam, SHARE_HASH_KEY } from "./share-hash";
 
 export { SHARE_HASH_KEY };
 
-export type ShareOrigin = "word_counter";
+const SHARE_ORIGINS = ["word_counter", "writing_sprint"] as const;
+
+export type ShareOrigin = (typeof SHARE_ORIGINS)[number];
+
+const isShareOrigin = (value: unknown): value is ShareOrigin => SHARE_ORIGINS.some((origin) => origin === value);
 
 /** Without `settings` the link carries the script only, and opening it keeps the visitor's own settings. */
 export interface SharePayload {
@@ -47,7 +51,7 @@ export function decodeShareHash(hash: string): SharePayload | null {
 		return {
 			script: capScript(t),
 			...(s !== undefined && { settings: validateSettings(mergeOverDefaults(s)) }),
-			...(o === "word_counter" && { origin: o }),
+			...(isShareOrigin(o) && { origin: o }),
 		};
 	} catch {
 		return null;

@@ -26,6 +26,8 @@ const GA_TEST_MEASUREMENT_ID = "G-RPVQBR9DFV";
 const REPORT_PATH = "privacy/scan-report.json";
 const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
+// Past the draft analysis tool's 2s settle before it reports, plus its rhythm recompute.
+const DRAFT_SETTLE_MS = 2500;
 const SENTINEL = "SENTINEL-do-not-leak-4f9a1c";
 
 const RECORD_CSP_VIOLATIONS = `
@@ -105,7 +107,16 @@ function sitemapPaths(): string[] {
 }
 
 const ENCODED_SHARE_PAYLOAD = compressToEncodedURIComponent(JSON.stringify({ v: 1, t: SENTINEL, s: {} }));
-const SENTINEL_FORMS = [SENTINEL, ENCODED_SHARE_PAYLOAD, compressToEncodedURIComponent(SENTINEL)];
+const ENCODED_SPRINT_HANDOFF_PAYLOAD = compressToEncodedURIComponent(
+	JSON.stringify({ v: 1, t: SENTINEL, o: "writing_sprint" }),
+);
+const SENTINEL_FORMS = [
+	SENTINEL,
+	ENCODED_SHARE_PAYLOAD,
+	ENCODED_SPRINT_HANDOFF_PAYLOAD,
+	compressToEncodedURIComponent(SENTINEL),
+];
+const DRAFT_ANALYSIS_PATH = "/tools/draft-analysis/";
 
 function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
@@ -247,11 +258,31 @@ async function writeSprint(page: Page): Promise<void> {
 	await page.click("#ws-stop");
 }
 
+async function analyseDraft(page: Page): Promise<void> {
+	await page.fill("#da-text", SENTINEL);
+	await page.waitForTimeout(DRAFT_SETTLE_MS);
+	await page.click("#da-rhythm-strip");
+}
+
+async function analyseSprintDraft(page: Page): Promise<void> {
+	await page.waitForFunction(
+		(sentinel) => (document.querySelector<HTMLTextAreaElement>("#da-text")?.value ?? "").includes(sentinel),
+		SENTINEL,
+	);
+	await page.click("#da-rhythm-strip");
+}
+
 const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "teleprompter share link", path: shareLink(), write: playSharedScript },
 	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
 	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
 	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
+	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyseDraft },
+	{
+		name: "draft analysis from a sprint",
+		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,
+		write: analyseSprintDraft,
+	},
 ];
 
 const REPORT_TITLES = `

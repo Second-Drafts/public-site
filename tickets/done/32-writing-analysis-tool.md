@@ -26,13 +26,23 @@ The rhythm strip was built and then removed in the commit that created this tick
 - `wc_rhythm_opened` and `wc_rhythm_sentence_clicked` are still in `EVENT_SCHEMA` and the lock, but nothing fires them. Replace them with events named for this tool, in one `npm run privacy:lock` bump. Until then, the privacy policy lists two events that never fire.
 - Run the `privacy-reviewer` agent, since this adds a tool under `src/tools`.
 
+### Static analysis, and the sprint hand-off
+
+This is an analysis tool, not a drafting tool. Text arrives by paste, by hand-off or from the last visit, so recompute after input settles rather than optimising keystrokes.
+
+When a writing sprint (#31) finishes, a link beside its word count opens this tool with the draft. The draft travels in the URL hash (the teleprompter's share payload, origin `writing_sprint`), so it never reaches a server.
+
 ## Acceptance criteria
 
-- [ ] The tool shows sentence rhythm for pasted or typed text, using #18's `sentences()`.
-- [ ] Typing stays smooth with 20,000 words.
-- [ ] The `wc_rhythm_*` events are replaced in the schema and lock, and the privacy policy lists only events that fire.
+- [x] The tool shows sentence rhythm for pasted or typed text, using #18's `sentences()`.
+- [x] 20,000 words analyse without freezing the page.
+- [x] The `wc_rhythm_*` events are replaced in the schema and lock, and the privacy policy lists only events that fire.
+- [x] Finishing a sprint shows a link beside the word count that opens this tool with the draft. Stopping or restarting a sprint hides it.
 
+## Outcome
 
-## Later
-
-- The writing sprint tool (#31) has no hand-off. Once this tool exists, add a way to send a finished draft here.
+- Added Draft Analysis at `/tools/draft-analysis` (`src/tools/draft-analysis/`), with the sentence rhythm strip restored from `0256dc3` and always shown. `TextHighlights.reveal()` is back.
+- The Writing Sprint shows "See analytics on your draft" beside its word count once a sprint finishes. The draft travels in the URL hash using the teleprompter's share payload, with a new `writing_sprint` origin.
+- `wc_rhythm_*` events are replaced by `da_text_entered`, `da_rhythm_sentence_clicked` and `ws_opened_analysis`. Registry lock is 2.4.0, with a new `da:text` storage key.
+- The privacy scan now types into the tool and follows the sprint hand-off, so it can catch a leak of the draft.
+- Later views (paragraph lengths, repeated words, reading time per section) are not built.

@@ -47,6 +47,11 @@ describe("script-only links", () => {
 		expect(decodeShareHash(hashOf(url))).toEqual({ script: "Hello", origin: "word_counter" });
 	});
 
+	it("carry the writing sprint as an origin", () => {
+		const { url } = buildShareUrl(BASE, { script: "Hello", origin: "writing_sprint" });
+		expect(decodeShareHash(hashOf(url))).toEqual({ script: "Hello", origin: "writing_sprint" });
+	});
+
 	it("drop an origin they don't know", () => {
 		const hash = `#${SHARE_HASH_KEY}=${encodeRaw({ v: 1, t: "Hello", o: "elsewhere" })}`;
 		expect(decodeShareHash(hash)).toEqual({ script: "Hello" });

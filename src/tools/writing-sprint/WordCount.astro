@@ -1,11 +1,31 @@
-<p class="ws-word-count" id="ws-word-count">0 words</p>
+<p class="ws-word-count">
+	<span id="ws-word-count">0 words</span>
+	<a id="ws-open-analysis" class="ws-open-analysis" href="/tools/draft-analysis" hidden>See analytics on your draft</a>
+</p>
 
 <style>
 	.ws-word-count {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: var(--space-4);
 		margin: var(--space-3) 0 0;
 		font-family: var(--font-mono);
 		font-size: 15px;
 		line-height: 24px;
 		color: var(--ink-muted);
+	}
+	.ws-open-analysis {
+		color: var(--ink-muted);
+		text-decoration: underline var(--stroke-hairline) var(--rule-strong);
+		text-underline-offset: 4px;
+	}
+	.ws-open-analysis[hidden] {
+		display: none;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.ws-open-analysis:hover {
+			color: var(--ink);
+		}
 	}
 </style>

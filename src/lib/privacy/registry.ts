@@ -133,6 +133,14 @@ export const STORAGE = {
 		purpose: "Keeps the draft you're writing in your browser, so it's still there when you come back.",
 		retention: "until-cleared",
 	},
+	"da:text": {
+		setBy: "us",
+		area: "local",
+		category: "necessary",
+		purposeId: "remember-analysed-draft",
+		purpose: "Keeps the draft you're analysing in your browser, so it's still there when you come back.",
+		retention: "until-cleared",
+	},
 	"wc:settings:v1": {
 		setBy: "us",
 		area: "local",
