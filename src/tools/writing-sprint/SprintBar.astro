@@ -1,0 +1,86 @@
+---
+import Button from "../../components/Button.astro";
+---
+
+<section id="ws-bar" class="ws-bar" aria-label="Sprint in progress" hidden>
+	<p class="ws-readout">
+		<span id="ws-clock-group" role="timer"><span id="ws-clock"></span> left</span>
+	</p>
+	<div class="ws-controls">
+		<Button id="ws-pause" variant="secondary" size="sm">Pause</Button>
+		<Button id="ws-stop" variant="quiet" size="sm">Stop</Button>
+		<Button id="ws-hide-timer" variant="quiet" size="sm">
+			<svg slot="icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+				<g id="ws-eye">
+					<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path>
+					<circle cx="12" cy="12" r="3"></circle>
+				</g>
+				<g id="ws-eye-off" hidden>
+					<path d="M9.9 5.2A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.1 4M6.5 6.5A17 17 0 0 0 2 12s3.6 7 10 7a9.6 9.6 0 0 0 4.4-1"></path>
+					<path d="m3 3 18 18M10 10a3 3 0 0 0 4 4"></path>
+				</g>
+			</svg>
+			Hide timer
+		</Button>
+	</div>
+	<div id="ws-track" class="ws-track" aria-hidden="true"><div id="ws-progress" class="ws-progress"></div></div>
+</section>
+
+<style>
+	.ws-bar {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		align-items: center;
+		gap: var(--space-2) var(--space-4);
+		margin: var(--space-4) 0 var(--space-3);
+	}
+	.ws-bar[hidden],
+	.ws-bar [hidden] {
+		display: none;
+	}
+	p {
+		margin: 0;
+	}
+	.ws-readout {
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 20px;
+		line-height: 28px;
+		font-weight: 500;
+		color: var(--ink);
+	}
+	.ws-controls {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: var(--space-2);
+	}
+	.ws-track {
+		grid-column: 1 / -1;
+		height: var(--stroke-marker);
+		background: var(--paper-sunken);
+		border-radius: var(--radius-pill);
+		overflow: hidden;
+	}
+	.ws-progress {
+		height: 100%;
+		background: var(--marker-blue);
+		transform-origin: left;
+		transform: scaleX(var(--elapsed, 0));
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.ws-progress {
+			transition: transform 1s linear;
+		}
+	}
+	@media (max-width: 30rem) {
+		.ws-bar {
+			grid-template-columns: 1fr;
+		}
+		.ws-controls {
+			justify-content: flex-start;
+		}
+	}
+</style>

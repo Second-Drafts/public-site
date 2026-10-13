@@ -1,0 +1,127 @@
+---
+import Button from "../../components/Button.astro";
+import TextField from "../../components/TextField.astro";
+import { MAX_SPRINT_MINUTES, SPRINT_PRESET_MINUTES } from "./lib/sprint";
+
+const DEFAULT_MINUTES = 25;
+---
+
+<div class="ws-sprint">
+	<p id="ws-summary" class="ws-summary" role="status"></p>
+
+	<section id="ws-setup" class="ws-setup" aria-label="Start a sprint">
+		<fieldset class="ws-lengths">
+			<legend class="sd-text-label">Sprint length</legend>
+			<div class="ws-choices">
+				{
+					SPRINT_PRESET_MINUTES.map((minutes) => (
+						<label class="ws-choice">
+							<input type="radio" name="ws-length" value={minutes} checked={minutes === DEFAULT_MINUTES} />
+							<span>{minutes} min</span>
+						</label>
+					))
+				}
+				<label class="ws-choice">
+					<input type="radio" name="ws-length" value="custom" />
+					<span>Custom</span>
+				</label>
+			</div>
+			<div id="ws-custom" class="ws-custom" hidden>
+				<TextField
+					id="ws-custom-minutes"
+					label="Minutes"
+					type="number"
+					inputmode="numeric"
+					min="1"
+					max={MAX_SPRINT_MINUTES}
+				/>
+			</div>
+		</fieldset>
+		<div>
+			<Button id="ws-start" variant="accent">Start sprint</Button>
+		</div>
+	</section>
+</div>
+
+<style>
+	.ws-sprint {
+		margin: var(--space-4) 0 var(--space-6);
+	}
+	p {
+		margin: 0;
+	}
+	.ws-summary {
+		font-family: var(--font-mono);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+	}
+	.ws-summary:not(:empty) {
+		margin-block-end: var(--space-4);
+	}
+	.ws-setup {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.ws-setup[hidden],
+	.ws-custom[hidden] {
+		display: none;
+	}
+	.ws-lengths {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		border: 0;
+		min-inline-size: 0;
+	}
+	.ws-lengths legend {
+		padding: 0;
+		margin-block-end: var(--space-2);
+	}
+	.ws-choices {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+	}
+	.ws-choice {
+		position: relative;
+		cursor: pointer;
+	}
+	.ws-choice input {
+		position: absolute;
+		opacity: 0;
+		inset: 0;
+		margin: 0;
+		cursor: pointer;
+	}
+	.ws-choice span {
+		display: inline-block;
+		padding: var(--space-2) var(--space-4);
+		font-family: var(--font-mono);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-md);
+	}
+	.ws-choice input:checked + span {
+		background: var(--ink);
+		border-color: var(--ink);
+		color: var(--paper);
+	}
+	.ws-choice input:focus-visible + span {
+		outline: 2px solid var(--focus);
+		outline-offset: 2px;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.ws-choice input:not(:checked):hover + span {
+			border-color: var(--ink);
+		}
+	}
+	.ws-custom {
+		max-inline-size: 12rem;
+	}
+</style>

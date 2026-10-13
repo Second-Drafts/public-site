@@ -1,12 +1,12 @@
 # Record of processing activities (GDPR Art. 30)
 
-Last reviewed: 2026-10-11
+Last reviewed: 2026-10-13
 
 **Controller:** The Department of Second Drafts, seconddrafts.com. Contact: privacy@seconddrafts.com. **To fill:** registered entity name and postal address (the address is still a placeholder in `src/lib/privacy/organisation.ts`).
 
 No data protection officer has been appointed. **To fill:** confirm whether one is required.
 
-Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, text a visitor writes in any tool stays on their device (the teleprompter keeps it in the browser's local storage and puts it after the `#` of share links, which browsers never send to a server; the word counter doesn't save it), and analytics only runs after consent.
+Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, text a visitor writes in any tool stays on their device (the teleprompter, word counter and writing sprint keep it in the browser's local storage, and the teleprompter also puts it after the `#` of share links, which browsers never send to a server), and analytics only runs after consent.
 
 ## Hosting the website
 
@@ -22,7 +22,7 @@ Common to all activities: data is protected in transit by HTTPS (GitHub Pages), 
 ## Website analytics
 
 - **Purpose:** Understanding which tools and settings people use so we know what to improve.
-- **Data categories:** Events and session properties as listed on the privacy policy (pages visited, tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Every page sends a page view; only the teleprompter sends tool events today. Never the text a visitor writes in any tool.
+- **Data categories:** Events and session properties as listed on the privacy policy (pages visited, tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Every page sends a page view; the teleprompter, word counter and writing sprint send tool events. Never the text a visitor writes in any tool.
 - **Data subjects:** Visitors who accept analytics.
 - **Recipients:** Google Analytics (processor, once the processor items in `google-analytics.md` are ticked; deploys are blocked until then).
 - **Transfers:** To the United States under the EU–US Data Privacy Framework.

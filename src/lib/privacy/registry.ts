@@ -125,6 +125,14 @@ export const STORAGE = {
 		purpose: "Keeps the text you're counting in your browser, so it's still there when you come back.",
 		retention: "until-cleared",
 	},
+	"ws:text": {
+		setBy: "us",
+		area: "local",
+		category: "necessary",
+		purposeId: "remember-sprint-draft",
+		purpose: "Keeps the draft you're writing in your browser, so it's still there when you come back.",
+		retention: "until-cleared",
+	},
 	"wc:settings:v1": {
 		setBy: "us",
 		area: "local",

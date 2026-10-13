@@ -1,65 +1,17 @@
 {
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"updated": "2026-10-13",
 	"reviews": [
 		{
-			"subject": "analytics property wc_cut_line_shown.rule",
+			"subject": "analytics property ws_sprint_finished.minutes",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property wc_cut_line_shown.unit",
+			"subject": "analytics property ws_sprint_finished.word_bucket",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property wc_engaged.duration_s",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_engaged.word_bucket",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_opened_in_teleprompter.word_bucket",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_sprint_finished.minutes",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_sprint_finished.word_bucket",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_sprint_started.minutes",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_target_reached.preset",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_target_reached.rule",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_target_set.preset",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_target_set.rule",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_target_set.unit",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_text_entered.source",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property wc_text_entered.word_bucket",
+			"subject": "analytics property ws_sprint_started.minutes",
 			"outcome": "clear"
 		}
 	],
@@ -124,13 +76,6 @@
 			"wc_rhythm_opened": {},
 			"wc_rhythm_sentence_clicked": {},
 			"wc_selection_counted": {},
-			"wc_sprint_finished": {
-				"minutes": ["number"],
-				"word_bucket": ["string"]
-			},
-			"wc_sprint_started": {
-				"minutes": ["number"]
-			},
 			"wc_target_reached": {
 				"preset": ["string"],
 				"rule": ["string"]
@@ -143,6 +88,13 @@
 			"wc_text_entered": {
 				"source": ["string"],
 				"word_bucket": ["string"]
+			},
+			"ws_sprint_finished": {
+				"minutes": ["number"],
+				"word_bucket": ["string"]
+			},
+			"ws_sprint_started": {
+				"minutes": ["number"]
 			}
 		},
 		"context": {
@@ -257,6 +209,14 @@
 			"category": "necessary",
 			"purposeId": "remember-counted-text",
 			"purpose": "Keeps the text you're counting in your browser, so it's still there when you come back.",
+			"retention": "until-cleared"
+		},
+		"ws:text": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-sprint-draft",
+			"purpose": "Keeps the draft you're writing in your browser, so it's still there when you come back.",
 			"retention": "until-cleared"
 		}
 	}

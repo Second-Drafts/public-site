@@ -240,10 +240,18 @@ async function countWords(page: Page): Promise<void> {
 	await page.fill("#wc-target", "120");
 }
 
+async function writeSprint(page: Page): Promise<void> {
+	await page.fill("#ws-text", SENTINEL);
+	await page.click("#ws-start");
+	await page.click("#ws-pause");
+	await page.click("#ws-stop");
+}
+
 const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "teleprompter share link", path: shareLink(), write: playSharedScript },
 	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
 	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
+	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
 ];
 
 const REPORT_TITLES = `

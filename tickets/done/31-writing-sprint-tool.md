@@ -14,7 +14,7 @@
 - Choose a length: 10, 15 or 25 minutes, or a custom length. Then press **Start**, which sits below the choices rather than in the same row.
 - **Start** focuses the text, so the writer can begin typing at once.
 - While a sprint runs, the timer and its controls sit next to the text, not in a panel below it:
-  - time left and words written this sprint;
+  - time left (the running word count is the one under the text);
   - **Pause** and resume;
   - **Stop**;
   - an eye toggle that hides the timer for writers who find it distracting, and shows it again. Hiding must not stop the sprint.
@@ -41,10 +41,18 @@ Pause needs the timer model to grow: time left must be based on elapsed running 
 
 ## Acceptance criteria
 
-- [ ] Start sits below the length choices and focuses the text.
-- [ ] The timer, pause, stop and hide controls sit next to the text while a sprint runs.
-- [ ] Hiding the timer doesn't stop or pause the sprint.
-- [ ] Pause and resume keep time left correct, including across a backgrounded tab.
-- [ ] Words written during a sprint exclude words that were already there.
-- [ ] The end-of-sprint summary is announced to screen readers.
-- [ ] The `wc_sprint_*` events are replaced in the schema and lock, and the privacy policy lists only events that fire.
+- [x] Start sits below the length choices and focuses the text.
+- [x] The timer, pause, stop and hide controls sit next to the text while a sprint runs.
+- [x] Hiding the timer doesn't stop or pause the sprint.
+- [x] Pause and resume keep time left correct, including across a backgrounded tab.
+- [x] Words written during a sprint exclude words that were already there.
+- [x] The end-of-sprint summary is announced to screen readers.
+- [x] The `wc_sprint_*` events are replaced in the schema and lock, and the privacy policy lists only events that fire.
+
+## Outcome
+
+- Built as `src/tools/writing-sprint/` at `/tools/writing-sprint`, listed on the tools index. Setup (10, 15, 25 or custom minutes, with **Start** below) swaps for a bar above the text with time left, **Pause**/**Resume**, **Stop** and a hide-timer toggle. Start focuses the text.
+- The timer model grew pause: time left comes from running time only (`elapsedBeforePauseMs` plus the current stretch), so pausing and a backgrounded tab both stay correct. Tests cover each.
+- The draft is saved under its own key, `ws:text`, separate from the word counter's `wc:text`.
+- A light word count sits under the text. There is no hand-off to the word counter; #32 (the writing analysis tool) takes the finished draft instead.
+- `wc_sprint_*` became `ws_sprint_started` and `ws_sprint_finished`, with the new storage key, in one lock bump to 2.3.0. The privacy scan now types into this tool too.

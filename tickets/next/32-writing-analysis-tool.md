@@ -23,7 +23,7 @@ The rhythm strip was built and then removed in the commit that created this tick
 
 ### Analytics and privacy
 
-- `wc_rhythm_opened` and `wc_rhythm_sentence_clicked` are still in `EVENT_SCHEMA` and the lock, but nothing fires them. Replace them with events named for this tool, in one `npm run privacy:lock` bump. Until then, the privacy policy lists two events that never fire. #31 has the same loose end for the `wc_sprint_*` events; one bump can cover both.
+- `wc_rhythm_opened` and `wc_rhythm_sentence_clicked` are still in `EVENT_SCHEMA` and the lock, but nothing fires them. Replace them with events named for this tool, in one `npm run privacy:lock` bump. Until then, the privacy policy lists two events that never fire.
 - Run the `privacy-reviewer` agent, since this adds a tool under `src/tools`.
 
 ## Acceptance criteria
@@ -31,3 +31,8 @@ The rhythm strip was built and then removed in the commit that created this tick
 - [ ] The tool shows sentence rhythm for pasted or typed text, using #18's `sentences()`.
 - [ ] Typing stays smooth with 20,000 words.
 - [ ] The `wc_rhythm_*` events are replaced in the schema and lock, and the privacy policy lists only events that fire.
+
+
+## Later
+
+- The writing sprint tool (#31) has no hand-off. Once this tool exists, add a way to send a finished draft here.

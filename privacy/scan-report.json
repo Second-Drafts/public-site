@@ -1,6 +1,6 @@
 {
-	"registryVersion": "2.2.0",
-	"sourceCommit": "5c2f336a0b1405118f9240729c39debd7af754a2",
+	"registryVersion": "2.3.0",
+	"sourceCommit": "3c55a7cfbe26daefb7c4527e394c12aa828eb090",
 	"sourceDirty": true,
 	"states": {
 		"no-decision": {
@@ -53,6 +53,12 @@
 				]
 			},
 			"/tools/word-counter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/writing-sprint/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -134,6 +140,14 @@
 				]
 			},
 			"/tools/word-counter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/writing-sprint/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -261,6 +275,18 @@
 					"https://www.googletagmanager.com"
 				]
 			},
+			"/tools/writing-sprint/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				]
+			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
 					"cookie:_ga",
@@ -326,6 +352,12 @@
 				]
 			},
 			"/tools/word-counter/": {
+				"storage": [],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/writing-sprint/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -407,6 +439,14 @@
 				]
 			},
 			"/tools/word-counter/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				]
+			},
+			"/tools/writing-sprint/": {
 				"storage": [
 					"local:privacy:consent"
 				],

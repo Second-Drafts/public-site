@@ -56,8 +56,8 @@ export const EVENT_SCHEMA = {
 	wc_engaged: { word_bucket: text<WordBucket>(), duration_s: num() },
 	wc_cut_line_shown: { rule: text<Rule>(), unit: text<Unit>() },
 	wc_selection_counted: {},
-	wc_sprint_started: { minutes: num() },
-	wc_sprint_finished: { minutes: num(), word_bucket: text<WordBucket>() },
+	ws_sprint_started: { minutes: num() },
+	ws_sprint_finished: { minutes: num(), word_bucket: text<WordBucket>() },
 	wc_rhythm_opened: {},
 	wc_rhythm_sentence_clicked: {},
 } satisfies Record<string, PropSchema>;
