@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INITIAL_STATE, summarize, type State } from "./state";
+import { INITIAL_STATE, speakingTime, summarize, type State } from "./state";
 
 const state = (patch: Partial<State>): State => ({ ...INITIAL_STATE, ...patch });
 
@@ -44,5 +44,32 @@ describe("summarize", () => {
 			state({ text: "a b c", showTarget: true, target: { unit: "words", value: 5, rule: "at-least" } }),
 		);
 		expect(summary.evaluation).toEqual({ state: "under", status: "2 to go" });
+	});
+});
+
+describe("speakingTime", () => {
+	const words = (count: number) => "word ".repeat(count);
+
+	it.each([
+		[0, null],
+		[30, "About 10 sec aloud"],
+		[150, "About 1 min aloud"],
+		[150 * 90, "About 1 hr 30 min aloud"],
+	])("%i words reads %s", (count, time) => {
+		expect(speakingTime(state({ text: words(count) }))).toBe(time);
+	});
+
+	it("hides for whitespace-only text", () => {
+		expect(speakingTime(state({ text: "  \n " }))).toBeNull();
+	});
+
+	it("shows for a characters target", () => {
+		const target = { ...INITIAL_STATE.target, unit: "characters" } as const;
+		expect(speakingTime(state({ text: words(150), target }))).toBe("About 1 min aloud");
+	});
+
+	it("hides for a spoken-time target, whose count already says it", () => {
+		const target = { ...INITIAL_STATE.target, unit: "seconds" } as const;
+		expect(speakingTime(state({ text: words(150), target }))).toBeNull();
 	});
 });

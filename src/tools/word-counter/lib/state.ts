@@ -1,4 +1,4 @@
-import { measure } from "../../../lib/text/measure";
+import { countWords, formatSpeakingTime, measure, speakingSeconds } from "../../../lib/text/measure";
 import type { Store as BaseStore } from "../../../lib/store";
 import { countText } from "./readout";
 import { evaluateTarget, isUsable, type Evaluation, type Target } from "./target";
@@ -37,4 +37,10 @@ export function summarize(state: State): Summary {
 	const target = activeTarget(state);
 	if (!target) return { count: countText(amount, unit), evaluation: null };
 	return { count: countText(amount, unit, target.value), evaluation: evaluateTarget(amount, target) };
+}
+
+/** How long the text takes to say, or null when there's nothing to say or the count already reads in spoken time. */
+export function speakingTime({ text, target }: State): string | null {
+	if (text.trim() === "" || target.unit === "seconds") return null;
+	return `${formatSpeakingTime(speakingSeconds(countWords(text)))} aloud`;
 }

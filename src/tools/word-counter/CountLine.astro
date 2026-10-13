@@ -5,7 +5,9 @@ const { count } = summarize(INITIAL_STATE);
 ---
 
 <div class="wc-count-line" id="wc-count-line">
-	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span>
+	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span></p>
+	<p class="wc-extras">
+		<span id="wc-speaking" class="wc-speaking" title="At 150 words per minute" hidden></span>
 		<a id="wc-open-teleprompter" class="wc-open-teleprompter" href="/tools/teleprompter" hidden>Open in Teleprompter</a>
 	</p>
 	<p id="wc-announcement" class="sd-visually-hidden" aria-live="polite"></p>
@@ -34,11 +36,22 @@ const { count } = summarize(INITIAL_STATE);
 		font-weight: 400;
 		color: var(--ink-muted);
 	}
-	.wc-open-teleprompter {
-		margin-inline-start: auto;
+	.wc-extras {
+		margin: var(--space-1) 0 0;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		column-gap: var(--space-3);
 		font-family: var(--font-prose);
 		font-size: 17px;
-		font-weight: 400;
+		line-height: 28px;
+		color: var(--ink-muted);
+	}
+	.wc-speaking[hidden] {
+		display: none;
+	}
+	.wc-open-teleprompter {
+		margin-inline-start: auto;
 		color: var(--ink-muted);
 		text-decoration: underline var(--stroke-hairline) var(--rule-strong);
 		text-underline-offset: 4px;
