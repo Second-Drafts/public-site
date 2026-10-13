@@ -235,9 +235,8 @@ async function playScript(page: Page): Promise<void> {
 
 async function countWords(page: Page): Promise<void> {
 	await page.fill("#wc-text", SENTINEL);
-	await page.check("#wc-show-target");
+	await page.selectOption("#wc-preset", "query-letter");
 	await page.selectOption("#wc-unit", "characters");
-	await page.selectOption("#wc-rule", "around");
 	await page.fill("#wc-target", "120");
 }
 
