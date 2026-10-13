@@ -7,7 +7,6 @@ import Editor from "../../tools/word-counter/Editor.astro";
 import SelectionLine from "../../tools/word-counter/SelectionLine.astro";
 import SessionProgress from "../../tools/word-counter/SessionProgress.astro";
 import TargetPanel from "../../tools/word-counter/TargetPanel.astro";
-import TargetToggle from "../../tools/word-counter/TargetToggle.astro";
 ---
 
 <Base title="Word Counter">
@@ -15,9 +14,9 @@ import TargetToggle from "../../tools/word-counter/TargetToggle.astro";
 		Type or paste some text to quickly check its word or character count
 	</PageHeader>
 	<Editor />
-	<CountLine><TargetToggle /></CountLine>
-	<TargetPanel />
+	<CountLine />
 	<SelectionLine />
+	<TargetPanel />
 	<CutLine />
 	<SessionProgress />
 </Base>

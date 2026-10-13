@@ -8,7 +8,9 @@ export function mountSessionProgress(store: Store): void {
 	const baselineWords = countWords(store.get().text);
 
 	function render({ text }: Readonly<State>) {
-		progress.textContent = sessionProgressText(sessionChange(baselineWords, countWords(text)));
+		const change = sessionChange(baselineWords, countWords(text));
+		progress.hidden = change === 0;
+		progress.textContent = sessionProgressText(change);
 	}
 
 	render(store.get());

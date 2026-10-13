@@ -5,10 +5,7 @@ const { count } = summarize(INITIAL_STATE);
 ---
 
 <div class="wc-count-line" id="wc-count-line">
-	<p class="wc-count">
-		<span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span>
-		<slot />
-	</p>
+	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span></p>
 	<p id="wc-announcement" class="sd-visually-hidden" aria-live="polite"></p>
 </div>
 

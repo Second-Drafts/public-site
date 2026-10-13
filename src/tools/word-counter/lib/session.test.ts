@@ -16,7 +16,6 @@ describe("sessionProgressText", () => {
 		[412, "+412 this session"],
 		[1240, "+1,240 this session"],
 		[-86, "−86 this session (trimmed)"],
-		[0, "No change this session"],
 	])("%i reads %s", (change, text) => {
 		expect(sessionProgressText(change)).toBe(text);
 	});

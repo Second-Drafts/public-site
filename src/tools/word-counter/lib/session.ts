@@ -7,8 +7,8 @@ export function sessionChange(baselineWords: number, currentWords: number): numb
 	return currentWords - baselineWords;
 }
 
+/** "+412 this session" or "−86 this session (trimmed)". Only meaningful once something has changed. */
 export function sessionProgressText(change: number): string {
-	if (change === 0) return "No change this session";
 	const amount = formatAmount(Math.abs(change), "words");
 	return change > 0 ? `+${amount} this session` : `${MINUS}${amount} this session (trimmed)`;
 }
