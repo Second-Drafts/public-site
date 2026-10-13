@@ -1,0 +1,87 @@
+---
+import ToolHead from "../../components/ToolHead.astro";
+import Base from "../../layouts/Base.astro";
+import AnswerLog from "../../tools/magic-8-ball/AnswerLog.astro";
+import QuestionForm from "../../tools/magic-8-ball/QuestionForm.astro";
+import Scene from "../../tools/magic-8-ball/Scene.astro";
+import SeoContent from "../../tools/magic-8-ball/SeoContent.astro";
+import ShareDialog from "../../tools/magic-8-ball/ShareDialog.astro";
+import { faq } from "../../tools/magic-8-ball/faq";
+
+const pageTitle = "Magic 8 Ball Online: Ask a Question and Shake";
+const pageDescription =
+	"Ask the Magic 8 Ball a question, then click, drag or shake your phone for an answer. Classic answers or a deck for writers. Free, and your question never leaves your browser.";
+const ogImageAlt =
+	'A glossy black Magic 8 Ball with a glowing blue triangle in its window reading "Signs point to yes", on a dark background.';
+---
+
+<Base title="Magic 8 Ball" seoTitle={pageTitle} description={pageDescription} wide edgeToEdge>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		appName="Magic 8 Ball online"
+		ogImage="magic-8-ball"
+		ogImageAlt={ogImageAlt}
+		faq={faq}
+	/>
+
+	<section class="m8" data-theme="dark" aria-labelledby="m8-title">
+		<div class="m8__layout">
+			<div class="m8__stage">
+				<Scene />
+				<QuestionForm />
+			</div>
+			<AnswerLog />
+		</div>
+	</section>
+
+	<SeoContent />
+
+	<ShareDialog />
+</Base>
+
+<style>
+	.m8 {
+		--m8-ground: #06060c;
+		--m8-glow: #2f3fd8;
+		--m8-glow-text: #c9d0ff;
+		--m8-muted: #8f93b8;
+		--paper: var(--m8-ground);
+		--paper-raised: #11111c;
+		--rule-strong: #34364f;
+		container: m8 / inline-size;
+		min-block-size: clamp(32rem, 85dvh, 60rem);
+		padding: var(--space-12) max(var(--space-6), env(safe-area-inset-left, 0px));
+		color: var(--ink);
+		background:
+			radial-gradient(ellipse 60% 50% at 50% 38%, oklch(32% 0.12 275 / 0.55), transparent 70%),
+			var(--m8-ground);
+	}
+	.m8__layout {
+		display: grid;
+		gap: var(--space-12);
+		max-inline-size: 72rem;
+		margin-inline: auto;
+	}
+	.m8__stage {
+		display: grid;
+		justify-items: center;
+		gap: var(--space-6);
+	}
+	@container m8 (min-width: 60rem) {
+		.m8__layout {
+			grid-template-columns: minmax(0, 1fr) 18rem;
+			align-items: start;
+		}
+		.m8__layout > :global(.m8-log) {
+			margin-block-start: var(--space-16);
+			padding-inline-start: var(--space-6);
+			border-inline-start: var(--stroke-hairline) solid var(--rule-strong);
+		}
+	}
+</style>
+
+<script>
+	import "../../tools/magic-8-ball/main";
+</script>

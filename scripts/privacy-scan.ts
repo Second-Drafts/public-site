@@ -28,6 +28,7 @@ const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
 // Past the draft analysis tool's 2s settle before it reports, plus its rhythm recompute.
 const DRAFT_SETTLE_MS = 2500;
+const BALL_SETTLE_MS = 2500;
 const SENTINEL = "SENTINEL-do-not-leak-4f9a1c";
 
 const RECORD_CSP_VIOLATIONS = `
@@ -258,6 +259,14 @@ async function writeSprint(page: Page): Promise<void> {
 	await page.click("#ws-stop");
 }
 
+async function askTheBall(page: Page): Promise<void> {
+	await page.fill("#m8-question", SENTINEL);
+	await page.click("#m8-shake");
+	await page.waitForTimeout(BALL_SETTLE_MS);
+	await page.click("#m8-share-open");
+	await page.keyboard.press("Escape");
+}
+
 async function analyseDraft(page: Page): Promise<void> {
 	await page.fill("#da-text", SENTINEL);
 	await page.waitForTimeout(DRAFT_SETTLE_MS);
@@ -278,6 +287,7 @@ const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
 	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
 	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyseDraft },
+	{ name: "magic 8 ball", path: "/tools/magic-8-ball/", write: askTheBall },
 	{
 		name: "draft analysis from a sprint",
 		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,

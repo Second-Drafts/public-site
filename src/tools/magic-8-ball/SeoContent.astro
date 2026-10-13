@@ -1,0 +1,63 @@
+---
+import SeoArticle from "../../components/SeoArticle.astro";
+import { DECKS, type Answer, type Tone } from "./lib/answers";
+import { faq } from "./faq";
+
+const classicTones: { tone: Tone; heading: string }[] = [
+	{ tone: "yes", heading: "Yes" },
+	{ tone: "maybe", heading: "Maybe" },
+	{ tone: "no", heading: "No" },
+];
+
+const answersWithTone = (answers: readonly Answer[], tone: Tone) =>
+	answers.filter((answer) => answer.tone === tone);
+---
+
+<SeoArticle idPrefix="m8-seo" {faq}>
+	<section aria-labelledby="m8-seo-how">
+		<h2 id="m8-seo-how" class="sd-text-title">How to ask the Magic 8 Ball</h2>
+		<ol>
+			<li>Type a question, or keep it in your head.</li>
+			<li>
+				Shake the ball. Press Shake, click or tap the ball, drag it back and forth, or shake your phone.
+			</li>
+			<li>Wait for the answer to rise into the window.</li>
+			<li>Share it as an image if you like.</li>
+		</ol>
+	</section>
+
+	<section aria-labelledby="m8-seo-answers">
+		<h2 id="m8-seo-answers" class="sd-text-title">All 20 Magic 8 Ball answers</h2>
+		{
+			classicTones.map(({ tone, heading }) => (
+				<>
+					<h3 class="sd-text-heading">{heading}</h3>
+					<ul>
+						{answersWithTone(DECKS.classic, tone).map((answer) => (
+							<li>{answer.text}</li>
+						))}
+					</ul>
+				</>
+			))
+		}
+	</section>
+
+	<section aria-labelledby="m8-seo-writers">
+		<h2 id="m8-seo-writers" class="sd-text-title">The writer's deck</h2>
+		<p>
+			Switch to the writer's deck for answers from the Department, such as "Kill that darling." and "Resubmit in
+			triplicate.", for when the question is about the draft.
+		</p>
+		<ul>
+			{DECKS.writers.map((answer) => <li>{answer.text}</li>)}
+		</ul>
+	</section>
+
+	<section aria-labelledby="m8-seo-privacy">
+		<h2 id="m8-seo-privacy" class="sd-text-title">Your question stays in your browser</h2>
+		<p>
+			Nothing you type is sent to our servers or saved. The ball reads your phone's motion only while the page is
+			open, to notice a shake, and the readings never leave the device.
+		</p>
+	</section>
+</SeoArticle>

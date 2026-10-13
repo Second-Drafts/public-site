@@ -1,17 +1,29 @@
 {
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"updated": "2026-10-13",
 	"reviews": [
 		{
-			"subject": "analytics property da_text_entered.source",
+			"subject": "analytics property m8_motion_permission.granted",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property da_text_entered.word_bucket",
-			"outcome": "accepted"
+			"subject": "analytics property m8_shaken.asked",
+			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property ws_opened_analysis.word_bucket",
+			"subject": "analytics property m8_shaken.deck",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property m8_shaken.method",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property m8_shaken.too_soon",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property m8_shared.method",
 			"outcome": "clear"
 		}
 	],
@@ -21,6 +33,18 @@
 			"da_text_entered": {
 				"source": ["string"],
 				"word_bucket": ["string"]
+			},
+			"m8_motion_permission": {
+				"granted": ["boolean"]
+			},
+			"m8_shaken": {
+				"asked": ["boolean"],
+				"deck": ["string"],
+				"method": ["string"],
+				"too_soon": ["boolean"]
+			},
+			"m8_shared": {
+				"method": ["string"]
 			},
 			"page_view": {
 				"landing_source": ["string"],

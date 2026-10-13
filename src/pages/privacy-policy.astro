@@ -36,6 +36,10 @@ const contextProperties = sessionContextProperties();
 			We don't receive what you write. It stays on your device, and when a tool makes a share link, the link carries
 			your text after the <code>#</code> in the address, which browsers never send to a server.
 		</li>
+		<li>
+			We don't receive your phone's motion. The Magic 8 Ball reads it on the page, only to notice a shake, and only
+			once you allow it where your device asks. The readings are never stored or sent.
+		</li>
 	</ul>
 
 	<h2>Hosting</h2>
@@ -52,7 +56,7 @@ const contextProperties = sessionContextProperties();
 	</p>
 	<p>
 		In plain terms, we record which pages you visit, which tool settings you use, roughly how long your text is (in ranges of word counts),
-		how you reach the site, how long you use a tool, and your device type. We never record what you write.
+		how you reach the site, how long you use a tool, and your device type. For the Magic 8 Ball, we record whether you typed a question, but never the question itself. We never record what you write.
 		Google also receives what it collects automatically, such as your IP address and browser details. For the cookies
 		involved and how long they last, see the <Link href="/cookie-policy">cookie policy</Link>.
 	</p>

@@ -1,0 +1,34 @@
+---
+import Button from "../../components/Button.astro";
+import Dialog from "../../components/Dialog.astro";
+---
+
+<Dialog id="m8-share" aria-labelledby="m8-share-title" width="30rem">
+	<h3 id="m8-share-title" class="sd-dialog__title sd-text-title">Share your answer</h3>
+	<canvas id="m8-share-canvas" class="share__preview" role="img" width="1200" height="1200"></canvas>
+	<p id="m8-share-status" class="share__status sd-text-meta" role="status"></p>
+	<div class="sd-dialog__actions share__actions">
+		<Button id="m8-share-copy" variant="primary" hidden>Copy image</Button>
+		<Button id="m8-share-native" variant="secondary" hidden>Share…</Button>
+		<Button id="m8-share-download" variant="secondary">Download</Button>
+		<Button id="m8-share-close" variant="quiet">Close</Button>
+	</div>
+</Dialog>
+
+<style>
+	.share__preview {
+		inline-size: 100%;
+		max-inline-size: 100%;
+		block-size: auto;
+		aspect-ratio: 1;
+		border-radius: var(--radius-md);
+	}
+	.share__status {
+		margin: 0;
+		min-block-size: 1lh;
+		color: var(--ink-muted);
+	}
+	.share__actions :global([hidden]) {
+		display: none;
+	}
+</style>

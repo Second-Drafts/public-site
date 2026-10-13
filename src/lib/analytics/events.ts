@@ -2,6 +2,9 @@
 import type { VendorId } from "../privacy/registry";
 import type { FontId, ThemeId } from "../../tools/teleprompter/lib/settings";
 import type { Rule } from "../../tools/word-counter/lib/target";
+import type { Deck } from "../../tools/magic-8-ball/lib/answers";
+import type { ShakeMethod } from "../../tools/magic-8-ball/lib/state";
+import type { ShareMethod } from "../../tools/magic-8-ball/share-dialog";
 import type { Unit } from "../text/measure";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "601-2000" | "2001-10000" | "10000+";
@@ -62,6 +65,9 @@ export const EVENT_SCHEMA = {
 	ws_opened_analysis: { word_bucket: text<WordBucket>() },
 	da_text_entered: { word_bucket: text<WordBucket>(), source: text<DraftTextSource>() },
 	da_rhythm_sentence_clicked: {},
+	m8_shaken: { method: text<ShakeMethod>(), asked: flag(), deck: text<Deck>(), too_soon: flag() },
+	m8_shared: { method: text<ShareMethod>() },
+	m8_motion_permission: { granted: flag() },
 } satisfies Record<string, PropSchema>;
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;

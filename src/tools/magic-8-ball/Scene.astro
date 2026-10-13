@@ -1,0 +1,161 @@
+---
+import Button from "../../components/Button.astro";
+---
+
+<div class="m8-scene">
+	<h1 id="m8-title" class="m8-title sd-text-display">Magic 8 Ball</h1>
+	<p id="m8-hint" class="m8-hint sd-text-meta">
+		<span class="m8-hint--fine">Click the ball, or drag it back and forth to shake it</span>
+		<span class="m8-hint--coarse">Tap the ball, drag it about, or shake your phone</span>
+	</p>
+
+	<button id="m8-ball" class="m8-ball" type="button" aria-label="Shake the ball" aria-describedby="m8-hint">
+		<canvas id="m8-canvas" aria-hidden="true"></canvas>
+		<span class="m8-fallback" aria-hidden="true">
+			<span class="m8-fallback__window">
+				<span class="m8-fallback__triangle">
+					<span class="m8-fallback__text"></span>
+				</span>
+			</span>
+		</span>
+	</button>
+
+	<p id="m8-answer" class="sd-visually-hidden" role="status"></p>
+
+	<div class="m8-actions">
+		<Button id="m8-share-open" variant="secondary" size="sm" hidden>Share this answer</Button>
+		<Button id="m8-motion" variant="secondary" size="sm" hidden>Shake your phone</Button>
+	</div>
+</div>
+
+<style>
+	.m8-scene {
+		display: grid;
+		justify-items: center;
+		gap: var(--space-4);
+		text-align: center;
+	}
+	.m8-title {
+		margin: 0;
+		color: var(--m8-glow-text);
+	}
+	.m8-hint {
+		margin: 0;
+		color: var(--m8-muted);
+	}
+	.m8-hint--coarse {
+		display: none;
+	}
+	@media (pointer: coarse) {
+		.m8-hint--fine {
+			display: none;
+		}
+		.m8-hint--coarse {
+			display: inline;
+		}
+	}
+
+	.m8-ball {
+		position: relative;
+		inline-size: min(68vmin, 26rem);
+		aspect-ratio: 1;
+		margin-block: var(--space-6);
+		padding: 0;
+		background: none;
+		border: 0;
+		border-radius: 50%;
+		cursor: grab;
+		touch-action: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+	.m8-ball:active {
+		cursor: grabbing;
+	}
+	.m8-ball:focus-visible {
+		outline: 2px solid var(--focus);
+		outline-offset: var(--space-2);
+	}
+	#m8-canvas {
+		position: absolute;
+		inset: -20%;
+		inline-size: 140%;
+		block-size: 140%;
+		pointer-events: none;
+	}
+	.m8-ball:not(.has-model) #m8-canvas,
+	.m8-ball.has-model .m8-fallback {
+		visibility: hidden;
+	}
+
+	.m8-fallback {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		border-radius: 50%;
+		background:
+			radial-gradient(circle at 35% 28%, oklch(100% 0 0 / 0.35), transparent 18%),
+			radial-gradient(circle at 50% 50%, #26252c, #050506 70%);
+		box-shadow:
+			inset -1.5rem -2rem 3rem oklch(0% 0 0 / 0.8),
+			0 2rem 4rem oklch(0% 0 0 / 0.6);
+	}
+	.m8-fallback__window {
+		display: grid;
+		place-items: center;
+		inline-size: 46%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: radial-gradient(circle, #0d0f3a, #020210 75%);
+		box-shadow:
+			inset 0 0.4rem 1rem oklch(0% 0 0 / 0.9),
+			0 0 0 0.35rem #121216;
+	}
+	.m8-fallback__triangle {
+		display: grid;
+		place-items: end center;
+		inline-size: 78%;
+		aspect-ratio: 1 / 0.87;
+		padding-block-end: 14%;
+		clip-path: polygon(50% 0, 100% 100%, 0 100%);
+		background: var(--m8-glow);
+		opacity: 0;
+		scale: 0.85;
+	}
+	.m8-fallback__text {
+		inline-size: 64%;
+		font-family: var(--font-display);
+		font-size: clamp(9px, 2.2vmin, 13px);
+		font-weight: 600;
+		line-height: 1.15;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--m8-glow-text);
+	}
+	.m8-fallback.is-revealed .m8-fallback__triangle {
+		opacity: 1;
+		scale: 1;
+	}
+	.m8-fallback[data-tone="hazy"] .m8-fallback__triangle {
+		filter: blur(1.5px);
+		opacity: 0.6;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.m8-fallback__triangle {
+			transition:
+				opacity 1.2s ease-out,
+				scale 1.2s ease-out;
+		}
+	}
+
+	.m8-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-2);
+		min-block-size: 2.5rem;
+	}
+	.m8-actions :global([hidden]) {
+		display: none;
+	}
+</style>
