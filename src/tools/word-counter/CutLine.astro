@@ -1,0 +1,22 @@
+<p id="wc-cut-announcement" class="sd-visually-hidden" aria-live="polite"></p>
+
+<style>
+	/* red pen marks what has to go: a tint and an underline over the excess, and a bar where the cut falls */
+	:global([data-highlight~="cut"]) {
+		background: color-mix(in srgb, var(--red-pen) 16%, transparent);
+		text-decoration: underline 1.5px var(--red-pen);
+		text-underline-offset: 4px;
+	}
+	:global([data-highlight-start~="cut"]) {
+		box-shadow: inset 2px 0 var(--red-pen);
+	}
+	@media (forced-colors: active) {
+		:global([data-highlight~="cut"]) {
+			background: Mark;
+			text-decoration-color: CanvasText;
+		}
+		:global([data-highlight-start~="cut"]) {
+			box-shadow: inset 2px 0 CanvasText;
+		}
+	}
+</style>

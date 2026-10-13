@@ -1,5 +1,6 @@
 import { createStore, mergeShallow } from "../../lib/store";
 import { mountCountLine } from "./count-line";
+import { mountCutLine } from "./cut-line";
 import { mountEditor } from "./editor";
 import type { State, Store } from "./lib/state";
 import { persistChanges, restoreState } from "./persistence";
@@ -18,6 +19,7 @@ if (import.meta.env.DEV) window.__wcStore = store;
 persistChanges(store);
 const usage = trackUsage(store);
 
-mountEditor(store, usage);
+const editor = mountEditor(store, usage);
 mountCountLine(store);
+mountCutLine(store, editor.highlights, usage);
 mountTargetPanel(store);

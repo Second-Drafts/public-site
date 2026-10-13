@@ -1,9 +1,14 @@
 import { askConfirm } from "../../lib/confirm";
 import { required } from "../../lib/dom";
+import { attachTextHighlights, type TextHighlights } from "../../lib/text-highlights";
 import type { State, Store } from "./lib/state";
 import type { UsageHooks } from "./usage-tracking";
 
-export function mountEditor(store: Store, usage: UsageHooks): void {
+export interface Editor {
+	highlights: TextHighlights;
+}
+
+export function mountEditor(store: Store, usage: UsageHooks): Editor {
 	const textarea = required<HTMLTextAreaElement>(document, "#wc-text");
 
 	const clear = required<HTMLButtonElement>(document, "#wc-clear");
@@ -33,4 +38,5 @@ export function mountEditor(store: Store, usage: UsageHooks): void {
 
 	render(store.get());
 	store.subscribe(render);
+	return { highlights: attachTextHighlights(textarea) };
 }
