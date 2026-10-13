@@ -77,7 +77,7 @@ function continuesSentence(previous: string, next: string): boolean {
 }
 
 function endsWithAbbreviation(sentence: string): boolean {
-	const lastWord = (sentence.trimEnd().split(/\s+/).at(-1) ?? "").replace(OPENING_PUNCTUATION, "");
+	const lastWord = (/\S*$/.exec(sentence.trimEnd())?.[0] ?? "").replace(OPENING_PUNCTUATION, "");
 	return TITLE_ABBREVIATIONS.has(lastWord.toLowerCase()) || INITIAL.test(lastWord);
 }
 

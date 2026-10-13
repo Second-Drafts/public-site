@@ -1,5 +1,5 @@
-import { debounce } from "../../lib/debounce";
 import { stored } from "../../lib/privacy/storage";
+import { saveOnChange } from "../../lib/store";
 import { INITIAL_STATE, type State, type Store } from "./lib/state";
 
 const storedText = stored("ws:text");
@@ -9,9 +9,5 @@ export function restoreState(): State {
 }
 
 export function persistChanges(store: Store): void {
-	const saveText = debounce((text: string) => storedText.write(text), 500);
-	store.subscribe((state, previous) => {
-		if (state.text !== previous.text) saveText(state.text);
-	});
-	addEventListener("pagehide", saveText.flush);
+	saveOnChange(store, (state) => state.text, storedText.write, { delayMs: 500 });
 }

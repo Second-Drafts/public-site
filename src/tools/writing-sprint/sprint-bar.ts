@@ -25,40 +25,47 @@ export function mountSprintBar(store: Store, editor: Editor): void {
 	const hideTimer = required<HTMLButtonElement>(document, "#ws-hide-timer");
 	const eye = required(document, "#ws-eye");
 	const eyeOff = required(document, "#ws-eye-off");
+	const pauseLabel = required(pause, ".sd-btn__label");
+	const hideTimerLabel = required(hideTimer, ".sd-btn__label");
 
-	let words = countWords(store.get().text);
 	let ticker: ReturnType<typeof setInterval> | undefined;
 
 	function finish(sprint: Sprint) {
-		store.set({ sprint: null, finished: { minutes: sprint.minutes, words: sprintWords(sprint, words) } }, "system");
+		const words = sprintWords(sprint, countWords(store.get().text));
+		store.set({ sprint: null, finished: { minutes: sprint.minutes, words } }, "system");
 	}
 
-	function renderTimer(sprint: Sprint, timerHidden: boolean) {
+	function renderTimer(sprint: Sprint) {
 		const now = Date.now();
-		const timeLeft = timeLeftMs(sprint, now);
-		clock.textContent = formatClock(timeLeft);
+		clock.textContent = formatClock(timeLeftMs(sprint, now));
 		progress.style.setProperty("--elapsed", String(fractionElapsed(sprint, now)));
-		clockGroup.hidden = track.hidden = timerHidden;
-		if (timeLeft === 0) finish(sprint);
+	}
+
+	function keepTicking(running: boolean) {
+		if (running) ticker ??= setInterval(tick, TICK_MS);
+		else {
+			clearInterval(ticker);
+			ticker = undefined;
+		}
 	}
 
 	function render({ sprint, timerHidden }: Readonly<State>) {
 		bar.hidden = sprint === null;
-		if (!sprint) {
-			clearInterval(ticker);
-			ticker = undefined;
-			return;
-		}
-		ticker ??= setInterval(tick, TICK_MS);
-		setLabel(pause, isPaused(sprint) ? "Resume" : "Pause");
-		setLabel(hideTimer, timerHidden ? "Show timer" : "Hide timer");
+		keepTicking(sprint !== null && !isPaused(sprint));
+		if (!sprint) return;
+		pauseLabel.textContent = isPaused(sprint) ? "Resume" : "Pause";
+		hideTimerLabel.textContent = timerHidden ? "Show timer" : "Hide timer";
 		eye.hidden = timerHidden;
 		eyeOff.hidden = !timerHidden;
-		renderTimer(sprint, timerHidden);
+		clockGroup.hidden = track.hidden = timerHidden;
+		renderTimer(sprint);
 	}
 
 	function tick() {
-		render(store.get());
+		const { sprint } = store.get();
+		if (!sprint) return;
+		if (timeLeftMs(sprint, Date.now()) === 0) return finish(sprint);
+		renderTimer(sprint);
 	}
 
 	pause.addEventListener("click", () => {
@@ -75,12 +82,7 @@ export function mountSprintBar(store: Store, editor: Editor): void {
 	document.addEventListener("visibilitychange", tick);
 
 	store.subscribe((state, previous) => {
-		if (state.text !== previous.text) words = countWords(state.text);
-		render(state);
+		if (state.sprint !== previous.sprint || state.timerHidden !== previous.timerHidden) render(state);
 	});
 	render(store.get());
-}
-
-function setLabel(button: HTMLElement, label: string) {
-	required(button, ".sd-btn__label").textContent = label;
 }

@@ -24,7 +24,7 @@ const usage = trackUsage(store);
 
 const editor = mountEditor(store, usage);
 mountCountLine(store);
-mountSelectionLine(store, usage);
+mountSelectionLine(store, editor, usage);
 mountCutLine(store, editor.highlights, usage);
 mountOpenInTeleprompter(store, usage);
 mountTargetPanel(store);

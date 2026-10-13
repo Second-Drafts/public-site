@@ -1,37 +1,32 @@
-import { track } from "../../lib/usage-reports";
-import type { CounterTextSource, WordBucket } from "../../lib/analytics/events";
+import type { WordBucket } from "../../lib/analytics/events";
 import { debounce } from "../../lib/debounce";
-import { countWords, wordBucket } from "../../lib/text/measure";
-import { activeTarget, summarize, type Store } from "./lib/state";
+import { trackTextEntry, type TextInputSource } from "../../lib/text-entry";
+import { countWords } from "../../lib/text/measure";
+import { wordBucket } from "../../lib/word-bucket";
+import { track } from "../../lib/usage-reports";
+import { summarize, type Store } from "./lib/state";
 
-const TEXT_SETTLE_MS = 2000;
 const TARGET_SETTLE_MS = 1000;
 const ENGAGED_WORDS = 50;
 const ENGAGED_MS = 60_000;
 const ENGAGED_CHECK_MS = 5000;
 
 export interface UsageHooks {
-	onTextInput(source: "paste" | "typed"): void;
+	onTextInput(source: TextInputSource): void;
 	onOpenedInTeleprompter(): void;
 	onCutLineShown(): void;
 	onSelectionCounted(): void;
 }
 
 export function trackUsage(store: Store): UsageHooks {
-	const currentWordBucket = () => wordBucket(countWords(store.get().text));
-	const textEntry = trackTextEntry(store, currentWordBucket);
+	const currentWordBucket = () => wordBucket(store.get().text);
+	const textEntry = trackTextEntry(
+		() => store.get().text,
+		(source) => track("wc_text_entered", { word_bucket: currentWordBucket(), source }),
+	);
 	trackTargetChanges(store);
 	trackTargetReached(store);
 	trackEngagement(store, currentWordBucket);
-
-	const onceAVisit = (report: () => void) => {
-		let reported = false;
-		return () => {
-			if (reported) return;
-			reported = true;
-			report();
-		};
-	};
 
 	return {
 		onTextInput: textEntry.input,
@@ -44,27 +39,12 @@ export function trackUsage(store: Store): UsageHooks {
 	};
 }
 
-function trackTextEntry(store: Store, currentWordBucket: () => WordBucket) {
+function onceAVisit(report: () => void): () => void {
 	let reported = false;
-	function report(source: CounterTextSource) {
-		if (reported || store.get().text.trim() === "") return;
+	return () => {
+		if (reported) return;
 		reported = true;
-		track("wc_text_entered", { word_bucket: currentWordBucket(), source });
-	}
-
-	let pendingSource: "paste" | "typed" | null = null;
-	const settle = debounce(() => {
-		if (pendingSource) report(pendingSource);
-		pendingSource = null;
-	}, TEXT_SETTLE_MS);
-
-	report("restored");
-
-	return {
-		input(source: "paste" | "typed") {
-			if (source === "paste" || !pendingSource) pendingSource = source;
-			settle();
-		},
+		report();
 	};
 }
 
@@ -87,13 +67,11 @@ function trackTargetChanges(store: Store): void {
 }
 
 function trackTargetReached(store: Store): void {
-	let reported = false;
-	store.subscribe((state, _previous, source) => {
-		const target = activeTarget(state);
-		if (reported || source !== "user" || !target || state.text.trim() === "") return;
+	const stop = store.subscribe((state, _previous, source) => {
+		if (source !== "user" || state.text.trim() === "") return;
 		if (summarize(state).evaluation?.state !== "met") return;
-		reported = true;
-		track("wc_target_reached", { preset: state.presetId, rule: target.rule });
+		stop();
+		track("wc_target_reached", { preset: state.presetId, rule: state.target.rule });
 	});
 }
 

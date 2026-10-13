@@ -2,7 +2,7 @@ import { debounce } from "../../lib/debounce";
 import { required } from "../../lib/dom";
 import { sentences as splitSentences, type Sentence } from "../../lib/text/sentences";
 import type { Editor } from "./editor";
-import type { State, Store } from "./lib/state";
+import type { Store } from "./lib/state";
 import {
 	barAt,
 	rhythmSummaryText,
@@ -88,7 +88,6 @@ export function mountRhythmView(store: Store, { textarea, highlights }: Editor, 
 
 	strip.addEventListener("pointermove", (event) => moveCursorTo(barUnder(event)));
 	strip.addEventListener("click", (event) => {
-		if (measured.length === 0) return;
 		const index = barUnder(event as PointerEvent);
 		moveCursorTo(index);
 		selectSentence(index);
@@ -110,13 +109,11 @@ export function mountRhythmView(store: Store, { textarea, highlights }: Editor, 
 			selectSentence(cursorIndex);
 		}
 	});
-	function render(state: Readonly<State>, previous?: Readonly<State>) {
-		if (!previous) return measure();
+
+	measure();
+	store.subscribe((state, previous) => {
 		if (state.text === previous.text) return;
 		highlights.paint("sentence", []);
 		measureWhenSettled();
-	}
-
-	render(store.get());
-	store.subscribe(render);
+	});
 }

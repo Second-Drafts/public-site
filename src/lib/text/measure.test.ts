@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
 	countCharacters,
-	countCharactersWithoutSpaces,
 	countWords,
 	formatSpeakingTime,
 	limitOffset,
 	measure,
 	speakingSeconds,
-	wordBucket,
 	wordSpans,
 	type Unit,
 } from "./measure";
@@ -74,12 +72,6 @@ describe("countCharacters", () => {
 		["café 👍🏽", 6],
 	])("%j → %i", (text, characters) => {
 		expect(countCharacters(text)).toBe(characters);
-	});
-});
-
-describe("countCharactersWithoutSpaces", () => {
-	it("skips spaces, tabs and line breaks", () => {
-		expect(countCharactersWithoutSpaces("a b\tc\nd 👍")).toBe(5);
 	});
 });
 
@@ -169,23 +161,5 @@ describe("formatSpeakingTime", () => {
 		[2 * 3600, "About 2 hr"],
 	])("%d seconds → %s", (seconds, text) => {
 		expect(formatSpeakingTime(seconds)).toBe(text);
-	});
-});
-
-describe("wordBucket", () => {
-	it.each([
-		[0, "0-50"],
-		[50, "0-50"],
-		[51, "51-200"],
-		[200, "51-200"],
-		[201, "201-600"],
-		[600, "201-600"],
-		[601, "601-2000"],
-		[2000, "601-2000"],
-		[2001, "2001-10000"],
-		[10000, "2001-10000"],
-		[10001, "10000+"],
-	])("%i words → %s", (words, bucket) => {
-		expect(wordBucket(words)).toBe(bucket);
 	});
 });

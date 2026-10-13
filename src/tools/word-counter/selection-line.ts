@@ -1,10 +1,10 @@
 import { required } from "../../lib/dom";
+import type { Editor } from "./editor";
 import { summarizeSelection, type SelectionRange } from "./lib/selection";
 import type { State, Store } from "./lib/state";
 import type { UsageHooks } from "./usage-tracking";
 
-export function mountSelectionLine(store: Store, usage: UsageHooks): void {
-	const textarea = required<HTMLTextAreaElement>(document, "#wc-text");
+export function mountSelectionLine(store: Store, { textarea }: Editor, usage: UsageHooks): void {
 	const line = required(document, "#wc-selection-line");
 	const selected = required(document, "#wc-selection");
 	const cut = required(document, "#wc-selection-cut");

@@ -1,6 +1,6 @@
-import { measure } from "../../../lib/text/measure";
-import { countText, formatAmount, unitLabel } from "./readout";
-import { activeTarget, type State } from "./state";
+import { measure, type Unit } from "../../../lib/text/measure";
+import { countText, formatAmount, unitLabel } from "../../../lib/text/readout";
+import { activeTarget, measureDraft, type State } from "./state";
 import { evaluateTarget, type Evaluation } from "./target";
 
 export interface SelectionRange {
@@ -24,15 +24,14 @@ export function summarizeSelection(state: State, { start, end }: SelectionRange)
 	if (selectedText.trim() === "") return null;
 	const { unit } = state.target;
 	const selectedAmount = measure(selectedText, unit);
-	const totalAmount = measure(state.text, unit);
+	const totalAmount = measureDraft(state.text, unit);
 	return {
-		selected: selectedLabel(selectedAmount, totalAmount, state),
+		selected: selectedLabel(selectedAmount, totalAmount, unit),
 		cut: cutResult(state, state.text.slice(0, start) + state.text.slice(end)),
 	};
 }
 
-function selectedLabel(selectedAmount: number, totalAmount: number, { target }: State): string {
-	const { unit } = target;
+function selectedLabel(selectedAmount: number, totalAmount: number, unit: Unit): string {
 	return `${formatAmount(selectedAmount, unit)} of ${formatAmount(totalAmount, unit)} ${unitLabel(totalAmount, unit)} selected`;
 }
 

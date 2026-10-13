@@ -60,7 +60,7 @@ export interface StripGeometry {
 	thresholdY: number | null;
 }
 
-export const MARK_BAND = 8;
+const MARK_BAND = 8;
 const BAR_AREA = 72;
 const BAR_WIDTH = 0.8;
 
@@ -75,9 +75,10 @@ export function stripGeometry(sentences: readonly Sentence[]): StripGeometry {
 	sentences.forEach((sentence, index) => {
 		const barHeight = Math.max(1, (sentence.words / wordsAtFullHeight) * BAR_AREA);
 		const bar = `M${index} ${height - barHeight}h${BAR_WIDTH}v${barHeight}h-${BAR_WIDTH}z`;
-		if (!isLongSentence(sentence)) return void bars.push(bar);
-		longBars.push(bar);
-		longMarks.push(`M${index} 0h${BAR_WIDTH}v${MARK_BAND - 2}h-${BAR_WIDTH}z`);
+		if (isLongSentence(sentence)) {
+			longBars.push(bar);
+			longMarks.push(`M${index} 0h${BAR_WIDTH}v${MARK_BAND - 2}h-${BAR_WIDTH}z`);
+		} else bars.push(bar);
 	});
 	return {
 		width: Math.max(1, sentences.length),

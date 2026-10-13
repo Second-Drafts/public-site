@@ -1,8 +1,7 @@
 import { required } from "../../lib/dom";
 import type { Unit } from "../../lib/text/measure";
-import { findPreset, NO_PRESET } from "./lib/presets";
-import { CUSTOM_PRESET } from "./lib/settings";
-import type { State, Store } from "./lib/state";
+import { CUSTOM_PRESET, findPreset, NO_PRESET } from "./lib/presets";
+import { activeTarget, type State, type Store } from "./lib/state";
 import { isUsable, type Target } from "./lib/target";
 import { fieldsFromTarget, sameTarget, targetFromFields, type FieldRule, type TargetFields } from "./lib/target-fields";
 
@@ -52,8 +51,9 @@ export function mountTargetPanel(store: Store): void {
 	min.addEventListener("input", applyFields);
 	value.addEventListener("input", applyFields);
 
-	function render({ showTarget, target, presetId }: Readonly<State>) {
-		const active = showTarget && isUsable(target);
+	function render(state: Readonly<State>) {
+		const { target, presetId } = state;
+		const active = activeTarget(state) !== null;
 		const preset = active ? findPreset(presetId) : undefined;
 		remove.hidden = !active;
 		for (const format of formats) format.setAttribute("aria-pressed", String(format.dataset.preset === preset?.id));

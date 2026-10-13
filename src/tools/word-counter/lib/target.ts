@@ -1,5 +1,5 @@
 import type { Unit } from "../../../lib/text/measure";
-import { formatAmount } from "./readout";
+import { formatAmount } from "../../../lib/text/readout";
 
 export type Rule = "at-most" | "at-least" | "exactly" | "around";
 
@@ -14,6 +14,8 @@ export interface Target {
 	min?: number;
 }
 
+export const DEFAULT_TARGET: Target = { unit: "words", value: 240, rule: "at-most" };
+
 export type TargetState = "under" | "met" | "over";
 
 export interface Evaluation {
@@ -21,7 +23,7 @@ export interface Evaluation {
 	status: string;
 }
 
-export const AROUND_TOLERANCE = 0.1;
+const AROUND_TOLERANCE = 0.1;
 
 export function isUsable(target: Target): boolean {
 	return target.value > 0 && Number.isFinite(target.value);

@@ -1,8 +1,9 @@
+import { countText } from "../../../lib/text/readout";
+
 export const SPRINT_PRESET_MINUTES = [10, 15, 25] as const;
 export const MAX_SPRINT_MINUTES = 180;
 
 const MS_PER_MINUTE = 60_000;
-const numberFormat = new Intl.NumberFormat("en-US");
 
 export interface Sprint {
 	minutes: number;
@@ -64,10 +65,6 @@ export function formatClock(ms: number): string {
 	return `${minutes}:${seconds}`;
 }
 
-export function wordsText(words: number): string {
-	return `${numberFormat.format(words)} ${words === 1 ? "word" : "words"}`;
-}
-
 export function sprintSummary({ minutes, words }: FinishedSprint): string {
-	return `${minutes} ${minutes === 1 ? "minute" : "minutes"} · ${wordsText(words)}`;
+	return `${minutes} ${minutes === 1 ? "minute" : "minutes"} · ${countText(words, "words")}`;
 }

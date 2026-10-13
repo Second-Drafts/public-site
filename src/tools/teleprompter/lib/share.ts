@@ -1,70 +1,34 @@
-import { compressToEncodedURIComponent, decompressFromEncodedURIComponent } from "lz-string";
+import { handOffUrl, readHandOff, type HandOffOrigin, type ReceivedHandOff } from "../../../lib/hand-off";
+import { asRecord } from "../../../lib/validate";
 import { DEFAULT_SETTINGS, validateSettings, type Settings } from "./settings";
-import { isRecord } from "./object";
-import { findHashParam, SHARE_HASH_KEY } from "./share-hash";
-
-export { SHARE_HASH_KEY };
-
-const SHARE_ORIGINS = ["word_counter", "writing_sprint"] as const;
-
-export type ShareOrigin = (typeof SHARE_ORIGINS)[number];
-
-const isShareOrigin = (value: unknown): value is ShareOrigin => SHARE_ORIGINS.some((origin) => origin === value);
 
 /** Without `settings` the link carries the script only, and opening it keeps the visitor's own settings. */
 export interface SharePayload {
 	script: string;
 	settings?: Settings;
-	origin?: ShareOrigin;
+	origin?: HandOffOrigin;
 }
 
 export const SHARE_URL_WARN_LENGTH = 8000;
 
-const PAYLOAD_VERSION = 1;
-
-export const MAX_SHARED_SCRIPT_LENGTH = 200_000;
-
 export function buildShareUrl(base: string, payload: SharePayload): { url: string; tooLong: boolean } {
-	const body = {
-		v: PAYLOAD_VERSION,
-		t: payload.script,
-		...(payload.settings && { s: diffFromDefaults(validateSettings(payload.settings)) }),
-		...(payload.origin && { o: payload.origin }),
-	};
-	const url = `${base}#${SHARE_HASH_KEY}=${compressToEncodedURIComponent(JSON.stringify(body))}`;
+	const fields = payload.settings ? { s: diffFromDefaults(validateSettings(payload.settings)) } : {};
+	const url = handOffUrl(base, { text: payload.script, origin: payload.origin }, fields);
 	return { url, tooLong: url.length > SHARE_URL_WARN_LENGTH };
 }
 
 export function decodeShareHash(hash: string): SharePayload | null {
-	try {
-		const encoded = findHashParam(hash, SHARE_HASH_KEY);
-		if (!encoded) return null;
-
-		const json = decompressFromEncodedURIComponent(encoded);
-		if (!json) return null;
-
-		const data: unknown = JSON.parse(json);
-		if (typeof data !== "object" || data === null || Array.isArray(data)) return null;
-		const { v, t, s, o } = data as Record<string, unknown>;
-		if (v !== PAYLOAD_VERSION || typeof t !== "string") return null;
-
-		return {
-			script: capScript(t),
-			...(s !== undefined && { settings: validateSettings(mergeOverDefaults(s)) }),
-			...(isShareOrigin(o) && { origin: o }),
-		};
-	} catch {
-		return null;
-	}
+	const handOff = readHandOff(hash);
+	return handOff && sharedScript(handOff);
 }
 
-function capScript(text: string): string {
-	if (text.length <= MAX_SHARED_SCRIPT_LENGTH) return text;
-	let cut = text.slice(0, MAX_SHARED_SCRIPT_LENGTH);
-	// Don't leave half of a surrogate pair at the end.
-	const last = cut.charCodeAt(cut.length - 1);
-	if (last >= 0xd800 && last <= 0xdbff) cut = cut.slice(0, -1);
-	return cut;
+export function sharedScript(handOff: ReceivedHandOff): SharePayload {
+	const { s } = handOff.fields;
+	return {
+		script: handOff.text,
+		...(s !== undefined && { settings: validateSettings(mergeOverDefaults(s)) }),
+		...(handOff.origin && { origin: handOff.origin }),
+	};
 }
 
 function diffFromDefaults(settings: Settings): Record<string, unknown> {
@@ -84,6 +48,6 @@ function diffFromDefaults(settings: Settings): Record<string, unknown> {
 }
 
 function mergeOverDefaults(partial: unknown): Record<string, unknown> {
-	const p = isRecord(partial) ? partial : {};
-	return { ...DEFAULT_SETTINGS, ...p, custom: { ...DEFAULT_SETTINGS.custom, ...(isRecord(p.custom) ? p.custom : {}) } };
+	const p = asRecord(partial);
+	return { ...DEFAULT_SETTINGS, ...p, custom: { ...DEFAULT_SETTINGS.custom, ...asRecord(p.custom) } };
 }

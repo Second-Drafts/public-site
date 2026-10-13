@@ -1,5 +1,5 @@
 import { track } from "../../lib/usage-reports";
-import { countWords, wordBucket } from "../../lib/text/measure";
+import { wordBucket } from "../../lib/word-bucket";
 import type { Store } from "./lib/state";
 
 export interface UsageHooks {
@@ -12,12 +12,12 @@ export function trackUsage(store: Store): UsageHooks {
 		if (state.finished && state.finished !== previous.finished) {
 			track("ws_sprint_finished", {
 				minutes: state.finished.minutes,
-				word_bucket: wordBucket(countWords(state.text)),
+				word_bucket: wordBucket(state.text),
 			});
 		}
 	});
 
 	return {
-		onOpenedAnalysis: () => track("ws_opened_analysis", { word_bucket: wordBucket(countWords(store.get().text)) }),
+		onOpenedAnalysis: () => track("ws_opened_analysis", { word_bucket: wordBucket(store.get().text) }),
 	};
 }

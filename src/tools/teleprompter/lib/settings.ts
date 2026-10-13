@@ -1,6 +1,6 @@
 import { normalizeHex } from "./color";
 import { clamp } from "./math";
-import { isRecord } from "./object";
+import { asRecord, pickBool, pickEnum } from "../../../lib/validate";
 
 export const FONT_IDS = ["clean", "classic", "hyperlegible", "condensed", "display", "mono"] as const;
 export type FontId = (typeof FONT_IDS)[number];
@@ -85,8 +85,8 @@ export const SETTINGS_VERSION = 1;
 
 export function validateSettings(input: unknown): Settings {
 	const defaults = DEFAULT_SETTINGS;
-	const raw = isRecord(input) ? input : {};
-	const rawCustom = isRecord(raw.custom) ? raw.custom : {};
+	const raw = asRecord(input);
+	const rawCustom = asRecord(raw.custom);
 
 	return {
 		font: pickEnum(FONT_IDS, raw.font, defaults.font),
@@ -111,14 +111,6 @@ export function validateSettings(input: unknown): Settings {
 		countdown: pickBool(raw.countdown, defaults.countdown),
 		arrowKeys: pickEnum(ARROW_KEY_LAYOUTS, raw.arrowKeys, defaults.arrowKeys),
 	};
-}
-
-function pickEnum<T extends string>(allowed: readonly T[], value: unknown, fallback: T): T {
-	return typeof value === "string" && (allowed as readonly string[]).includes(value) ? (value as T) : fallback;
-}
-
-function pickBool(value: unknown, fallback: boolean): boolean {
-	return typeof value === "boolean" ? value : fallback;
 }
 
 function pickNumber(key: NumericSetting, value: unknown, fallback: number): number {

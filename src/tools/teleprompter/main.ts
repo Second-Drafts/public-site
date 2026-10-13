@@ -1,13 +1,13 @@
+import { takeHandOffFromUrl } from "../../lib/hand-off-hash";
 import { stored } from "../../lib/privacy/storage";
 import { askConfirm } from "../../lib/confirm";
 import { mountEditPreview } from "./edit-preview";
 import { mountEditView } from "./edit-view";
 import { defaultSettingsForViewport } from "./lib/defaults";
-import { debounce } from "../../lib/debounce";
 import { removeRetiredStorage } from "./lib/retired-storage";
 import { SAMPLE_SCRIPT } from "./lib/sample";
-import { validateSettings, type Settings } from "./lib/settings";
-import { hasShareParam } from "./lib/share-hash";
+import { validateSettings } from "./lib/settings";
+import { saveOnChange } from "../../lib/store";
 import { createStore, type Store } from "./lib/store";
 import { mountPromptView } from "./prompt-view";
 import { mountSettingsPanel } from "./settings-panel";
@@ -45,29 +45,20 @@ openShareLink(store, usage, showNotice);
 addEventListener("hashchange", () => openShareLink(store, usage, showNotice));
 
 function persistChanges(store: Store) {
-	const saveScript = debounce((script: string) => storedScript.write(script), 500);
-	const saveSettings = debounce((settings: Settings) => storedSettings.writeJSON(settings), 300);
-	store.subscribe((state, previous) => {
-		if (state.script !== previous.script) saveScript(state.script);
-		if (state.settings !== previous.settings) saveSettings(state.settings);
-	});
-	addEventListener("pagehide", () => {
-		saveScript.flush();
-		saveSettings.flush();
-	});
+	saveOnChange(store, (state) => state.script, storedScript.write, { delayMs: 500 });
+	saveOnChange(store, (state) => state.settings, storedSettings.writeJSON, { delayMs: 300 });
 }
 
 async function openShareLink(store: Store, usage: UsageHooks, showNotice: (message: string) => void) {
-	if (!hasShareParam(location.hash)) return;
-	const { decodeShareHash } = await import("./lib/share");
-	const shared = decodeShareHash(location.hash);
-	// Before the confirm, so a reload doesn't ask again.
-	history.replaceState(null, "", location.pathname + location.search);
+	const handOff = await takeHandOffFromUrl();
+	if (handOff === undefined) return;
 	if (store.get().view === "prompt") store.set({ view: "edit" });
-	if (!shared) {
+	if (!handOff) {
 		showNotice("That share link couldn't be opened. It may have been cut short when it was copied.");
 		return;
 	}
+	const { sharedScript } = await import("./lib/share");
+	const shared = sharedScript(handOff);
 	const fromWordCounter = shared.origin === "word_counter";
 	if (!fromWordCounter) usage.onShareLinkOpened();
 

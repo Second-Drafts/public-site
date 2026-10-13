@@ -1,7 +1,8 @@
 import { compressToEncodedURIComponent } from "lz-string";
 import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS, type Settings } from "./settings";
-import { SHARE_HASH_KEY, SHARE_URL_WARN_LENGTH, buildShareUrl, decodeShareHash } from "./share";
+import { HAND_OFF_HASH_KEY as SHARE_HASH_KEY } from "../../../lib/hand-off-hash";
+import { SHARE_URL_WARN_LENGTH, buildShareUrl, decodeShareHash } from "./share";
 
 const BASE = "https://example.com/tools/teleprompter";
 const defaults = (): Settings => ({ ...DEFAULT_SETTINGS, custom: { ...DEFAULT_SETTINGS.custom } });

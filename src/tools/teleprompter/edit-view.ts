@@ -1,21 +1,19 @@
 import { askConfirm } from "../../lib/confirm";
 import { required } from "../../lib/dom";
-import type { Store } from "./lib/store";
+import { bindTextarea, type TextInputSource } from "../../lib/text-entry";
 import { countWords, formatSpeakingTime, speakingSeconds } from "../../lib/text/measure";
+import { countText } from "../../lib/text/readout";
+import type { Store } from "./lib/store";
 
 export interface EditHooks {
-	onScriptInput(source: "paste" | "typed"): void;
+	onScriptInput(source: TextInputSource): void;
 	onShareCopied(tooLong: boolean): void;
 }
-
-const wordCountFormat = new Intl.NumberFormat("en");
 
 function statsText(script: string): string {
 	const words = countWords(script);
 	if (words === 0) return "No words yet. Paste or type a script to begin.";
-	const count = `${wordCountFormat.format(words)} ${words === 1 ? "word" : "words"}`;
-	const time = formatSpeakingTime(speakingSeconds(words));
-	return `${count} · ${time} to read`;
+	return `${countText(words, "words")} · ${formatSpeakingTime(speakingSeconds(words))} to read`;
 }
 
 const NOTICE_MS = 10_000;
@@ -64,8 +62,6 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 
 	function render() {
 		const { script } = store.get();
-		// Only touch the textarea when the value really differs, so the caret stays where it is while typing.
-		if (textarea.value !== script) textarea.value = script;
 		stats.textContent = statsText(script);
 		const blank = script.trim() === "";
 		start.disabled = blank;
@@ -73,10 +69,7 @@ export function mountEditView(store: Store, hooks: EditHooks): EditView {
 		clear.disabled = script === "";
 	}
 
-	textarea.addEventListener("input", (event) => {
-		store.set({ script: textarea.value });
-		hooks.onScriptInput((event as InputEvent).inputType === "insertFromPaste" ? "paste" : "typed");
-	});
+	bindTextarea(textarea, store, "script", hooks.onScriptInput);
 
 	start.addEventListener("click", () => store.set({ view: "prompt" }));
 

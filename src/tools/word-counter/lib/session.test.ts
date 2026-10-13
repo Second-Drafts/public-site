@@ -1,15 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sessionChange, sessionProgressText } from "./session";
-
-describe("sessionChange", () => {
-	it.each([
-		[100, 512, 412],
-		[100, 14, -86],
-		[100, 100, 0],
-	])("from %i to %i is %i", (baseline, current, change) => {
-		expect(sessionChange(baseline, current)).toBe(change);
-	});
-});
+import { sessionProgressText } from "./session";
 
 describe("sessionProgressText", () => {
 	it.each([

@@ -1,3 +1,5 @@
+import { debounce } from "./debounce";
+
 export type ChangeSource = "user" | "system";
 
 export type Listener<State> = (state: Readonly<State>, previous: Readonly<State>, source: ChangeSource) => void;
@@ -31,4 +33,22 @@ export function createStore<State, Patch>(
 			return () => listeners.delete(listener);
 		},
 	};
+}
+
+/** Saves the selected slice of state a beat after it changes, and anything still waiting when the page goes away. */
+export function saveOnChange<State, Slice>(
+	store: Store<State>,
+	select: (state: Readonly<State>) => Slice,
+	save: (slice: Slice) => void,
+	{
+		delayMs,
+		changed = (now, before) => now !== before,
+	}: { delayMs: number; changed?: (now: Slice, before: Slice) => boolean },
+): void {
+	const saveSoon = debounce(save, delayMs);
+	store.subscribe((state, previous) => {
+		const slice = select(state);
+		if (changed(slice, select(previous))) saveSoon(slice);
+	});
+	addEventListener("pagehide", saveSoon.flush);
 }

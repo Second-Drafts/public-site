@@ -1,5 +1,3 @@
-import type { WordBucket } from "../analytics/events";
-
 export type Unit = "words" | "characters" | "seconds";
 
 export interface Span {
@@ -14,7 +12,6 @@ const WORD_SEPARATOR = /[\s–—―…]+|-{2,}|\.{3,}/gu;
 const HAS_LETTER_OR_NUMBER = /[\p{L}\p{N}]/u;
 const WRITTEN_WITHOUT_SPACES =
 	/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
-const WHITESPACE = /^\s+$/u;
 
 export function segmenter(granularity: "grapheme" | "word" | "sentence"): Intl.Segmenter | undefined {
 	return typeof Intl.Segmenter === "function" ? new Intl.Segmenter(undefined, { granularity }) : undefined;
@@ -68,12 +65,6 @@ export function countCharacters(text: string): number {
 	return count;
 }
 
-export function countCharactersWithoutSpaces(text: string): number {
-	let count = 0;
-	for (const { segment } of graphemes(text)) if (!WHITESPACE.test(segment)) count++;
-	return count;
-}
-
 export function speakingSeconds(words: number, wpm: number = WORDS_PER_MINUTE): number {
 	return (words / wpm) * 60;
 }
@@ -117,13 +108,4 @@ export function formatSpeakingTime(seconds: number): string {
 	const hours = Math.floor(minutes / 60);
 	const rest = minutes % 60;
 	return rest === 0 ? `About ${hours} hr` : `About ${hours} hr ${rest} min`;
-}
-
-export function wordBucket(words: number): WordBucket {
-	if (words <= 50) return "0-50";
-	if (words <= 200) return "51-200";
-	if (words <= 600) return "201-600";
-	if (words <= 2000) return "601-2000";
-	if (words <= 10000) return "2001-10000";
-	return "10000+";
 }

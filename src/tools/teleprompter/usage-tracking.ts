@@ -1,12 +1,13 @@
 import { track } from "../../lib/usage-reports";
 import type { AnalyticsEvents, ScriptSource, TrackedSetting, WordBucket } from "../../lib/analytics/events";
 import { debounce } from "../../lib/debounce";
+import { settledInput, type TextInputSource } from "../../lib/text-entry";
 import { SAMPLE_SCRIPT } from "./lib/sample";
 import type { Settings } from "./lib/settings";
 import type { Store } from "./lib/store";
-import { countWords, wordBucket } from "../../lib/text/measure";
+import { countWords } from "../../lib/text/measure";
+import { wordBucket } from "../../lib/word-bucket";
 
-const SCRIPT_SETTLE_MS = 2000;
 const SETTING_SETTLE_MS = 1000;
 const ENGAGED_WORDS = 200;
 const ENGAGED_MS = 60_000;
@@ -16,14 +17,14 @@ const TRACKED_SETTINGS: TrackedSetting[] = ["font", "theme", "mirror", "flip", "
 export interface UsageHooks {
 	onPlay(): void;
 	onReachedEnd(): void;
-	onScriptInput(source: "paste" | "typed"): void;
+	onScriptInput(source: TextInputSource): void;
 	onShareCopied(tooLong: boolean): void;
 	onShareLinkOpened(): void;
 	onSharedScriptApplied(source: ScriptSource): void;
 }
 
 export function trackUsage(store: Store): UsageHooks {
-	const currentWordBucket = () => wordBucket(countWords(store.get().script));
+	const currentWordBucket = () => wordBucket(store.get().script);
 	const scriptEntry = trackScriptEntry(store, currentWordBucket);
 	const promptSession = trackPromptSession(store, currentWordBucket, scriptEntry.report);
 	trackSettingChanges(store);
@@ -67,19 +68,7 @@ function trackScriptEntry(store: Store, currentWordBucket: () => WordBucket) {
 		track("tp_script_entered", { word_bucket, source });
 	}
 
-	let pendingSource: "paste" | "typed" | null = null;
-	const settle = debounce(() => {
-		if (pendingSource) report(pendingSource);
-		pendingSource = null;
-	}, SCRIPT_SETTLE_MS);
-
-	return {
-		report,
-		input(source: "paste" | "typed") {
-			if (source === "paste" || !pendingSource) pendingSource = source;
-			settle();
-		},
-	};
+	return { report, input: settledInput(report) };
 }
 
 function trackPromptSession(

@@ -1,14 +1,13 @@
 import { required } from "../../lib/dom";
-import { countWords } from "../../lib/text/measure";
-import { sessionChange, sessionProgressText } from "./lib/session";
-import type { State, Store } from "./lib/state";
+import { sessionProgressText } from "./lib/session";
+import { measureDraft, type State, type Store } from "./lib/state";
 
 export function mountSessionProgress(store: Store): void {
 	const progress = required(document, "#wc-session-progress");
-	const baselineWords = countWords(store.get().text);
+	const baselineWords = measureDraft(store.get().text, "words");
 
 	function render({ text }: Readonly<State>) {
-		const change = sessionChange(baselineWords, countWords(text));
+		const change = measureDraft(text, "words") - baselineWords;
 		progress.hidden = change === 0;
 		progress.textContent = sessionProgressText(change);
 	}

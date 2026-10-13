@@ -1,4 +1,4 @@
-import type { Unit } from "../../../lib/text/measure";
+import type { Unit } from "./measure";
 
 const numberFormat = new Intl.NumberFormat("en");
 
@@ -26,7 +26,7 @@ export function formatAmount(amount: number, unit: Unit): string {
 	return unit === "seconds" ? formatDuration(amount) : numberFormat.format(amount);
 }
 
-export function formatDuration(seconds: number): string {
+function formatDuration(seconds: number): string {
 	const total = Math.round(seconds);
 	const minutes = Math.floor(total / 60);
 	const rest = total % 60;

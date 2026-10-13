@@ -1,9 +1,8 @@
-import { isRecord } from "../../teleprompter/lib/object";
 import type { Unit } from "../../../lib/text/measure";
-import { DEFAULT_TARGET, type State } from "./state";
-import { RULES, UNITS, type Rule, type Target } from "./target";
-
-export const CUSTOM_PRESET = "custom";
+import { asRecord, pickBool, pickEnum } from "../../../lib/validate";
+import { CUSTOM_PRESET } from "./presets";
+import type { State } from "./state";
+import { DEFAULT_TARGET, RULES, UNITS, type Rule, type Target } from "./target";
 
 export type Settings = Pick<State, "showTarget" | "target" | "presetId">;
 
@@ -20,7 +19,7 @@ export const pickSettings = ({ showTarget, target, presetId }: State): Settings 
 });
 
 export function validateSettings(input: unknown): Settings {
-	const raw = isRecord(input) ? input : {};
+	const raw = asRecord(input);
 	return {
 		showTarget: pickBool(raw.showTarget, DEFAULT_SETTINGS.showTarget),
 		target: validateTarget(raw.target),
@@ -29,7 +28,7 @@ export function validateSettings(input: unknown): Settings {
 }
 
 function validateTarget(input: unknown): Target {
-	const raw = isRecord(input) ? input : {};
+	const raw = asRecord(input);
 	const target: Target = {
 		unit: pickEnum<Unit>(UNITS, raw.unit, DEFAULT_TARGET.unit),
 		rule: pickEnum<Rule>(RULES, raw.rule, DEFAULT_TARGET.rule),
@@ -37,14 +36,6 @@ function validateTarget(input: unknown): Target {
 	};
 	const min = pickAmount(raw.min);
 	return min === undefined || min >= target.value ? target : { ...target, min };
-}
-
-function pickEnum<T extends string>(allowed: readonly T[], value: unknown, fallback: T): T {
-	return typeof value === "string" && (allowed as readonly string[]).includes(value) ? (value as T) : fallback;
-}
-
-function pickBool(value: unknown, fallback: boolean): boolean {
-	return typeof value === "boolean" ? value : fallback;
 }
 
 function pickAmount(value: unknown): number | undefined {

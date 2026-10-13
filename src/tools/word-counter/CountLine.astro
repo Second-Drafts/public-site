@@ -1,4 +1,5 @@
 ---
+import { WORDS_PER_MINUTE } from "../../lib/text/measure";
 import { INITIAL_STATE, summarize } from "./lib/state";
 
 const { count } = summarize(INITIAL_STATE);
@@ -7,7 +8,7 @@ const { count } = summarize(INITIAL_STATE);
 <div class="wc-count-line" id="wc-count-line">
 	<p class="wc-count"><span id="wc-count">{count}</span> <span id="wc-status" class="wc-status"></span></p>
 	<p class="wc-extras">
-		<span id="wc-speaking" class="wc-speaking" title="At 150 words per minute" hidden></span>
+		<span id="wc-speaking" class="wc-speaking" title={`At ${WORDS_PER_MINUTE} words per minute`} hidden></span>
 		<a id="wc-open-teleprompter" class="wc-open-teleprompter" href="/tools/teleprompter" hidden>Open in Teleprompter</a>
 	</p>
 	<p id="wc-announcement" class="sd-visually-hidden" aria-live="polite"></p>

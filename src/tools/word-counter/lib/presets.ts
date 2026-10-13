@@ -1,6 +1,7 @@
 import type { Target } from "./target";
 
 export const NO_PRESET = "none";
+export const CUSTOM_PRESET = "custom";
 
 export interface Preset {
 	id: string;
