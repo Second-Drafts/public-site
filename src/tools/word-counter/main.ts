@@ -6,7 +6,7 @@ import type { State, Store } from "./lib/state";
 import { persistChanges, restoreState } from "./persistence";
 import { mountRhythmStrip } from "./rhythm-strip";
 import { mountSelectionLine } from "./selection-line";
-import { mountSessionPanel } from "./session-panel";
+import { mountSessionProgress } from "./session-progress";
 import { trackUsage } from "./usage-tracking";
 import { mountTargetPanel } from "./target-panel";
 
@@ -28,4 +28,4 @@ mountSelectionLine(store, usage);
 mountCutLine(store, editor.highlights, usage);
 mountTargetPanel(store);
 mountRhythmStrip(store, editor.highlights, usage);
-mountSessionPanel(store, usage);
+mountSessionProgress(store);

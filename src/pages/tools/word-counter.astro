@@ -1,5 +1,4 @@
 ---
-import ConfirmDialog from "../../components/ConfirmDialog.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import Base from "../../layouts/Base.astro";
 import CountLine from "../../tools/word-counter/CountLine.astro";
@@ -7,7 +6,7 @@ import CutLine from "../../tools/word-counter/CutLine.astro";
 import Editor from "../../tools/word-counter/Editor.astro";
 import RhythmStrip from "../../tools/word-counter/RhythmStrip.astro";
 import SelectionLine from "../../tools/word-counter/SelectionLine.astro";
-import SessionPanel from "../../tools/word-counter/SessionPanel.astro";
+import SessionProgress from "../../tools/word-counter/SessionProgress.astro";
 import TargetPanel from "../../tools/word-counter/TargetPanel.astro";
 ---
 
@@ -21,8 +20,7 @@ import TargetPanel from "../../tools/word-counter/TargetPanel.astro";
 	<CutLine />
 	<TargetPanel />
 	<RhythmStrip />
-	<SessionPanel />
-	<ConfirmDialog />
+	<SessionProgress />
 </Base>
 
 <script>

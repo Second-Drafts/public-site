@@ -1,6 +1,6 @@
 # 17 · Word counter v2 (overview)
 
-Child tickets: 18–30.
+Child tickets: 18–31.
 
 ## Goal
 
@@ -34,5 +34,6 @@ The difficult, shared logic comes first and is done serially, so the later ticke
 | 2 · Features | #21 speaking time | Haiku | Display only |
 | 2 · Features | #22 open in teleprompter, #24 SEO | Sonnet | After #21 |
 | Later | #26 preset landing pages | — | Once #23 shows which presets people use |
+| Later | #31 writing sprint tool, spun out of #29 | — | Sprints need a focused writing screen, not a panel in the counter |
 
 Phase 2 tickets each add one component and one mount line, and call analytics hooks #23 already registered, so they don't edit `EVENT_SCHEMA`, the lock file or the settings validator. Run each in its own worktree and merge them one at a time.

@@ -15,8 +15,6 @@ export interface UsageHooks {
 	onOpenedInTeleprompter(): void;
 	onCutLineShown(): void;
 	onSelectionCounted(): void;
-	onSprintStarted(minutes: number): void;
-	onSprintFinished(minutes: number): void;
 	onRhythmOpened(): void;
 	onRhythmSentenceClicked(): void;
 }
@@ -45,8 +43,6 @@ export function trackUsage(store: Store): UsageHooks {
 			track("wc_cut_line_shown", { rule, unit });
 		}),
 		onSelectionCounted: onceAVisit(() => track("wc_selection_counted", {})),
-		onSprintStarted: (minutes) => track("wc_sprint_started", { minutes }),
-		onSprintFinished: (minutes) => track("wc_sprint_finished", { minutes, word_bucket: currentWordBucket() }),
 		onRhythmOpened: () => track("wc_rhythm_opened", {}),
 		onRhythmSentenceClicked: () => track("wc_rhythm_sentence_clicked", {}),
 	};

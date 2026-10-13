@@ -43,3 +43,4 @@ Added `SessionPanel.astro` and `session-panel.ts`, mounted with one line in `mai
 - The end-of-sprint summary (`25 minutes · 640 words`) is in a `role="status"` region, so it is announced. The ticking clock is a `role="timer"`, which is not announced.
 - `usage.onSprintStarted` and `onSprintFinished` are called; a stopped sprint reports no finish. No new storage keys.
 - Not verified: a real multi-minute background tab (the timer was checked by stubbing `Date.now`), screen reader output, and the final `[hidden]` CSS fix for the setup row was not re-checked in the browser after the edit.
+- Later the same day, the sprint timer was taken out of the word counter and spun out into #31, a writing sprint tool of its own. The counter keeps session progress, now `SessionProgress.astro` and `session-progress.ts`. `lib/sprint.ts` and the `onSprintStarted` / `onSprintFinished` hooks were removed; #31 says where to find them in history.
