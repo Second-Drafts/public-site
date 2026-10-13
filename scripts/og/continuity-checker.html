@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			@font-face {
+				font-family: Inter;
+				font-weight: 700;
+				src: url(../../public/fonts/inter-700.woff2);
+			}
+			@font-face {
+				font-family: "Josefin Sans";
+				font-weight: 300 700;
+				src: url(../../public/fonts/josefin-sans.woff2);
+			}
+			@font-face {
+				font-family: "JetBrains Mono";
+				font-weight: 700;
+				src: url(../../public/fonts/jetbrains-mono-700.woff2);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+			}
+			body {
+				width: 1200px;
+				height: 630px;
+				background: #000;
+				color: #fff;
+				font-family: Inter, sans-serif;
+				position: relative;
+				overflow: clip;
+			}
+			.stage {
+				position: absolute;
+				left: 100px;
+				right: 100px;
+				top: 122px;
+				display: flex;
+				flex-direction: column;
+				gap: 30px;
+			}
+			.label {
+				font-family: "JetBrains Mono", monospace;
+				font-weight: 700;
+				font-size: 30px;
+				letter-spacing: 0.06em;
+				color: #ff6b5e;
+			}
+			.passage {
+				display: flex;
+				align-items: baseline;
+				gap: 32px;
+				padding-left: 28px;
+				border-left: 6px solid #2a2a2a;
+				white-space: nowrap;
+			}
+			.chapter {
+				flex: none;
+				width: 120px;
+				font-family: "JetBrains Mono", monospace;
+				font-weight: 700;
+				font-size: 30px;
+				color: #888;
+			}
+			.quote {
+				font-weight: 700;
+				font-size: 60px;
+				line-height: 84px;
+			}
+			.quote b {
+				color: #ffd400;
+			}
+			.strip {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 116px;
+				background: #111;
+				border-top: 2px solid #2a2a2a;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 56px;
+			}
+			.cap {
+				white-space: nowrap;
+				font-family: "Josefin Sans", sans-serif;
+				font-weight: 600;
+				font-size: 32px;
+				color: #fff;
+				padding-top: 4px;
+			}
+			.cap span {
+				color: #ffd400;
+				margin: 0 0.35em;
+			}
+			.strip img {
+				height: 40px;
+				width: 475px;
+				flex: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="label">CONTRADICTION</div>
+			<div class="passage">
+				<div class="chapter">Ch. 3</div>
+				<div class="quote">“the <b>green</b> door stood…”</div>
+			</div>
+			<div class="passage">
+				<div class="chapter">Ch. 12</div>
+				<div class="quote">“painted a <b>red</b> that…”</div>
+			</div>
+		</div>
+		<div class="strip">
+			<div class="cap">Continuity checker<span>·</span>Coming soon</div>
+			<img src="../../public/img/sd-word-single_line-marked-night.svg" alt="" />
+		</div>
+	</body>
+</html>

@@ -1,22 +1,17 @@
 {
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"updated": "2026-10-13",
 	"reviews": [
 		{
-			"subject": "analytics property da_text_entered.source",
-			"outcome": "clear"
-		},
-		{
-			"subject": "analytics property da_text_entered.word_bucket",
-			"outcome": "accepted"
-		},
-		{
-			"subject": "analytics property ws_opened_analysis.word_bucket",
-			"outcome": "clear"
+			"subject": "analytics property cc_waitlist_clicked.placement",
+			"outcome": "checked-by-hand"
 		}
 	],
 	"analytics": {
 		"events": {
+			"cc_waitlist_clicked": {
+				"placement": ["string"]
+			},
 			"da_rhythm_sentence_clicked": {},
 			"da_text_entered": {
 				"source": ["string"],

@@ -2,6 +2,7 @@
 import Button from "../../components/Button.astro";
 import TextField from "../../components/TextField.astro";
 import Dialog from "../../components/Dialog.astro";
+import SoonTag from "../../components/SoonTag.astro";
 import { EMAIL_CAPTURE_ENABLED } from "./lib/interest";
 
 const emailCapture = EMAIL_CAPTURE_ENABLED;
@@ -22,7 +23,7 @@ const doors = [
 					<button type="button" class="fd__door" data-fake-door={door.feature} aria-haspopup="dialog">
 						<span class="fd__head">
 							<span class="fd__name sd-text-button">{door.name}</span>
-							<span class="fd__tag">Soon</span>
+							<SoonTag />
 						</span>
 						<span class="fd__sub">{door.subtitle}</span>
 					</button>
@@ -131,20 +132,6 @@ const doors = [
 		align-items: baseline;
 		justify-content: space-between;
 		gap: var(--space-2);
-	}
-	/* Josefin rides high */
-	.fd__tag {
-		font-family: var(--font-display);
-		font-size: 11px;
-		line-height: 14px;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink-muted);
-		border: var(--stroke-hairline) solid var(--rule-strong);
-		border-radius: var(--radius-pill);
-		padding: 3px var(--space-2) 1px;
-		white-space: nowrap;
 	}
 	.fd__sub {
 		font-family: var(--font-prose);

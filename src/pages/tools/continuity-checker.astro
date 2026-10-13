@@ -1,0 +1,253 @@
+---
+import Button from "../../components/Button.astro";
+import HighlightedBand from "../../components/HighlightedBand.astro";
+import Mark from "../../components/Mark.astro";
+import SoonTag from "../../components/SoonTag.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import Base from "../../layouts/Base.astro";
+import ExampleFlag from "../../tools/continuity-checker/ExampleFlag.astro";
+import { EXAMPLE_FLAGS } from "../../tools/continuity-checker/example-flags";
+import { WAITLIST_URL } from "../../tools/continuity-checker/waitlist";
+
+const pageTitle = "Continuity Checker: Catch It Before Your Reader Does";
+const pageDescription =
+	"A continuity checker for your manuscript. It reads the whole book and points out details that change, even a hundred pages apart. Coming soon.";
+const ogImageAlt = "A flag marked Contradiction, quoting a green door in chapter 3 and a red one in chapter 12.";
+
+const checks = [
+	{ title: "Details that change", text: "Eye colours, names, addresses, the colour of a door." },
+	{ title: "Your world’s own rules", text: "Magic that costs something, a curse with conditions, a law of the city." },
+	{ title: "Where people and things are", text: "Someone speaking from two valleys away, a letter that burned last chapter." },
+	{ title: "Timelines and counts", text: "Ages, dates, how many days have passed, how many guests sat down." },
+];
+
+const differences = [
+	{
+		title: "It reads the whole book at once",
+		text: "Not a chapter at a time. A slip in chapter 3 and its other half in chapter 30 are read together.",
+	},
+	{
+		title: "It shows its work",
+		text: "Every flag quotes both passages exactly, so you can judge it in a few seconds.",
+	},
+	{
+		title: "It rarely cries wolf",
+		text: "It tells you when it’s sure and when it’s only a maybe, so you know which to look at first.",
+	},
+	{
+		title: "It never rewrites",
+		text: "It points things out. What to change, and whether to change it, is up to you.",
+	},
+];
+---
+
+<Base title="Continuity Checker" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		ogImage="continuity-checker"
+		ogImageAlt={ogImageAlt}
+	/>
+
+	<div class="cc">
+		<header class="cc__hero">
+			<p class="cc__eyebrow">
+				<span class="sd-text-label">Continuity Checker</span>
+				<SoonTag />
+			</p>
+			<h1 class="sd-text-headline cc__headline">Catch it before your reader does.</h1>
+			<p class="cc__lede">
+				The Continuity Checker reads your whole manuscript and points out details that change, even a hundred pages
+				apart. It points things out; it never rewrites.
+			</p>
+			<div class="cc__cta">
+				<Button href={WAITLIST_URL} variant="accent" size="lg" data-waitlist-placement="hero">Join the waitlist</Button>
+				<p class="sd-text-meta cc__cta-note">Tell us what you’re writing, and we’ll let you know when it’s ready.</p>
+			</div>
+		</header>
+
+		<figure class="cc__examples">
+			<div class="cc__flags">
+				{EXAMPLE_FLAGS.map((flag) => <ExampleFlag flag={flag} />)}
+			</div>
+			<figcaption class="sd-text-meta cc__caption">Examples on a sample story, The Door in the Hill.</figcaption>
+		</figure>
+
+		<section class="cc__section" aria-labelledby="cc-checks">
+			<h2 id="cc-checks" class="sd-text-title">What it checks</h2>
+			<ul class="cc__list">
+				{
+					checks.map((check) => (
+						<li>
+							<h3 class="sd-text-heading">{check.title}</h3>
+							<p>{check.text}</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section class="cc__section" aria-labelledby="cc-different">
+			<h2 id="cc-different" class="sd-text-title">A second pair of eyes</h2>
+			<ul class="cc__list">
+				{
+					differences.map((difference) => (
+						<li>
+							<h3 class="sd-text-heading">{difference.title}</h3>
+							<p>{difference.text}</p>
+						</li>
+					))
+				}
+			</ul>
+			<p>
+				It won’t catch everything, and it doesn’t replace a good editor or a sharp-eyed beta reader. It catches the
+				slips that are easy to miss after your tenth read.
+			</p>
+		</section>
+
+		<section class="cc__section" aria-labelledby="cc-manuscript">
+			<h2 id="cc-manuscript" class="sd-text-title">Your manuscript</h2>
+			<p>
+				To check your manuscript, the Continuity Checker has to read it. Before it launches, we’ll publish exactly
+				where your manuscript goes and how it’s handled, so you can decide before you upload anything.
+			</p>
+		</section>
+	</div>
+
+	<HighlightedBand as="aside" aria-labelledby="cc-band">
+		<div class="cc__band">
+			<h2 id="cc-band" class="sd-text-title">
+				Find it before your <Mark kind="strike">reader</Mark> editor does.
+			</h2>
+			<p>Join the waitlist and tell us about your manuscript. It helps us decide what to build first.</p>
+			<Button href={WAITLIST_URL} variant="primary" size="lg" data-waitlist-placement="band">Join the waitlist</Button>
+		</div>
+	</HighlightedBand>
+</Base>
+
+<script>
+	import { mountWaitlistLinks } from "../../tools/continuity-checker/waitlist";
+
+	mountWaitlistLinks();
+</script>
+
+<style>
+	.cc {
+		--gutter: var(--space-6);
+		--content: 34em;
+		--breakout: 72rem;
+
+		display: grid;
+		grid-template-columns:
+			[full-width-start] minmax(var(--gutter), 1fr)
+			[breakout-start] minmax(0, calc((var(--breakout) - var(--content)) / 2))
+			[content-start] min(100% - var(--gutter) * 2, var(--content)) [content-end]
+			minmax(0, calc((var(--breakout) - var(--content)) / 2)) [breakout-end]
+			minmax(var(--gutter), 1fr) [full-width-end];
+		row-gap: var(--space-16);
+		padding-block: var(--space-16);
+	}
+	.cc > * {
+		grid-column: content;
+	}
+	.cc > .cc__examples {
+		grid-column: breakout;
+	}
+	.cc p,
+	.cc h1,
+	.cc h2,
+	.cc h3,
+	.cc figure,
+	.cc ul {
+		margin: 0;
+	}
+
+	.cc__hero {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.cc__eyebrow {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-3);
+		color: var(--ink-muted);
+	}
+	.cc__headline {
+		font-weight: 600;
+		text-wrap: balance;
+	}
+	.cc__lede {
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+	.cc__cta {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-3);
+		margin-block-start: var(--space-4);
+	}
+	.cc__cta-note {
+		color: var(--ink-muted);
+	}
+
+	.cc__examples {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.cc__flags {
+		display: grid;
+		gap: var(--space-6);
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+		align-items: start;
+	}
+	.cc__caption {
+		color: var(--ink-muted);
+		text-align: center;
+	}
+
+	.cc__section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.cc__section h2 {
+		text-wrap: balance;
+	}
+	.cc__section p {
+		text-wrap: pretty;
+	}
+	.cc__list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		padding: 0;
+		list-style: none;
+	}
+	.cc__list li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+	}
+	.cc__list p {
+		color: var(--ink-muted);
+	}
+
+	.cc__band {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-4);
+		max-width: 34em;
+		margin-inline: auto;
+	}
+	.cc__band h2,
+	.cc__band p {
+		margin: 0;
+	}
+</style>

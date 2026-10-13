@@ -4,7 +4,7 @@ import type { FaqItem } from "../lib/seo/faq";
 interface Props {
 	title: string;
 	description: string;
-	appName: string;
+	appName?: string;
 	ogImage: string;
 	ogImageAlt: string;
 	faq?: FaqItem[];
@@ -56,4 +56,4 @@ const appJsonLd = {
 <meta name="twitter:image" content={ogImageUrl} />
 <meta name="twitter:image:alt" content={ogImageAlt} />
 {faq.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd)} />}
-<script type="application/ld+json" set:html={JSON.stringify(appJsonLd)} />
+{appName && <script type="application/ld+json" set:html={JSON.stringify(appJsonLd)} />}

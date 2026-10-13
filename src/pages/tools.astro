@@ -1,9 +1,16 @@
 ---
 import Link from "../components/Link.astro";
 import PageHeader from "../components/PageHeader.astro";
+import SoonTag from "../components/SoonTag.astro";
 import Base from "../layouts/Base.astro";
 
-const tools = {
+interface Tool {
+	title: string;
+	description: string;
+	comingSoon?: boolean;
+}
+
+const tools: Record<string, Tool> = {
 	"word-counter": {
 		title: "Word Counter",
 		description: "Count words and characters, check a limit for an essay, story or post, and see how long your text takes to read aloud. Your text stays in your browser.",
@@ -20,19 +27,27 @@ const tools = {
 		title: "Teleprompter",
 		description: "Read your script from the screen. Free, with no account and no time limits, in fonts and colours that are easy on the eyes.",
 	},
+	"continuity-checker": {
+		title: "Continuity Checker",
+		description: "Reads your whole manuscript and points out details that change, even a hundred pages apart.",
+		comingSoon: true,
+	},
 };
 ---
 
 <Base title="Tools">
-	<PageHeader title="Tools">Our collection of free writing tools</PageHeader>
+	<PageHeader title="Tools">Our collection of writing tools</PageHeader>
 
 	<ul class="tools">
 		{
 			Object.entries(tools).map(([key, tool]) => (
 				<li>
-					<Link href={`/tools/${key}`} class="sd-text-heading">
-						{tool.title}
-					</Link>
+					<span class="tools__title">
+						<Link href={`/tools/${key}`} class="sd-text-heading">
+							{tool.title}
+						</Link>
+						{tool.comingSoon && <SoonTag />}
+					</span>
 					<p>{tool.description}</p>
 				</li>
 			))
@@ -48,6 +63,12 @@ const tools = {
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+	.tools__title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-3);
 	}
 	.tools p {
 		margin: var(--space-2) 0 0;
