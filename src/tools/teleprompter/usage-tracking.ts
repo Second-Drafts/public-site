@@ -1,4 +1,4 @@
-import { track } from "../../lib/analytics";
+import { track } from "../../lib/usage-reports";
 import type { AnalyticsEvents, ScriptSource, TrackedSetting, WordBucket } from "../../lib/analytics/events";
 import { debounce } from "../../lib/debounce";
 import { SAMPLE_SCRIPT } from "./lib/sample";

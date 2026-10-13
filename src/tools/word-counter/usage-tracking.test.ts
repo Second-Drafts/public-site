@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { track } from "../../lib/analytics";
+import { track } from "../../lib/usage-reports";
 import { createStore, mergeShallow } from "../../lib/store";
 import { INITIAL_STATE, type State, type Store } from "./lib/state";
 import { trackUsage, type UsageHooks } from "./usage-tracking";
 
-vi.mock("../../lib/analytics", () => ({ track: vi.fn() }));
+vi.mock("../../lib/usage-reports", () => ({ track: vi.fn() }));
 
 const tracked = vi.mocked(track);
 const manyWords = Array.from({ length: 60 }, () => "word").join(" ");

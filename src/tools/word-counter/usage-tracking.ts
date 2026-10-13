@@ -1,4 +1,4 @@
-import { track } from "../../lib/analytics";
+import { track } from "../../lib/usage-reports";
 import type { CounterTextSource, WordBucket } from "../../lib/analytics/events";
 import { debounce } from "../../lib/debounce";
 import { countWords, wordBucket } from "../../lib/text/measure";

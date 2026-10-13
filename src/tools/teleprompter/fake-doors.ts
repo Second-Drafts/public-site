@@ -1,4 +1,4 @@
-import { track } from "../../lib/analytics";
+import { track } from "../../lib/usage-reports";
 import type { FakeDoorFeature } from "../../lib/analytics/events";
 import { wireDialog } from "../../lib/dialog";
 import { required } from "../../lib/dom";
