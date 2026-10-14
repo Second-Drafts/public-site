@@ -1,0 +1,1 @@
+var e=(e,t,n)=>Math.min(n,Math.max(t,e)),t=(e,t,n)=>e+(t-e)*n;export{t as n,e as t};
