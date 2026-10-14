@@ -48,10 +48,16 @@ const { flag } = Astro.props;
 		margin: 0;
 	}
 	.flag__certainty {
-		color: var(--ink-muted);
+		align-self: start;
+		padding: 3px var(--space-3) 1px;
+		border-radius: var(--radius-pill);
+		color: var(--on-marker);
 	}
 	.flag__certainty--contradiction {
-		color: var(--red-pen);
+		background: var(--marker-pink);
+	}
+	.flag__certainty--possible {
+		background: var(--marker-yellow);
 	}
 	.flag__summary {
 		font-weight: 600;
