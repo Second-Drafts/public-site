@@ -8,7 +8,7 @@ A lighter tool, for fun: something to ask when a draft (or anything else) needs 
 
 ## What
 
-- A 3D Magic 8 Ball at `/tools/magic-8-ball`. The ball is modelled in Blender by `scripts/models/magic-8-ball.py` and rendered with three.js, bundled from npm because the CSP allows no CDNs. A CSS ball stands in while the model loads, and stays if WebGL or the model isn't available.
+- A 3D Magic 8 Ball at `/tools/magic-8-ball`. The ball is modelled in Blender by `scripts/models/magic-8-ball.py` and drawn by a small WebGL2 renderer of our own (`ball-webgl.ts`). It shades each material with a matcap: a picture of a sphere in that material, in `public/models/magic-8-ball-matcaps.webp`. The matcaps were baked once from the three.js renderer at commit 0e57180, which is the source of the look; changing the shine means re-baking from there. Each 256 px cell is a unit sphere in one material with that commit's lights, environment and tone mapping and no fog. It's seen from the page camera's distance with the sphere filling the cell, except the rim cell, which is seen head-on. The atlas is saved as WebP at quality 92 with sharp YUV. A CSS ball stands in while the model loads, and stays if WebGL2 or the model isn't available.
 - Both balls first show their 8 for a beat, then turn to the window. The die tumbles in blue water while the ball is shaken and rises clear of the haze to answer.
 - An optional question. You can shake the ball four ways: submit the question, click or press a key on the ball, drag it back and forth, or shake your phone. iOS asks for motion access from a tap first.
 - Two decks: the classic 20 answers, and a writer's deck in the Department's voice.

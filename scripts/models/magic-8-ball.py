@@ -5,7 +5,11 @@ Run from the repo root:
 
 The ball is modelled with the window on +Z and "up" on +Y. Before export the
 whole model is baked into Blender's Z-up space so the glTF (Y-up) result has
-the window facing +Z, toward a three.js camera at rest.
+the window facing +Z, toward the page's camera at rest.
+
+The page reads the file with src/tools/magic-8-ball/lib/glb.ts, which handles
+only what this export produces: nodes that only move, and triangle meshes with
+float attributes and 16-bit indices. Its tests read the exported file.
 """
 
 import math

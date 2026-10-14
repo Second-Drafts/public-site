@@ -1,4 +1,4 @@
-import { clamp } from "./math";
+import { clamp } from "../../../lib/math";
 
 export function normalizeHex(value: unknown): string | null {
 	if (typeof value !== "string") return null;

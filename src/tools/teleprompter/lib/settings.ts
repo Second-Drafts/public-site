@@ -1,5 +1,5 @@
 import { normalizeHex } from "./color";
-import { clamp } from "./math";
+import { clamp } from "../../../lib/math";
 import { asRecord, pickBool, pickEnum } from "../../../lib/validate";
 
 export const FONT_IDS = ["clean", "classic", "hyperlegible", "condensed", "display", "mono"] as const;

@@ -5,7 +5,6 @@ import type { Answer } from "./lib/answers";
 import { answerChosen, answerSettled } from "./lib/oracle";
 import type { ShakeMethod, State, Store } from "./lib/state";
 
-const MODEL_URL = "/models/magic-8-ball.glb";
 /** How long the ball keeps shaking after the last shake or drag movement before it starts to settle. */
 const SHAKE_MS = 900;
 const REDUCED_SHAKE_MS = 600;
@@ -76,7 +75,7 @@ export function mountScene(store: Store): DraggableBall {
 async function loadModelBall(canvas: HTMLCanvasElement, reducedMotion: boolean): Promise<BallRenderer | null> {
 	try {
 		const { createBallRenderer } = await import("./ball-renderer");
-		return await createBallRenderer(canvas, { modelUrl: MODEL_URL, reducedMotion });
+		return await createBallRenderer(canvas, { reducedMotion });
 	} catch {
 		return null;
 	}

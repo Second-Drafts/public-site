@@ -1,4 +1,4 @@
-import { clamp } from "./math";
+import { clamp } from "../../../lib/math";
 import { SPEED_STEPS } from "./settings";
 
 export const SLOWEST_LPS = 0.1;
