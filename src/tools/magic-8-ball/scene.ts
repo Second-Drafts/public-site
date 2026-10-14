@@ -27,12 +27,16 @@ export function mountScene(store: Store): DraggableBall {
 	let answerTimer: ReturnType<typeof setTimeout> | undefined;
 
 	void loadModelBall(canvas, reducedMotion).then((modelBall) => {
-		if (!modelBall) return;
+		if (modelBall) useModelBall(modelBall);
+		if (store.get().phase === "idle") ball.introduce();
+	});
+
+	function useModelBall(modelBall: BallRenderer) {
 		ball = modelBall;
 		button.classList.add("has-model");
 		const { phase, reading } = store.get();
 		if (reading && phase !== "shaking") void ball.reveal(reading.answer);
-	});
+	}
 
 	function chooseAnswerAfterShaking() {
 		clearTimeout(answerTimer);

@@ -6,6 +6,7 @@ import {
 	Color,
 	DirectionalLight,
 	Euler,
+	Fog,
 	Group,
 	MathUtils,
 	Mesh,
@@ -16,8 +17,11 @@ import {
 	PerspectiveCamera,
 	PMREMGenerator,
 	PointLight,
+	Quaternion,
 	Scene,
 	SRGBColorSpace,
+	type Texture,
+	Vector3,
 	WebGLRenderer,
 } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
@@ -26,6 +30,8 @@ import type { Answer } from "./lib/answers";
 import { fitTextInTriangle } from "./lib/triangle-text";
 
 export interface BallRenderer {
+	/** Shows the 8 side for a beat, then turns to the window. Shaking turns it at once. */
+	introduce(): void;
 	shake(intensity: number): void;
 	drag(dx: number, dy: number): void;
 	release(): void;
@@ -43,19 +49,26 @@ const CAMERA_DISTANCE = 5.5;
 const MAX_PIXEL_RATIO = 2;
 const MAX_FRAME_SECONDS = 0.05;
 const MAX_AGITATION = 1.6;
-const AGITATION_DECAY_PER_SECOND = 1.1;
+const AGITATION_DECAY_PER_SECOND = 0.7;
 const DIE_FACE_DISTANCE = 0.286;
 const DIE_FACE_RISEN_Z = 0.79;
 const DIE_FACE_SUNK_Z = 0.4;
 const DIE_RISEN_SCALE = 1.6;
 const DIE_SUNK_SCALE = 1;
+const DIE_RESTING_TILT = new Quaternion().setFromEuler(new Euler(0.7, -1.1, 0.5));
+const ANSWER_FACING_GLASS = new Quaternion();
+const TUMBLE_RADIANS_PER_SECOND = 9;
 const GLASS_Z = 0.826;
+const LIQUID_FLOOR_Z = 0.12;
+const WATER_COLOR = new Color(0.01, 0.02, 0.12);
+const INTRO_HOLD_SECONDS = 0.8;
+const INTRO_TURN_SECONDS = 1.4;
+const HURRIED_TURN_SECONDS = 0.45;
 const ANSWER_FONT_FAMILY = '"Josefin Sans", sans-serif';
 const ANSWER_FONT_WEIGHT = 600;
 const ANSWER_TEXTURE_WIDTH = 640;
 const ANSWER_TEXTURE_HEIGHT = Math.round(ANSWER_TEXTURE_WIDTH * (Math.sqrt(3) / 2));
 const HAZY_TEXT_ALPHA = 0.7;
-const MURK_COLOR = new Color(0.004, 0.004, 0.022);
 
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 const easeInOut = (t: number) => t * t * (3 - 2 * t);
@@ -132,9 +145,9 @@ class Spring {
 interface BallParts {
 	root: Object3D;
 	die: Object3D;
-	dieMaterial: MeshStandardMaterial;
 	answerFace: Mesh;
 	window: Mesh;
+	liquid: Mesh;
 }
 
 function loadModel(modelUrl: string): Promise<Object3D> {
@@ -157,18 +170,19 @@ function firstMaterial(node: Object3D): MeshStandardMaterial {
 	return found;
 }
 
-function tuneMaterials(root: Object3D): BallParts {
+/** The environment is given to each material that reflects it, because three ignores a material's own `envMapIntensity` when it falls back to `scene.environment`. */
+function tuneMaterials(root: Object3D, environment: Texture): BallParts {
 	root.traverse((child) => {
 		const mesh = child as Mesh;
 		if (!mesh.isMesh) return;
 		const source = mesh.material as MeshStandardMaterial;
-		if (source.name === "ShellBlack") mesh.material = glossyShellMaterial(source);
-		if (source.name === "ShellRim") mesh.material = rimMaterial(source);
-		if (source.name === "DiscWhite") mesh.material = whiteDiscMaterial(source);
+		if (source.name === "ShellBlack") mesh.material = glossyShellMaterial(source, environment);
+		if (source.name === "ShellRim") mesh.material = rimMaterial(source, environment);
+		if (source.name === "DiscWhite") mesh.material = whiteDiscMaterial(source, environment);
 	});
 
 	const window = requireNode<Mesh>(root, "Window");
-	window.material = glassMaterial();
+	window.material = glassMaterial(environment);
 	window.renderOrder = 3;
 
 	const liquid = requireNode<Mesh>(root, "Liquid");
@@ -176,52 +190,57 @@ function tuneMaterials(root: Object3D): BallParts {
 
 	const die = requireNode<Object3D>(root, "Die");
 	const dieMaterial = firstMaterial(die);
-	dieMaterial.color.setRGB(0.001, 0.002, 0.012);
-	dieMaterial.roughness = 0.9;
-	dieMaterial.envMapIntensity = 0.05;
+	dieMaterial.color.setRGB(0.02, 0.04, 0.2);
+	dieMaterial.roughness = 0.6;
+	dieMaterial.envMap = environment;
+	dieMaterial.envMapIntensity = 0.3;
 	dieMaterial.flatShading = true;
 
 	const answerFace = requireNode<Mesh>(root, "AnswerFace");
 	answerFace.renderOrder = 1;
 
-	return { root, die, dieMaterial, answerFace, window };
+	return { root, die, answerFace, window, liquid };
 }
 
-function glossyShellMaterial(source: MeshStandardMaterial) {
+function glossyShellMaterial(source: MeshStandardMaterial, environment: Texture) {
 	const shell = new MeshPhysicalMaterial({
 		color: new Color(0.012, 0.012, 0.016),
-		roughness: 0.14,
+		roughness: 0.32,
 		metalness: 0,
 		clearcoat: 1,
-		clearcoatRoughness: 0.04,
-		envMapIntensity: 0.28,
+		clearcoatRoughness: 0.2,
+		envMap: environment,
+		envMapIntensity: 0.24,
 	});
 	source.dispose();
 	return shell;
 }
 
-function rimMaterial(source: MeshStandardMaterial) {
+function rimMaterial(source: MeshStandardMaterial, environment: Texture) {
 	const rim = new MeshPhysicalMaterial({
 		color: new Color(0.008, 0.008, 0.011),
 		roughness: 0.6,
+		envMap: environment,
 		envMapIntensity: 0.1,
 	});
 	source.dispose();
 	return rim;
 }
 
-function whiteDiscMaterial(source: MeshStandardMaterial) {
+function whiteDiscMaterial(source: MeshStandardMaterial, environment: Texture) {
 	const disc = new MeshPhysicalMaterial({
 		color: new Color(0.82, 0.82, 0.8),
 		roughness: 0.38,
 		clearcoat: 0.6,
 		clearcoatRoughness: 0.2,
+		envMap: environment,
+		envMapIntensity: 0.5,
 	});
 	source.dispose();
 	return disc;
 }
 
-function glassMaterial() {
+function glassMaterial(environment: Texture) {
 	return new MeshPhysicalMaterial({
 		color: new Color(0.01, 0.012, 0.03),
 		roughness: 0.03,
@@ -231,7 +250,8 @@ function glassMaterial() {
 		transparent: true,
 		opacity: 0.12,
 		depthWrite: false,
-		envMapIntensity: 1.6,
+		envMap: environment,
+		envMapIntensity: 0.7,
 	});
 }
 
@@ -272,8 +292,8 @@ function drawCloudTexture() {
 	return texture;
 }
 
-function createFogPlane(windowRadius: number) {
-	const fog = new Mesh(
+function createCloudPlane(windowRadius: number) {
+	const cloud = new Mesh(
 		new CircleGeometry(windowRadius, 48),
 		new MeshBasicMaterial({
 			map: drawCloudTexture(),
@@ -284,9 +304,23 @@ function createFogPlane(windowRadius: number) {
 			toneMapped: false,
 		}),
 	);
-	fog.position.z = GLASS_Z;
-	fog.renderOrder = 2;
-	return fog;
+	cloud.position.z = GLASS_Z;
+	cloud.renderOrder = 2;
+	return cloud;
+}
+
+/** Fogs only what sits in the chamber, thickening from clear at the glass to solid water at the chamber floor. */
+function fillChamberWithWater(scene: Scene, ball: Object3D, underwater: Object3D[]) {
+	scene.fog = new Fog(WATER_COLOR, CAMERA_DISTANCE - GLASS_Z, CAMERA_DISTANCE - LIQUID_FLOOR_Z);
+	setFog(ball, false);
+	for (const node of underwater) setFog(node, true);
+}
+
+function setFog(root: Object3D, enabled: boolean) {
+	root.traverse((child) => {
+		const mesh = child as Mesh;
+		if (mesh.isMesh) (mesh.material as MeshStandardMaterial).fog = enabled;
+	});
 }
 
 function createAnswerCanvas() {
@@ -362,12 +396,10 @@ function createLighting(scene: Scene, renderer: WebGLRenderer) {
 	const environment = pmrem.fromScene(room, 0.04);
 	room.dispose();
 	pmrem.dispose();
-	scene.environment = environment.texture;
-	scene.environmentIntensity = 0.7;
 
-	const key = new DirectionalLight(0xffffff, 2.4);
+	const key = new DirectionalLight(0xffffff, 1.8);
 	key.position.set(2.5, 3.5, 5);
-	const rim = new DirectionalLight(0x8aa4ff, 3);
+	const rim = new DirectionalLight(0x8aa4ff, 1.8);
 	rim.position.set(-4, 2, -3);
 	const fill = new AmbientLight(0x202030, 0.6);
 	scene.add(key, rim, fill);
@@ -432,10 +464,10 @@ function assembleBallRenderer(
 	pivot.add(model);
 	scene.add(pivot);
 
-	const parts = tuneMaterials(model);
+	const parts = tuneMaterials(model, environmentTexture);
 	const dieRest = parts.die.position.clone();
-	const fog = createFogPlane(0.41);
-	pivot.add(fog);
+	const cloud = createCloudPlane(0.41);
+	pivot.add(cloud);
 
 	const answerCanvas = createAnswerCanvas();
 	const answerTexture = new CanvasTexture(answerCanvas);
@@ -453,8 +485,8 @@ function assembleBallRenderer(
 	const answerGlow = new PointLight(0x4f68ff, 0, 0.9, 1.2);
 	answerGlow.position.set(0, 0, 0.8);
 	pivot.add(answerGlow);
+	fillChamberWithWater(scene, pivot, [parts.liquid, parts.die]);
 
-	const dieColor = parts.dieMaterial.color.clone();
 	const glass = parts.window.material as MeshPhysicalMaterial;
 	const glassColor = glass.color.clone();
 	const hazyGlassColor = new Color(0.1, 0.12, 0.22);
@@ -466,9 +498,13 @@ function assembleBallRenderer(
 	const springs = [positionX, positionY, tiltX, tiltY];
 	const depth = new Track(0);
 	const textAlpha = new Track(0);
-	const dieTurn = new Track(1);
+	const answerFacing = new Track(0);
 	const haze = new Track(0);
-	const tracks = [depth, textAlpha, dieTurn, haze];
+	const turnFromWindow = new Track(0);
+	const tracks = [depth, textAlpha, answerFacing, haze, turnFromWindow];
+	const dieTumble = DIE_RESTING_TILT.clone();
+	const tumbleAxis = new Vector3();
+	const tumbleStep = new Quaternion();
 	let agitation = 0;
 	let unitsPerPixel = 0.005;
 	let pendingReveal: (() => void) | null = null;
@@ -489,41 +525,39 @@ function assembleBallRenderer(
 	}
 
 	function applyBallPose(now: number) {
-		const wobble = reducedMotion ? 0 : agitation;
 		pivot.position.set(
-			positionX.value + Math.sin(now * 41) * 0.045 * wobble,
-			positionY.value + Math.sin(now * 37 + 1) * 0.045 * wobble,
+			positionX.value + Math.sin(now * 41) * 0.045 * agitation,
+			positionY.value + Math.sin(now * 37 + 1) * 0.045 * agitation,
 			0,
 		);
 		pivot.rotation.set(
-			tiltX.value + Math.sin(now * 29 + 2) * 0.16 * wobble,
-			tiltY.value + Math.sin(now * 23 + 4) * 0.16 * wobble,
-			Math.sin(now * 33 + 3) * 0.13 * wobble,
+			tiltX.value + Math.sin(now * 29 + 2) * 0.16 * agitation,
+			tiltY.value + turnFromWindow.value + Math.sin(now * 23 + 4) * 0.16 * agitation,
+			Math.sin(now * 33 + 3) * 0.13 * agitation,
 		);
 	}
 
-	function applyDiePose(now: number) {
+	/** The die tumbles freely until it starts turning to the answer, so that turn always starts from a fixed pose. */
+	function tumbleDie(seconds: number, now: number) {
+		if (agitation === 0 || answerFacing.value > 0) return;
+		tumbleAxis.set(Math.sin(now * 1.3), Math.cos(now * 1.3), Math.sin(now * 0.7)).normalize();
+		tumbleStep.setFromAxisAngle(tumbleAxis, agitation * TUMBLE_RADIANS_PER_SECOND * seconds);
+		dieTumble.premultiply(tumbleStep);
+	}
+
+	function applyDiePose() {
 		const rise = easeOutCubic(depth.value);
-		const turn = dieTurn.value;
-		const sway = reducedMotion ? 0 : agitation * 0.35;
 		const scale = MathUtils.lerp(DIE_SUNK_SCALE, DIE_RISEN_SCALE, rise);
 		const faceZ = MathUtils.lerp(DIE_FACE_SUNK_Z, DIE_FACE_RISEN_Z, rise);
 		parts.die.position.set(dieRest.x, dieRest.y, faceZ - DIE_FACE_DISTANCE * scale);
 		parts.die.scale.setScalar(scale);
-		parts.die.rotation.copy(
-			new Euler(
-				turn * 0.7 + Math.sin(now * 19) * sway,
-				turn * -1.1 + Math.sin(now * 17 + 1) * sway,
-				turn * 0.5 + Math.sin(now * 13 + 2) * sway,
-			),
-		);
-		parts.dieMaterial.color.copy(MURK_COLOR).lerp(dieColor, rise ** 1.6);
+		parts.die.quaternion.slerpQuaternions(dieTumble, ANSWER_FACING_GLASS, answerFacing.value);
 	}
 
 	function applyAnswerAndHaze() {
 		answerMaterial.opacity = textAlpha.value;
 		answerGlow.intensity = textAlpha.value * 0.35;
-		fog.material.opacity = haze.value * 0.6;
+		cloud.material.opacity = haze.value * 0.6;
 		glass.opacity = MathUtils.lerp(0.12, 0.35, haze.value);
 		glass.color.copy(glassColor).lerp(hazyGlassColor, haze.value);
 	}
@@ -531,9 +565,10 @@ function assembleBallRenderer(
 	function updateScene(seconds: number, now: number) {
 		for (const spring of springs) spring.step(seconds);
 		for (const track of tracks) track.update(now);
+		tumbleDie(seconds, now);
 		agitation = Math.max(0, agitation - AGITATION_DECAY_PER_SECOND * seconds);
 		applyBallPose(now);
-		applyDiePose(now);
+		applyDiePose();
 		applyAnswerAndHaze();
 	}
 
@@ -581,7 +616,19 @@ function assembleBallRenderer(
 		const seconds = reducedMotion ? 0.2 : 0.45;
 		depth.animateTo(0, seconds);
 		textAlpha.animateTo(0, 0.25);
-		dieTurn.jumpTo(1);
+		dieTumble.copy(parts.die.quaternion);
+		answerFacing.jumpTo(0);
+	}
+
+	function hurryToWindow() {
+		if (turnFromWindow.isRunning) turnFromWindow.animateTo(0, HURRIED_TURN_SECONDS);
+	}
+
+	function introduce() {
+		if (reducedMotion) return;
+		turnFromWindow.jumpTo(Math.PI);
+		turnFromWindow.animateTo(0, INTRO_TURN_SECONDS, INTRO_HOLD_SECONDS);
+		requestFrame();
 	}
 
 	async function reveal(answer: Answer) {
@@ -595,11 +642,11 @@ function assembleBallRenderer(
 		const finalTextAlpha = hazy ? HAZY_TEXT_ALPHA : 1;
 		if (reducedMotion) {
 			depth.jumpTo(1);
-			dieTurn.jumpTo(0);
+			answerFacing.jumpTo(1);
 			textAlpha.animateTo(finalTextAlpha, 0.3);
 		} else {
-			depth.animateTo(1, 1.5, 0.1, easeOutCubic);
-			dieTurn.animateTo(0, 1.7, 0.1, easeOutCubic);
+			depth.animateTo(1, 1.5, 0, easeOutCubic);
+			answerFacing.animateTo(1, 1.7, 0, easeOutCubic);
 			textAlpha.animateTo(finalTextAlpha, 1.3, 0.4);
 		}
 		const settled = new Promise<void>((resolve) => {
@@ -611,8 +658,9 @@ function assembleBallRenderer(
 
 	function shake(intensity: number) {
 		const clamped = MathUtils.clamp(intensity, 0, 1);
-		agitation = Math.min(MAX_AGITATION, agitation + 0.5 + clamped * 0.7);
+		if (!reducedMotion) agitation = Math.min(MAX_AGITATION, agitation + 0.5 + clamped * 0.7);
 		settlePendingReveal();
+		hurryToWindow();
 		sinkDie();
 		requestFrame();
 	}
@@ -649,5 +697,5 @@ function assembleBallRenderer(
 		renderer.forceContextLoss();
 	}
 
-	return { shake, drag, release, reveal, dispose };
+	return { introduce, shake, drag, release, reveal, dispose };
 }

@@ -2,6 +2,7 @@ import { required } from "../../lib/dom";
 import type { BallRenderer } from "./ball-renderer";
 import type { Answer } from "./lib/answers";
 
+const INTRO_HOLD_MS = 800;
 const REVEAL_MS = 1200;
 const REDUCED_REVEAL_MS = 300;
 const WOBBLE_MS = 900;
@@ -21,9 +22,14 @@ export function createFallbackBall(element: HTMLElement, { reducedMotion }: { re
 
 	const wobble = () =>
 		element.animate(WOBBLE_KEYFRAMES, { duration: WOBBLE_MS, easing: "ease-in-out", composite: "add" });
+	const showWindow = () => element.classList.remove("is-showing-eight");
 
 	return {
+		introduce() {
+			setTimeout(showWindow, INTRO_HOLD_MS);
+		},
 		shake() {
+			showWindow();
 			element.classList.remove("is-revealed");
 			if (!reducedMotion) wobble();
 		},

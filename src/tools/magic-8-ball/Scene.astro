@@ -11,11 +11,19 @@ import Button from "../../components/Button.astro";
 
 	<button id="m8-ball" class="m8-ball" type="button" aria-label="Shake the ball" aria-describedby="m8-hint">
 		<canvas id="m8-canvas" aria-hidden="true"></canvas>
-		<span class="m8-fallback" aria-hidden="true">
+		<span class="m8-fallback is-showing-eight" aria-hidden="true">
 			<span class="m8-fallback__window">
 				<span class="m8-fallback__triangle">
 					<span class="m8-fallback__text"></span>
 				</span>
+			</span>
+			<span class="m8-fallback__eight">
+				<svg viewBox="-0.5 -0.5 1 1">
+					<polygon
+						points="-0.075,0 0.075,0 0.135,-0.06 0.135,-0.17 0.075,-0.23 -0.075,-0.23 -0.135,-0.17 -0.135,-0.06"
+					></polygon>
+					<polygon points="-0.09,0.27 0.09,0.27 0.16,0.2 0.16,0.07 0.09,0 -0.09,0 -0.16,0.07 -0.16,0.2"></polygon>
+				</svg>
 			</span>
 		</span>
 	</button>
@@ -99,6 +107,31 @@ import Button from "../../components/Button.astro";
 		box-shadow:
 			inset -1.5rem -2rem 3rem oklch(0% 0 0 / 0.8),
 			0 2rem 4rem oklch(0% 0 0 / 0.6);
+	}
+	.m8-fallback > * {
+		grid-area: 1 / 1;
+	}
+	.m8-fallback__eight {
+		inline-size: 58%;
+		aspect-ratio: 1;
+		border-radius: 50%;
+		background: radial-gradient(circle at 40% 35%, oklch(94% 0 none), oklch(80% 0 none) 90%);
+		transition: opacity 0.6s ease-out;
+	}
+	.m8-fallback__eight svg {
+		display: block;
+		fill: none;
+		stroke: oklch(14% 0 none);
+		stroke-width: 0.034;
+		stroke-linejoin: round;
+	}
+	.m8-fallback:not(.is-showing-eight) .m8-fallback__eight {
+		opacity: 0;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.m8-fallback__eight {
+			display: none;
+		}
 	}
 	.m8-fallback__window {
 		display: grid;

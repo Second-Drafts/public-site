@@ -270,10 +270,10 @@ def build_liquid():
         result = bmesh.ops.create_cone(
             mesh, cap_ends=False, segments=48, radius1=radius, radius2=radius, depth=depth
         )
-        bmesh.ops.reverse_faces(mesh, faces=mesh.faces[:])
         floor = [vert for vert in result["verts"] if vert.co.z < 0]
-        mesh.faces.new(floor[::-1])
+        mesh.faces.new(floor)
         bmesh.ops.recalc_face_normals(mesh, faces=mesh.faces[:])
+        bmesh.ops.reverse_faces(mesh, faces=mesh.faces[:])
 
     liquid = object_from_bmesh(
         "Liquid", build, MATERIALS["liquid"], (0, 0, LIQUID_FLOOR_Z + depth / 2)
