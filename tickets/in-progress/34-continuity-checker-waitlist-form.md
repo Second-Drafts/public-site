@@ -17,11 +17,41 @@ The coming soon page (#33) exists to collect a waitlist and learn from the write
 - **Retention:** an email address is kept until we've sent what the person asked for, or until they ask to be removed, whichever comes first. Answers to optional questions are deleted 12 months after they're submitted.
 - **Sending:** by hand from our Proton Mail inbox, in batches of up to 100 BCC recipients. Unsubscribing means replying, and we act on the reply. Proton isn't recorded in this release; add a `privacy/vendors.md` section before the first send (Swiss, so EU adequacy covers transfers). The policy names "our email provider" as a category of recipient so it stays true in the meantime.
 - **New UI:** add `ChoiceField` (radio or checkbox options) and `ScaleField` (1–5) next to `TextField.astro`. Write the survey as plain Astro markup, with no form schema or rendering engine.
+- **Consent on the form:** pressing "Email me when it launches" is the consent to the launch email, so there's no required checkbox. "I'd like to try an early version" is an optional box, unticked by default, for inviting beta testers. Each form names its own purpose next to its button and links to the privacy policy.
+- **No confirmation email.** The Worker can't send mail. The first email we send says why the person is getting it and how to be removed.
+- **Answers aren't published or quoted without asking first.** The policy promises this for every form.
+- **Storage is one `submissions` table**, not Workers Logs. Logs are kept for only 3–7 days and can't be deleted entry by entry, and turning them on would record the IP addresses the policy says we don't keep. The Worker has logging turned off (`observability.enabled: false`).
+- **`email` can be empty.** After sending, clear the email and keep the answers until their 12-month clean-up.
 
-## Setup (account owner)
+## Progress
 
-- Create the Cloudflare account and accept its terms, including the DPA.
-- Run `npx wrangler login` once.
+Done, in commits `a7f63b0` and `6a3e164`:
+
+- **Cloudflare:** the account exists and wrangler is logged in. The D1 database `forms` was created in the `eu` jurisdiction (id in `workers/forms/wrangler.jsonc`), and the free plan allows it. The live database has no tables yet.
+- **Policy and records:** the privacy policy has its "Waitlists and forms" section, and `privacy/processing-record.md` has a matching entry.
+- **Worker:** `workers/forms/index.ts` handles `POST /signups` (returns `{ id }`) and `POST /answers` (`{ signupId, answers }`, accepted once per signup). It checks the origin and body size, rate-limits to 10 requests a minute per IP (the IP is never stored), and quietly drops honeypot submissions.
+- **Schema:** `workers/forms/migrations/0001_create_submissions.sql`.
+- **Shared validation:** `src/lib/forms/submission.ts`, with tests. The forms should validate with it too.
+- **Scripts:**
+  - `npm run forms:dev` runs the Worker and a local database at `localhost:8787` and accepts requests from `localhost:4321`.
+  - `npm run forms:deploy` applies migrations to the live database, then deploys.
+
+**Not deployed yet, on purpose.** Everything can be tested end to end locally with `npm run forms:dev` and `npm run dev`. Deploy once, before the site deploys. That first deploy is also what reveals the production URL, `forms.<subdomain>.workers.dev`.
+
+## Next steps
+
+1. **Maintenance scripts** (npm scripts that wrap `wrangler d1 execute --remote`):
+   - Export one form's emails, comma-separated in groups of 100 for BCC. Record the time of the export.
+   - After sending, set `email = NULL` for that form's rows created up to the export time, so later signups aren't cleared.
+   - Delete everything for one email, for removal requests.
+   - Set `answers = NULL` on rows older than 12 months.
+2. **Site setting for the Worker address:** add `PUBLIC_FORMS_URL` to `src/env.d.ts`, with `http://localhost:8787` in development and the `workers.dev` URL in `public-env/.env.production`. Add a small client module that posts a signup and its answers using `src/lib/forms/submission.ts`.
+3. **Field components:** `ChoiceField` and `ScaleField`, matching `TextField.astro`.
+4. **The Continuity Checker form:** step 1 is the email, the early-access box and the hidden honeypot field. Step 2 is Q1–Q10. Include the error state. Point both Join the waitlist buttons at it.
+5. **Teleprompter:** fill in `subscribe()` with form `teleprompter:<feature>` and remove `EMAIL_CAPTURE_ENABLED`. Today `fake-doors.ts` subscribes an email even when the visitor answers "Not really". Decide whether that should happen. Name the feature in the dialog's hint and link to the policy.
+6. **Records:** a Cloudflare entry in `VENDORS`, a `privacy/vendors.md` section, `npm run privacy:lock`, and `TOOLS_VISITORS_WRITE_IN` entries for both forms.
+7. **Review:** run the `privacy-reviewer` agent.
+8. **Ship:** `npm run forms:deploy`, fill in the production URL, run `npm run predeploy`, check the live round trip, then merge #33 and this ticket.
 
 ## What
 
@@ -56,11 +86,13 @@ For our own form:
 8. What do you write in? (Word / Google Docs / Scrivener / Markdown or plain text / other). The spike only reads plain text.
 9. What would you expect to pay to check one full manuscript? (price bands / I'd want a subscription / I wouldn't pay)
 10. How do you feel about sending your manuscript to an AI service for checking? (1–5, plus an optional "what would reassure you?")
-11. Email, a required "email me when it launches" box, and an optional "I'd like to try an early version" box.
+11. Moved to step 1: the email field and an optional "I'd like to try an early version" box. The button wording carries the launch-email consent.
 
 ## Acceptance criteria
 
 - [x] Tool chosen and retention decided.
 - [ ] Privacy policy, records and email guard updated in the same release as the form.
-- [ ] `WAITLIST_URL` in `src/tools/continuity-checker/waitlist.ts` points at the form.
+- [ ] Both Join the waitlist buttons lead to the form. `WAITLIST_URL` in `src/tools/continuity-checker/waitlist.ts` is replaced or points at it.
+- [ ] The teleprompter's coming-soon email signup saves to the same Worker.
+- [ ] The Worker is deployed, and a signup from the live site reaches the live database.
 - [ ] `npm run predeploy` passes.
