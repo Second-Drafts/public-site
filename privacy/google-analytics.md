@@ -16,8 +16,10 @@ Status: production property set up 2026-10-12. Test property `G-RPVQBR9DFV` crea
 - [x] Google Signals off in the property (the site's config also sets `allow_google_signals: false`)
 - [x] Enhanced measurement off, or reviewed: it adds automatic events that are not in our event schema
 - [x] Granular location and device data collection off, at least for the EEA and UK
-- [x] No links to Google Ads or other Google products
+- [x] No links to Google Ads or other Google products, except Search Console (see below)
 - [x] No user-provided data collection
 - [x] A separate test property exists for the privacy scan (ticket 16). `scripts/privacy-scan.ts` builds its own copy of the site with the test ID, so scan visits never reach production
+
+Search Console link: `sc-domain:seconddrafts.com` linked to the property to evaluate the joined reports. The link is two-way: Search Console data is exported into GA under the GA terms, and GA data is imported into Search Console under the Search Console terms, so GA-derived data reaches a product the data processing terms don't cover. We judge it aggregate and not personal data, and the privacy policy says so. Unlink it in Admin > Product links > Search Console links if the reports aren't useful. Re-run `npm run privacy:scan` after linking and expect no new origins, cookies or requests.
 
 Chosen retention (stated on the privacy policy, "How long we keep data"): event data 2 months, user data 14 months.
