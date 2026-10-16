@@ -7,36 +7,42 @@
 
 The coming soon page (#33) exists to collect a waitlist and learn from the writers who join it. Collecting email addresses changes what the privacy policy can promise, so how we collect them is a decision to make deliberately.
 
+## Decisions
+
+- **Our own form, posting to a Cloudflare Worker with a D1 database created with `--jurisdiction eu`.** Typeform was ruled out: its free plan allows about 10 responses a month and it stores data in the US. A Tally link would look like Tally and keep the visitor off our page, and a Tally embed loads a third party on page load. Supabase's free projects pause after a week without activity.
+- **The Worker is served from `*.workers.dev`.** DNS is at GoDaddy, and a custom domain needs the zone on Cloudflare. If DNS moves later, changing the origin in `VENDORS` is enough.
+- **One endpoint and one policy for every form.** Each submission records which form it came from and, where relevant, the feature (`continuity-checker`, `teleprompter:voice_scroll`), so we only email people about what they asked about. The privacy policy's "Waitlists and forms" section covers forms in general, and each form states its own purpose next to its button. Accounts are out of scope (#15).
+- **The teleprompter's coming-soon email signup ships in this release.** Fill in `subscribe()` in `src/tools/teleprompter/lib/interest.ts`, then remove `EMAIL_CAPTURE_ENABLED`.
+- **Form order:** step 1 is the email and consent boxes, saved straight away. Step 2, "Help us build it", holds Q1–Q10, all optional.
+- **Retention:** an email address is kept until we've sent what the person asked for, or until they ask to be removed, whichever comes first. Answers to optional questions are deleted 12 months after they're submitted.
+- **Sending:** by hand from our Proton Mail inbox, in batches of up to 100 BCC recipients. Unsubscribing means replying, and we act on the reply. Proton isn't recorded in this release; add a `privacy/vendors.md` section before the first send (Swiss, so EU adequacy covers transfers). The policy names "our email provider" as a category of recipient so it stays true in the meantime.
+- **New UI:** add `ChoiceField` (radio or checkbox options) and `ScaleField` (1–5) next to `TextField.astro`. Write the survey as plain Astro markup, with no form schema or rendering engine.
+
+## Setup (account owner)
+
+- Create the Cloudflare account and accept its terms, including the DPA.
+- Run `npx wrangler login` once.
+
 ## What
 
-Decide first:
+Common to every form option (a subset of #15):
 
-- **Our own form and a small database.** This keeps visitors' details in our hands and in our design. The site is static on GitHub Pages, so it needs a serverless endpoint and somewhere to store the answers. That means `form-action` and `connect-src` in `src/lib/privacy/csp.ts` and a registry vendor for the host.
-- **A Typeform link that opens in a new tab.** Nothing loads on our page, so there are no security policy changes. Typeform becomes a processor holding the emails.
-- **How long we keep emails and answers.**
-
-Either way (a subset of #15):
-
-- **Privacy policy:** replace "we don't ask for your name or email address" and add a waitlist section covering purpose, legal basis (consent), recipient, retention and how to be removed.
-- **Records:** `privacy/vendors.md` and `privacy/processing-record.md`.
-- **Email guard:** `EMAIL_CAPTURE_ENABLED` covers the teleprompter's own in-page signup, which stays off. Reword its test in `src/components/privacy/privacyPolicyModel.test.ts` so it no longer claims the site collects no email at all.
+- **Privacy policy:** drafted. "What we don't do" now carves out forms, and a new "Waitlists and forms" section covers purpose, legal basis, recipients, retention and how to be removed.
+- **Records:** `privacy/processing-record.md` drafted. Still to do: the Cloudflare section in `privacy/vendors.md`.
+- **Email guard:** the test that asserted `EMAIL_CAPTURE_ENABLED` is false has been removed, because the policy now covers the teleprompter signup.
 - **Review:** run the `privacy-reviewer` agent.
-- **"What we don't do":** reword the bullet at `privacy-policy.astro:31`.
-- **Survey free text:** Q6 and the Q10 reassurance box invite quotes from manuscripts. "We don't receive what you write" (`privacy-policy.astro:36`) needs a carve-out for the survey, and free-text answers need their own retention.
+- **Survey free text:** Q6 and the Q10 reassurance box invite quotes from manuscripts. The policy now covers this, and the form's hint should say there's no need to paste passages.
 - **One consent per purpose:** launch email, early access, and using answers for product research are separate purposes. Each needs its own legal basis and wording, and withdrawing must be as easy as agreeing.
 - **Analytics:** keep `cc_waitlist_clicked` count-only. Never add an event carrying form values or the email address.
 
-If we build our own form:
+For our own form:
 
-- Add spam and abuse protection, and a way to delete someone's answers on request.
-- `privacy:lock` needs a person to confirm the host's role, and `privacy:records` needs its terms and data-sharing settings recorded.
-- Add the form to the leak checks in `scripts/privacy-scan.ts`, since visitors write in it.
-
-If we use Typeform:
-
-- Link with `rel="noopener noreferrer"`.
-- Say in the policy that the visitor leaves our site and Typeform sets its own cookies.
-- Record a transfer basis for Typeform as a processor.
+- **Worker:** a POST endpoint with CORS limited to `https://seconddrafts.com`, a honeypot field and a rate limit. No Turnstile, since it's another third-party script. Deploy it with its own npm script, separate from `deploy`.
+- **Operations:** npm scripts to export signups (for sending the launch email), to delete one person by email (for removal requests), and to delete survey answers older than 12 months.
+- **Records:** a `VENDORS` entry for Cloudflare, with the Worker origin in `origins.data`. That feeds `connect-src`, and `form-action` stays `'self'` because we submit with `fetch`. Its role is processor and its transfer basis is the EU–US Data Privacy Framework. Add a section in `privacy/vendors.md` for Cloudflare. `privacy:lock` needs a person to confirm Cloudflare's role, and `privacy:records` needs its terms recorded.
+- **Leak checks:** add both forms to `TOOLS_VISITORS_WRITE_IN` in `scripts/privacy-scan.ts`. Answers may reach our Worker's origin and must go nowhere else.
+- **No IP addresses in storage:** the policy promises we don't store them with a submission. The rate limit may use the IP in memory, but never write it to D1.
+- **Errors:** if the save fails, show a clear message and offer emailing us as a fallback.
 
 ### Survey questions
 
@@ -54,7 +60,7 @@ If we use Typeform:
 
 ## Acceptance criteria
 
-- [ ] Tool chosen and retention decided.
+- [x] Tool chosen and retention decided.
 - [ ] Privacy policy, records and email guard updated in the same release as the form.
 - [ ] `WAITLIST_URL` in `src/tools/continuity-checker/waitlist.ts` points at the form.
 - [ ] `npm run predeploy` passes.
