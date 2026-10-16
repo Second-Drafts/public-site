@@ -1,0 +1,20 @@
+{
+	"$schema": "../../node_modules/wrangler/config-schema.json",
+	"name": "forms",
+	"main": "index.ts",
+	"compatibility_date": "2026-10-01",
+	"workers_dev": true,
+	"preview_urls": false,
+	// Request logs would include visitors' IP addresses, which the privacy policy says we don't keep.
+	"observability": { "enabled": false },
+	"vars": { "ALLOWED_ORIGIN": "https://seconddrafts.com" },
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "forms",
+			"database_id": "674eda9d-9feb-43be-8e3a-a16ce3f65caf",
+			"migrations_dir": "migrations",
+		},
+	],
+	"ratelimits": [{ "name": "RATE_LIMITER", "namespace_id": "1001", "simple": { "limit": 10, "period": 60 } }],
+}
