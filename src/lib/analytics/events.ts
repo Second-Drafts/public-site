@@ -90,7 +90,6 @@ export const AUTOMATIC_EVENT_SCHEMA = {
 	user_engagement: {},
 	scroll: { percent_scrolled: num() },
 	click: { ...linkProps, link_domain: text(), outbound: flag() },
-	view_search_results: { search_term: text() },
 	video_start: videoProps,
 	video_progress: videoProps,
 	video_complete: videoProps,

@@ -37,6 +37,7 @@ Enhanced measurement is configured in the GA admin, not in code, so without a gu
 
 Enhanced measurement is on in both properties (2026-10-16), with history page views off. `AUTOMATIC_EVENT_SCHEMA` declares the events Google sends itself. `LOCKED_ANALYTICS_SCHEMA` locks them with the site's own events, rather than in a separate section of the lock, so the bump rules, Jev and the scan treat them the same (lock 2.6.0, minor). Jev's flags on `form_submit_text`, `search_term`, `file_name` and `video_title` were checked against the code and accepted. The privacy policy now describes the automatic events in plain language instead of listing every event. The scan rejects undeclared events and flushes GA's batched hits before reading requests.
 
-The cookie policy now mentions scroll depth and outbound clicks. Follow-ups from the privacy review, not done here:
-- The records could explain why site search can't collect terms (`page_location` carries no query string).
-- The scan report doesn't record which event names it saw.
+Follow-ups from the privacy review, done the next day:
+- The cookie policy mentions scroll depth and outbound clicks.
+- The review suggested site search couldn't collect terms because `page_location` has no query string. A probe showed it does: GA reads the real page URL, and `/blog/?q=probe-search-term` sent `ep.search_term=probe-search-term`. The site has no search, so site search is now off on both streams and `view_search_results` is removed from the lock (2.7.0, minor). The scan loads `/blog/?q=scan-search-query` and fails if it comes back on. The privacy reviewer agent asks about turning it back on whenever a diff adds site search.
+- The scan report records the analytics event names each page sent.

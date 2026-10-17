@@ -98,12 +98,18 @@ function isAnalyticsHit(url: string): boolean {
 }
 
 /** Enhanced measurement is set in the Google Analytics admin, so only the hits show what it actually sends. */
-export function undeclaredAnalyticsEvents(requests: RecordedRequest[]): string[] {
+export function analyticsEventNames(requests: RecordedRequest[]): string[] {
 	const names = requests
 		.filter(({ url }) => isAnalyticsHit(url))
 		.flatMap((request) => hitParameters(request).map((parameters) => parameters.get("en")))
-		.filter((name): name is string => name !== null && !(name in lock.analytics.events));
-	return [...new Set(names)].map((name) => `analytics event "${name}" is not in registry.lock.json`);
+		.filter((name): name is string => name !== null);
+	return [...new Set(names)];
+}
+
+export function undeclaredAnalyticsEvents(requests: RecordedRequest[]): string[] {
+	return analyticsEventNames(requests)
+		.filter((name) => !(name in lock.analytics.events))
+		.map((name) => `analytics event "${name}" is not in registry.lock.json`);
 }
 
 export function pageUrlExposure(url: string): Exposure {

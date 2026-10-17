@@ -11,6 +11,7 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	analyticsEventNames,
 	undeclaredAnalyticsEvents,
 	type Exposure,
 	type Observation,
@@ -58,6 +59,7 @@ const READ_STORAGE_IN_PAGE = `(async () => ({
 interface PageReport {
 	storage: string[];
 	origins: string[];
+	analyticsEvents: string[];
 }
 
 function freePort(): Promise<number> {
@@ -119,6 +121,9 @@ const SENTINEL_FORMS = [
 	compressToEncodedURIComponent(SENTINEL),
 ];
 const DRAFT_ANALYSIS_PATH = "/tools/draft-analysis/";
+
+// Site search is off in Google Analytics. If it comes back on, this page sends an undeclared view_search_results.
+const SEARCH_QUERY_PATH = "/blog/?q=scan-search-query";
 
 function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
@@ -234,7 +239,7 @@ async function scanPage(
 	const origins = observation.requestOrigins.map((requestOrigin) =>
 		requestOrigin === origin ? "self" : requestOrigin,
 	);
-	return { report: { storage, origins }, violations };
+	return { report: { storage, origins, analyticsEvents: analyticsEventNames(requests).sort() }, violations };
 }
 
 interface WritingTool {
@@ -302,8 +307,6 @@ async function analyseSprintDraft(page: Page): Promise<void> {
 	await page.click("#da-rhythm-strip");
 }
 
-// Google Analytics reports search terms from a page's query string (q, s, search, query, keyword), so a site search
-// box belongs here too.
 const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "teleprompter share link", path: shareLink(), write: playSharedScript },
 	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
@@ -388,7 +391,7 @@ async function main(): Promise<void> {
 	buildForScan();
 	const preview = await startPreview();
 	const browser = await launchBrowser();
-	const paths = [...sitemapPaths(), shareLink()];
+	const paths = [...sitemapPaths(), shareLink(), SEARCH_QUERY_PATH];
 	const violations: string[] = [];
 	const states: Record<string, Record<string, PageReport>> = {};
 
