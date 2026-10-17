@@ -11,6 +11,7 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	undeclaredAnalyticsEvents,
 	type Exposure,
 	type Observation,
 	type RecordedRequest,
@@ -168,7 +169,23 @@ async function withdrawAnalytics(page: Page, requests: RecordedRequest[]): Promi
 	await Promise.all([page.waitForEvent("load"), page.click("[data-consent-save]")]);
 }
 
+// Lets enhanced measurement's scroll event fire, so the scan checks it like every other hit.
+async function scrollToBottom(page: Page): Promise<void> {
+	await page.evaluate(() => window.scrollTo(0, Number.MAX_SAFE_INTEGER));
+}
+
+// Google Analytics holds hits for about five seconds and sends them early when the page is hidden, as when a visitor
+// leaves. Hiding the page makes it send them before the scan reads its requests.
+const HIDE_PAGE = `
+Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+Object.defineProperty(document, "hidden", { value: true, configurable: true });
+document.dispatchEvent(new Event("visibilitychange"));
+window.dispatchEvent(new Event("pagehide"));
+`;
+
 async function settle(page: Page): Promise<void> {
+	await page.waitForLoadState("networkidle");
+	await page.evaluate(HIDE_PAGE);
 	await page.waitForLoadState("networkidle");
 	await page.waitForTimeout(300);
 }
@@ -200,6 +217,8 @@ async function scanPage(
 	const page = await context.newPage();
 	await page.goto(origin + path);
 	await chooseConsent(page, state, requests);
+	await page.waitForLoadState("networkidle");
+	await scrollToBottom(page);
 	await settle(page);
 
 	const observation: Observation = {
@@ -208,7 +227,9 @@ async function scanPage(
 		cspViolations: await page.evaluate(() => (window as unknown as { __cspViolations: string[] }).__cspViolations),
 	};
 	await context.close();
-	const violations = findViolations(state, observation, origin).map((message) => `[${state}] ${path}: ${message}`);
+	const violations = [...findViolations(state, observation, origin), ...undeclaredAnalyticsEvents(requests)].map(
+		(message) => `[${state}] ${path}: ${message}`,
+	);
 	const storage = observation.storage.map(({ area, name }) => `${area}:${name}`).sort();
 	const origins = observation.requestOrigins.map((requestOrigin) =>
 		requestOrigin === origin ? "self" : requestOrigin,
@@ -281,6 +302,8 @@ async function analyseSprintDraft(page: Page): Promise<void> {
 	await page.click("#da-rhythm-strip");
 }
 
+// Google Analytics reports search terms from a page's query string (q, s, search, query, keyword), so a site search
+// box belongs here too.
 const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "teleprompter share link", path: shareLink(), write: playSharedScript },
 	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
@@ -339,6 +362,7 @@ async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exp
 async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, tool: WritingTool): Promise<string[]> {
 	const context = await openContext("accepted");
 	const collectExposures = await watchForLeaks(context);
+	const { requests } = trackRequests(context);
 	const page = await context.newPage();
 	await page.goto(origin + tool.path);
 	await page.click("[data-consent-accept]");
@@ -346,7 +370,9 @@ async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, to
 	await settle(page);
 	const exposures = await collectExposures();
 	await context.close();
-	return findSentinelLeaks(exposures, SENTINEL_FORMS).map((leak) => `[${tool.name}] ${leak}`);
+	return [...findSentinelLeaks(exposures, SENTINEL_FORMS), ...undeclaredAnalyticsEvents(requests)].map(
+		(problem) => `[${tool.name}] ${problem}`,
+	);
 }
 
 function sourceRevision(): { sourceCommit: string; sourceDirty: boolean } {

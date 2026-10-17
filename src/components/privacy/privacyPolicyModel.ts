@@ -1,4 +1,3 @@
-import lock from "../../lib/privacy/registry.lock.json";
 import { CATEGORIES, VENDORS } from "../../lib/privacy/registry";
 
 export interface VendorSection {
@@ -7,11 +6,6 @@ export interface VendorSection {
 	roleDescription: string;
 	transfer: string;
 	privacyUrl: string;
-}
-
-export interface EventDisclosure {
-	name: string;
-	properties: string[];
 }
 
 const ROLE_DESCRIPTIONS = {
@@ -27,15 +21,4 @@ export function vendorSections(): VendorSection[] {
 		transfer,
 		privacyUrl,
 	}));
-}
-
-export function analyticsEvents(): EventDisclosure[] {
-	return Object.entries(lock.analytics.events).map(([name, properties]) => ({
-		name,
-		properties: Object.keys(properties),
-	}));
-}
-
-export function sessionContextProperties(): string[] {
-	return Object.keys(lock.analytics.context);
 }

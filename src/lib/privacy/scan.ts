@@ -1,5 +1,6 @@
-// Rules the pre-deploy scan applies to what a real browser observed. Keep imports to the registry so Node scripts can load it.
+// Rules the pre-deploy scan applies to what a real browser observed. Keep imports to the registry and its lock so Node scripts can load it.
 import { CATEGORIES, VENDORS, findStorageEntry, type CategoryId, type StorageArea } from "./registry.ts";
+import lock from "./registry.lock.json" with { type: "json" };
 
 export type ScanState = "no-decision" | "rejected" | "accepted" | "gpc" | "withdrawn";
 
@@ -69,15 +70,18 @@ export interface Exposure {
 
 const ANALYTICS_PAGE_PARAMETERS = ["page_location", "dl", "dr", "dt"];
 
-function analyticsParameterExposures(endpoint: string, { url, body }: RecordedRequest): Exposure[] {
-	const queryStrings = [new URL(url).search, ...body.split("\n")];
-	return queryStrings.flatMap((query) => {
-		const parameters = new URLSearchParams(query);
-		return ANALYTICS_PAGE_PARAMETERS.filter((name) => parameters.has(name)).map((name) => ({
+// Google Analytics batches hits: one in the query string, or one per line of the body.
+function hitParameters({ url, body }: RecordedRequest): URLSearchParams[] {
+	return [new URL(url).search, ...body.split("\n")].map((query) => new URLSearchParams(query));
+}
+
+function analyticsParameterExposures(endpoint: string, request: RecordedRequest): Exposure[] {
+	return hitParameters(request).flatMap((parameters) =>
+		ANALYTICS_PAGE_PARAMETERS.filter((name) => parameters.has(name)).map((name) => ({
 			channel: `analytics parameter ${name} sent to ${endpoint}`,
 			text: parameters.get(name) ?? "",
-		}));
-	});
+		})),
+	);
 }
 
 export function requestExposures(request: RecordedRequest): Exposure[] {
@@ -87,6 +91,19 @@ export function requestExposures(request: RecordedRequest): Exposure[] {
 		{ channel: `request body sent to ${endpoint}`, text: request.body },
 		...analyticsParameterExposures(endpoint, request),
 	];
+}
+
+function isAnalyticsHit(url: string): boolean {
+	return new URL(url).pathname.endsWith("/g/collect");
+}
+
+/** Enhanced measurement is set in the Google Analytics admin, so only the hits show what it actually sends. */
+export function undeclaredAnalyticsEvents(requests: RecordedRequest[]): string[] {
+	const names = requests
+		.filter(({ url }) => isAnalyticsHit(url))
+		.flatMap((request) => hitParameters(request).map((parameters) => parameters.get("en")))
+		.filter((name): name is string => name !== null && !(name in lock.analytics.events));
+	return [...new Set(names)].map((name) => `analytics event "${name}" is not in registry.lock.json`);
 }
 
 export function pageUrlExposure(url: string): Exposure {

@@ -1,38 +1,204 @@
 {
-	"version": "2.5.0",
-	"updated": "2026-10-13",
+	"version": "2.6.0",
+	"updated": "2026-10-16",
 	"reviews": [
 		{
-			"subject": "analytics property m8_motion_permission.granted",
+			"subject": "analytics property click.link_classes",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property m8_shaken.asked",
+			"subject": "analytics property click.link_domain",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property m8_shaken.deck",
+			"subject": "analytics property click.link_id",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property m8_shaken.method",
+			"subject": "analytics property click.link_url",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property m8_shaken.too_soon",
+			"subject": "analytics property click.outbound",
 			"outcome": "clear"
 		},
 		{
-			"subject": "analytics property m8_shared.method",
+			"subject": "analytics property file_download.file_extension",
 			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property file_download.file_name",
+			"outcome": "accepted"
+		},
+		{
+			"subject": "analytics property file_download.link_classes",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property file_download.link_id",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property file_download.link_text",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property file_download.link_url",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_start.form_destination",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_start.form_id",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_start.form_name",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_submit.form_destination",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_submit.form_id",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_submit.form_name",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property form_submit.form_submit_text",
+			"outcome": "accepted"
+		},
+		{
+			"subject": "analytics property scroll.percent_scrolled",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_current_time",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_duration",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_percent",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_provider",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_title",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.video_url",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_complete.visible",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.video_current_time",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.video_duration",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.video_percent",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.video_provider",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.video_title",
+			"outcome": "accepted"
+		},
+		{
+			"subject": "analytics property video_progress.video_url",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_progress.visible",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_current_time",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_duration",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_percent",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_provider",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_title",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.video_url",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property video_start.visible",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property view_search_results.search_term",
+			"outcome": "accepted"
 		}
 	],
 	"analytics": {
 		"events": {
+			"click": {
+				"link_classes": ["string"],
+				"link_domain": ["string"],
+				"link_id": ["string"],
+				"link_url": ["string"],
+				"outbound": ["boolean"]
+			},
 			"da_rhythm_sentence_clicked": {},
 			"da_text_entered": {
 				"source": ["string"],
 				"word_bucket": ["string"]
+			},
+			"file_download": {
+				"file_extension": ["string"],
+				"file_name": ["string"],
+				"link_classes": ["string"],
+				"link_id": ["string"],
+				"link_text": ["string"],
+				"link_url": ["string"]
+			},
+			"form_start": {
+				"form_destination": ["string"],
+				"form_id": ["string"],
+				"form_name": ["string"]
+			},
+			"form_submit": {
+				"form_destination": ["string"],
+				"form_id": ["string"],
+				"form_name": ["string"],
+				"form_submit_text": ["string"]
 			},
 			"m8_motion_permission": {
 				"granted": ["boolean"]
@@ -49,6 +215,9 @@
 			"page_view": {
 				"landing_source": ["string"],
 				"referrer_domain": ["string"]
+			},
+			"scroll": {
+				"percent_scrolled": ["number"]
 			},
 			"tp_completed": {
 				"duration_s": ["number"],
@@ -91,6 +260,37 @@
 				"word_bucket": ["string"]
 			},
 			"tp_share_link_opened": {},
+			"user_engagement": {},
+			"video_complete": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
+			"video_progress": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
+			"video_start": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
+			"view_search_results": {
+				"search_term": ["string"]
+			},
 			"wc_cut_line_shown": {
 				"rule": ["string"],
 				"unit": ["string"]
