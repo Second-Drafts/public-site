@@ -170,4 +170,4 @@ Key concepts:
 
 ## Tickets
 
-We use beads `br` for tickets. Prefix: `PUB`
+We use beads `br` for tickets. Prefix: `pub`
