@@ -24,14 +24,14 @@ Enhanced measurement is configured in the GA admin, not in code, so without a gu
 - [x] Records in `privacy/` match the policy and the lock.
 - [x] Enhanced measurement set in both properties, and its checklist item in `privacy/google-analytics.md` ticked with the date.
 - [x] `npm run privacy:scan` passes with the toggles on, and the accepted state's hits include `scroll`.
-- [x] History page views off in practice: no `page_view` follows `pushState` or `replaceState`.
-- [x] User-provided data collection off for both properties, with what the served tag still contains recorded in `privacy/google-analytics.md`.
+- [x] History page views off: the tag served for both properties shows `"vtp_enableHistoryEvents":false`.
+- [x] User-provided data collection off for both properties, including automatic detection in each Google tag's settings.
 
 ## Findings along the way
 
 - Before the scan hid the page, it read requests about 300ms after each flow, while GA sends batched hits after about five seconds. Most analytics hits, including the tools' own events, never reached its sentinel and declaration checks. With the flush, a scan whose lock had every event removed reported `scroll` on all 13 pages, plus `user_engagement`, `m8_shaken`, `da_*`, `tp_*`, `wc_target_set` and `ws_sprint_started`. The real scan still passes, so none of those hits carried visitor text.
-- After history events were unticked in the admin, the tag served for both properties still has `"vtp_enableHistoryEvents":true`. A probe showed no `page_view` after `pushState` or `replaceState`, so the flag looks like GA's general history listener rather than the page-view checkbox.
-- The served tag also includes `__ogt_1p_data_v2` with automatic email, phone and address detection, although user-provided data collection is off in both properties. A probe that typed an email address and phone number into the Magic 8 Ball question sent nothing email- or phone-like to Google. Both are noted in `privacy/google-analytics.md` for the quarterly review.
+- After history events were unticked in the admin, the tag served for both properties still has `"vtp_enableHistoryEvents":true`. It changed to `false` later the same day, so admin changes take a while to reach the served tag.
+- The served tag also includes `__ogt_1p_data_v2` with automatic email, phone and address detection, although user-provided data collection was off in both properties: automatic detection is a separate switch in each Google tag's settings. A probe that typed an email address and phone number into the Magic 8 Ball question sent nothing email- or phone-like to Google. The switch was turned off on both tags the same day, and the served tags now show `"vtp_isAutoEnabled":false`.
 
 ## Outcome
 
