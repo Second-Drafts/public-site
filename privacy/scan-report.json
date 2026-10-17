@@ -1,6 +1,6 @@
 {
-	"registryVersion": "2.5.0",
-	"sourceCommit": "8b38007087e721308fca432acca7a4d19f23f804",
+	"registryVersion": "2.7.0",
+	"sourceCommit": "b9264d7a1dfe9f9f147a0bbb5647d6cc1a07bb6e",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -8,73 +8,85 @@
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/about-us/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/hello-world/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/cookie-policy/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/privacy-policy/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/magic-8-ball/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/word-counter/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/writing-sprint/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
@@ -83,7 +95,15 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
+			},
+			"/blog/?q=scan-search-query": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
 			}
 		},
 		"rejected": {
@@ -93,7 +113,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/about-us/": {
 				"storage": [
@@ -101,7 +122,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/": {
 				"storage": [
@@ -109,7 +131,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/hello-world/": {
 				"storage": [
@@ -117,7 +140,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/cookie-policy/": {
 				"storage": [
@@ -125,7 +149,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/privacy-policy/": {
 				"storage": [
@@ -133,7 +158,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/": {
 				"storage": [
@@ -141,7 +167,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
 				"storage": [
@@ -149,7 +176,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/magic-8-ball/": {
 				"storage": [
@@ -157,7 +185,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/": {
 				"storage": [
@@ -165,7 +194,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/word-counter/": {
 				"storage": [
@@ -173,7 +203,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/writing-sprint/": {
 				"storage": [
@@ -181,7 +212,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
@@ -191,7 +223,17 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
+			},
+			"/blog/?q=scan-search-query": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
 			}
 		},
 		"accepted": {
@@ -205,6 +247,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/about-us/": {
@@ -217,6 +263,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/blog/": {
@@ -229,6 +279,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/blog/hello-world/": {
@@ -241,6 +295,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/cookie-policy/": {
@@ -253,6 +311,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/privacy-policy/": {
@@ -265,6 +327,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/": {
@@ -277,6 +343,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/draft-analysis/": {
@@ -289,6 +359,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/magic-8-ball/": {
@@ -301,6 +375,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/teleprompter/": {
@@ -313,6 +391,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/word-counter/": {
@@ -325,6 +407,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/writing-sprint/": {
@@ -337,6 +423,10 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			},
 			"/tools/teleprompter/#s=<share link>": {
@@ -351,6 +441,28 @@
 					"self",
 					"https://www.google-analytics.com",
 					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll",
+					"tp_script_entered",
+					"tp_share_link_opened"
+				]
+			},
+			"/blog/?q=scan-search-query": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
 				]
 			}
 		},
@@ -359,73 +471,85 @@
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/about-us/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/hello-world/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/cookie-policy/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/privacy-policy/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/magic-8-ball/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/word-counter/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/writing-sprint/": {
 				"storage": [],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
@@ -434,7 +558,15 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
+			},
+			"/blog/?q=scan-search-query": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
 			}
 		},
 		"withdrawn": {
@@ -444,7 +576,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/about-us/": {
 				"storage": [
@@ -452,7 +585,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/": {
 				"storage": [
@@ -460,7 +594,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/blog/hello-world/": {
 				"storage": [
@@ -468,7 +603,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/cookie-policy/": {
 				"storage": [
@@ -476,7 +612,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/privacy-policy/": {
 				"storage": [
@@ -484,7 +621,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/": {
 				"storage": [
@@ -492,7 +630,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
 				"storage": [
@@ -500,7 +639,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/magic-8-ball/": {
 				"storage": [
@@ -508,7 +648,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/": {
 				"storage": [
@@ -516,7 +657,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/word-counter/": {
 				"storage": [
@@ -524,7 +666,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/writing-sprint/": {
 				"storage": [
@@ -532,7 +675,8 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
 			},
 			"/tools/teleprompter/#s=<share link>": {
 				"storage": [
@@ -542,7 +686,17 @@
 				],
 				"origins": [
 					"self"
-				]
+				],
+				"analyticsEvents": []
+			},
+			"/blog/?q=scan-search-query": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
 			}
 		}
 	}
