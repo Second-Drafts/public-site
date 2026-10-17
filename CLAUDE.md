@@ -166,3 +166,8 @@ Key concepts:
 - When consistency goes too far
 
 **Use when**: Writing code, code reviews, establishing team practices
+
+
+## Tickets
+
+We use beads `br` for tickets. Prefix: `PUB`
