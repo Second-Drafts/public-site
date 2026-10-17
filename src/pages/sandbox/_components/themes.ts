@@ -32,6 +32,12 @@ export const SANDBOX_PAGES = [
 		description: "Labelled inputs and textareas, with hints and errors.",
 	},
 	{
+		href: "/sandbox/choice-field",
+		label: "ChoiceField",
+		description: "A question answered with radio buttons or checkboxes.",
+	},
+	{ href: "/sandbox/scale-field", label: "ScaleField", description: "A question answered from 1 to 5." },
+	{
 		href: "/sandbox/margin-note",
 		label: "MarginNote",
 		description: "Comments in the margin from collaborators and agents.",

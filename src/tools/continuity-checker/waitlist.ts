@@ -1,7 +1,7 @@
 import { track } from "../../lib/analytics";
 import type { WaitlistPlacement } from "../../lib/analytics/events";
 
-export const WAITLIST_URL = "#";
+export const WAITLIST_URL = "/tools/continuity-checker/waitlist/";
 
 const PLACEMENTS: readonly WaitlistPlacement[] = ["hero", "band"];
 

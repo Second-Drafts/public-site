@@ -36,6 +36,14 @@ Done, in commits `a7f63b0` and `6a3e164`:
   - `npm run forms:dev` runs the Worker and a local database at `localhost:8787` and accepts requests from `localhost:4321`.
   - `npm run forms:deploy` applies migrations to the live database, then deploys.
 
+Form work, tested end to end against `npm run forms:dev`:
+
+- **Worker address:** `PUBLIC_FORMS_URL` in `src/env.d.ts`, set to `http://localhost:8787` in `public-env/.env.development`. The production value goes in `public-env/.env.production` after the first deploy. The public-env test now covers every file in the folder.
+- **Client:** `src/lib/forms/client.ts` (`sendSignup`, `sendSurveyAnswers`) and `src/lib/forms/answers.ts` (`readAnswers`, which turns a survey form into `Answers`).
+- **Fields:** `ChoiceField` and `ScaleField`, with READMEs in `design-system/components/` and sandbox pages. They aren't in the React bundle.
+- **Form:** `/tools/continuity-checker/waitlist/` (`src/tools/continuity-checker/WaitlistForm.astro` and `waitlist-form.ts`). Both Join the waitlist buttons link to it. The privacy policy's section now has the anchor `#waitlists-and-forms`.
+- **Astro's CSP isn't applied in dev**, so the form reaches localhost there. A production build blocks the Worker until the Cloudflare `VENDORS` entry (step 6) adds its origin to `connect-src`.
+
 **Not deployed yet, on purpose.** Everything can be tested end to end locally with `npm run forms:dev` and `npm run dev`. Deploy once, before the site deploys. That first deploy is also what reveals the production URL, `forms.<subdomain>.workers.dev`.
 
 ## Next steps
@@ -45,9 +53,7 @@ Done, in commits `a7f63b0` and `6a3e164`:
    - After sending, set `email = NULL` for that form's rows created up to the export time, so later signups aren't cleared.
    - Delete everything for one email, for removal requests.
    - Set `answers = NULL` on rows older than 12 months.
-2. **Site setting for the Worker address:** add `PUBLIC_FORMS_URL` to `src/env.d.ts`, with `http://localhost:8787` in development and the `workers.dev` URL in `public-env/.env.production`. Add a small client module that posts a signup and its answers using `src/lib/forms/submission.ts`.
-3. **Field components:** `ChoiceField` and `ScaleField`, matching `TextField.astro`.
-4. **The Continuity Checker form:** step 1 is the email, the early-access box and the hidden honeypot field. Step 2 is Q1–Q10. Include the error state. Point both Join the waitlist buttons at it.
+2. **Done:** the site setting, client, field components and the Continuity Checker form. See Progress.
 5. **Teleprompter:** fill in `subscribe()` with form `teleprompter:<feature>` and remove `EMAIL_CAPTURE_ENABLED`. Today `fake-doors.ts` subscribes an email even when the visitor answers "Not really". Decide whether that should happen. Name the feature in the dialog's hint and link to the policy.
 6. **Records:** a Cloudflare entry in `VENDORS`, a `privacy/vendors.md` section, `npm run privacy:lock`, and `TOOLS_VISITORS_WRITE_IN` entries for both forms.
 7. **Review:** run the `privacy-reviewer` agent.

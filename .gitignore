@@ -12,3 +12,4 @@ dist-privacy-scan
 .env
 .env.*
 !public-env/.env.production
+!public-env/.env.development
