@@ -1,5 +1,6 @@
-<section id="m8-log-section" class="m8-log" aria-labelledby="m8-log-title" hidden>
+<section id="m8-log-section" class="m8-log" aria-labelledby="m8-log-title">
 	<h2 id="m8-log-title" class="sd-text-label">This visit</h2>
+	<p id="m8-log-empty" class="m8-log__empty">Your answers will collect here.</p>
 	<ol id="m8-log" class="m8-log__list"></ol>
 </section>
 
@@ -10,7 +11,15 @@
 		gap: var(--space-3);
 		text-align: start;
 	}
-	.m8-log[hidden] {
+	.m8-log__empty {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 22px;
+		font-style: italic;
+		color: var(--m8-muted);
+	}
+	.m8-log__empty[hidden] {
 		display: none;
 	}
 	.m8-log h2 {

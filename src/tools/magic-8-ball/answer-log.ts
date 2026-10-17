@@ -6,6 +6,7 @@ const UNASKED = "A question kept to yourself";
 export function mountAnswerLog(store: Store): void {
 	const section = required(document, "#m8-log-section");
 	const list = required(section, "#m8-log");
+	const emptyNotice = required(section, "#m8-log-empty");
 
 	function entry({ question, answer }: Reading): HTMLLIElement {
 		const item = document.createElement("li");
@@ -23,7 +24,7 @@ export function mountAnswerLog(store: Store): void {
 
 	function render({ log }: Readonly<State>, previous?: Readonly<State>) {
 		if (log === previous?.log) return;
-		section.hidden = log.length === 0;
+		emptyNotice.hidden = log.length > 0;
 		list.replaceChildren(...log.map(entry));
 	}
 
