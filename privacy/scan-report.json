@@ -1,6 +1,6 @@
 {
-	"registryVersion": "2.7.0",
-	"sourceCommit": "b9264d7a1dfe9f9f147a0bbb5647d6cc1a07bb6e",
+	"registryVersion": "2.8.0",
+	"sourceCommit": "64ddc097fefd095c11b1d550801ab05d728bd9ad",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -47,6 +47,20 @@
 				"analyticsEvents": []
 			},
 			"/tools/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/waitlist/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -162,6 +176,24 @@
 				"analyticsEvents": []
 			},
 			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/waitlist/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -349,6 +381,38 @@
 					"scroll"
 				]
 			},
+			"/tools/continuity-checker/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/tools/continuity-checker/waitlist/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
 			"/tools/draft-analysis/": {
 				"storage": [
 					"cookie:_ga",
@@ -516,6 +580,20 @@
 				],
 				"analyticsEvents": []
 			},
+			"/tools/continuity-checker/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/waitlist/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/tools/draft-analysis/": {
 				"storage": [],
 				"origins": [
@@ -625,6 +703,24 @@
 				"analyticsEvents": []
 			},
 			"/tools/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/continuity-checker/waitlist/": {
 				"storage": [
 					"local:privacy:consent"
 				],
