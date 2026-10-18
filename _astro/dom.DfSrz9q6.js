@@ -1,0 +1,1 @@
+function e(e,t){let n=e.querySelector(t);if(!n)throw Error(`Markup is missing ${t}`);return n}export{e as t};
