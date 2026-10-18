@@ -15,6 +15,7 @@ The Department of Second Drafts makes the creative workstation for storytellers 
 - Respect the work. Never call writing "content". Never promise that a tool writes for you; agents *assist*, *suggest*, *check*. Credit the writer.
 - No emoji. No exclamation marks in product UI.
 - Numbers about writing are concrete and set in `meta`: "82,310 words", "v14", "edited 2m ago".
+- Always use the Oxford comma.
 
 Examples:
 

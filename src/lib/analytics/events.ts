@@ -2,6 +2,9 @@
 import type { VendorId } from "../privacy/registry";
 import type { FontId, ThemeId } from "../../tools/teleprompter/lib/settings";
 import type { Rule } from "../../tools/word-counter/lib/target";
+import type { Deck } from "../../tools/magic-8-ball/lib/answers";
+import type { ShakeMethod } from "../../tools/magic-8-ball/lib/state";
+import type { ShareMethod } from "../../tools/magic-8-ball/share-dialog";
 import type { Unit } from "../text/measure";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "601-2000" | "2001-10000" | "10000+";
@@ -64,9 +67,43 @@ export const EVENT_SCHEMA = {
 	da_text_entered: { word_bucket: text<WordBucket>(), source: text<DraftTextSource>() },
 	da_rhythm_sentence_clicked: {},
 	cc_waitlist_clicked: { placement: text<WaitlistPlacement>() },
+	m8_shaken: { method: text<ShakeMethod>(), asked: flag(), deck: text<Deck>(), too_soon: flag() },
+	m8_shared: { method: text<ShareMethod>() },
+	m8_motion_permission: { granted: flag() },
 } satisfies Record<string, PropSchema>;
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;
+
+// Sent by Google Analytics itself, from the enhanced measurement settings in privacy/google-analytics.md, so `track()`
+// can't send them. The privacy scan fails on any event reaching Google that isn't here or in EVENT_SCHEMA.
+const linkProps = { link_classes: text(), link_id: text(), link_url: text() };
+const formProps = { form_id: text(), form_name: text(), form_destination: text() };
+const videoProps = {
+	video_current_time: num(),
+	video_duration: num(),
+	video_percent: num(),
+	video_provider: text(),
+	video_title: text(),
+	video_url: text(),
+	visible: flag(),
+};
+
+export const AUTOMATIC_EVENT_SCHEMA = {
+	user_engagement: {},
+	scroll: { percent_scrolled: num() },
+	click: { ...linkProps, link_domain: text(), outbound: flag() },
+	video_start: videoProps,
+	video_progress: videoProps,
+	video_complete: videoProps,
+	file_download: { ...linkProps, file_extension: text(), file_name: text(), link_text: text() },
+	form_start: formProps,
+	form_submit: { ...formProps, form_submit_text: text() },
+} satisfies Record<string, PropSchema>;
+
+export const LOCKED_ANALYTICS_SCHEMA = {
+	events: { ...EVENT_SCHEMA, ...AUTOMATIC_EVENT_SCHEMA },
+	context: SESSION_CONTEXT_SCHEMA,
+};
 
 export type AnalyticsEvents = { [E in keyof typeof EVENT_SCHEMA]: Derive<(typeof EVENT_SCHEMA)[E]> };
 

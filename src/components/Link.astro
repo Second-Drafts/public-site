@@ -17,22 +17,22 @@ const { class: className, ...rest } = Astro.props;
 <a {...rest} class:list={["sd-link", className]}><slot /></a>
 
 <style>
-	.sd-link {
-		color: var(--ink);
-		text-decoration: underline;
-		text-decoration-color: var(--marker-green);
-		text-decoration-thickness: 3px;
-		text-underline-offset: 3px;
-	}
-	.sd-link:focus-visible {
-		outline: none;
-		border-radius: var(--radius-sm);
-		box-shadow:
-			0 0 0 2px var(--paper),
-			0 0 0 4px var(--focus);
-	}
-	/* Green would sit on pink; links in the band underline in ink. */
-	:global([data-theme="highlighted"]) .sd-link {
-		text-decoration-color: var(--ink);
-	}
+  .sd-link {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--marker-green);
+    text-decoration-thickness: 0.125em;
+    text-underline-offset: 0.125em;
+  }
+  .sd-link:focus-visible {
+    outline: none;
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--focus);
+  }
+  /* Green would sit on pink; links in the band underline in ink. */
+  :global([data-theme="highlighted"]) .sd-link {
+    text-decoration-color: var(--ink);
+  }
 </style>

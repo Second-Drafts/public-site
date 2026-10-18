@@ -9,7 +9,6 @@
 		".impeccable/**",
 		"design-system/**",
 		"public/**",
-		"tickets/**",
 		"*.md",
 		"package-lock.json",
 		"skills-lock.json"

@@ -1,7 +1,11 @@
 {
-	"version": "2.6.0",
+	"version": "2.8.0",
 	"updated": "2026-10-18",
 	"reviews": [
+		{
+			"subject": "analytics property cc_waitlist_clicked.placement",
+			"outcome": "checked-by-hand"
+		},
 		{
 			"subject": "vendor cloudflare (Cloudflare) as processor in forms",
 			"outcome": "role-confirmed"
@@ -12,14 +16,55 @@
 			"cc_waitlist_clicked": {
 				"placement": ["string"]
 			},
+			"click": {
+				"link_classes": ["string"],
+				"link_domain": ["string"],
+				"link_id": ["string"],
+				"link_url": ["string"],
+				"outbound": ["boolean"]
+			},
 			"da_rhythm_sentence_clicked": {},
 			"da_text_entered": {
 				"source": ["string"],
 				"word_bucket": ["string"]
 			},
+			"file_download": {
+				"file_extension": ["string"],
+				"file_name": ["string"],
+				"link_classes": ["string"],
+				"link_id": ["string"],
+				"link_text": ["string"],
+				"link_url": ["string"]
+			},
+			"form_start": {
+				"form_destination": ["string"],
+				"form_id": ["string"],
+				"form_name": ["string"]
+			},
+			"form_submit": {
+				"form_destination": ["string"],
+				"form_id": ["string"],
+				"form_name": ["string"],
+				"form_submit_text": ["string"]
+			},
+			"m8_motion_permission": {
+				"granted": ["boolean"]
+			},
+			"m8_shaken": {
+				"asked": ["boolean"],
+				"deck": ["string"],
+				"method": ["string"],
+				"too_soon": ["boolean"]
+			},
+			"m8_shared": {
+				"method": ["string"]
+			},
 			"page_view": {
 				"landing_source": ["string"],
 				"referrer_domain": ["string"]
+			},
+			"scroll": {
+				"percent_scrolled": ["number"]
 			},
 			"tp_completed": {
 				"duration_s": ["number"],
@@ -62,6 +107,34 @@
 				"word_bucket": ["string"]
 			},
 			"tp_share_link_opened": {},
+			"user_engagement": {},
+			"video_complete": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
+			"video_progress": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
+			"video_start": {
+				"video_current_time": ["number"],
+				"video_duration": ["number"],
+				"video_percent": ["number"],
+				"video_provider": ["string"],
+				"video_title": ["string"],
+				"video_url": ["string"],
+				"visible": ["boolean"]
+			},
 			"wc_cut_line_shown": {
 				"rule": ["string"],
 				"unit": ["string"]

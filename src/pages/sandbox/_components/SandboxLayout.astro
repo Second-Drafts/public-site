@@ -8,8 +8,8 @@ import DesignSystemHead from "../../../components/DesignSystemHead.astro";
 import { SANDBOX_PAGES } from "./themes";
 
 interface Props {
-	title: string;
-	description?: string;
+  title: string;
+  description?: string;
 }
 
 const { title, description } = Astro.props;
@@ -19,123 +19,129 @@ const nav = [{ href: "/sandbox", label: "Index" }, ...SANDBOX_PAGES];
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="robots" content="noindex" />
-		<title>{title} · Sandbox</title>
-		<script is:inline>
-			try {
-				const stored = localStorage.getItem("sandbox-theme");
-				if (stored === "dark" || stored === "light") document.documentElement.dataset.theme = stored;
-			} catch {}
-		</script>
-		<DesignSystemHead />
-	</head>
-	<body>
-		<header class="sb-bar">
-			<nav aria-label="Sandbox pages">
-				<ul class="sb-nav">
-					{
-						nav.map((page) => (
-							<li>
-								<a
-									class="sb-nav__link sd-text-label"
-									href={page.href}
-									aria-current={page.href === current ? "page" : undefined}
-								>
-									{page.label}
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</nav>
-			<Button variant="secondary" size="sm" id="sb-theme-toggle">Night shift</Button>
-		</header>
-		<main class="sb-main">
-			<h1 class="sd-text-headline sb-title">{title}</h1>
-			{description && <p class="sb-lede">{description}</p>}
-			<slot />
-		</main>
-		<slot name="after" />
-		<script>
-			const root = document.documentElement;
-			const systemDark = matchMedia("(prefers-color-scheme: dark)");
-			const toggle = document.querySelector<HTMLButtonElement>("#sb-theme-toggle");
-			const label = toggle?.querySelector(".sd-btn__label");
-			// With no data-theme the page follows the system setting, so that's the current theme.
-			const current = () => root.dataset.theme ?? (systemDark.matches ? "dark" : "light");
-			const render = () => {
-				if (label) label.textContent = current() === "dark" ? "Paper" : "Night shift";
-			};
-			systemDark.addEventListener("change", render);
-			toggle?.addEventListener("click", () => {
-				const next = current() === "dark" ? "light" : "dark";
-				root.dataset.theme = next;
-				try {
-					localStorage.setItem("sandbox-theme", next);
-				} catch {}
-				render();
-			});
-			render();
-		</script>
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>{title} · Sandbox</title>
+    <script is:inline>
+      try {
+        const stored = localStorage.getItem("sandbox-theme");
+        if (stored === "dark" || stored === "light")
+          document.documentElement.dataset.theme = stored;
+      } catch {}
+    </script>
+    <DesignSystemHead />
+  </head>
+  <body>
+    <header class="sb-bar">
+      <nav aria-label="Sandbox pages">
+        <ul class="sb-nav">
+          {
+            nav.map((page) => (
+              <li>
+                <a
+                  class="sb-nav__link sd-text-label"
+                  href={page.href}
+                  aria-current={page.href === current ? "page" : undefined}
+                >
+                  {page.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      <Button variant="secondary" size="sm" id="sb-theme-toggle"
+        >Night shift</Button
+      >
+    </header>
+    <main class="sb-main">
+      <h1 class="sd-text-headline sb-title">{title}</h1>
+      {description && <p class="sb-lede">{description}</p>}
+      <slot />
+    </main>
+    <slot name="after" />
+    <script>
+      const root = document.documentElement;
+      const systemDark = matchMedia("(prefers-color-scheme: dark)");
+      const toggle =
+        document.querySelector<HTMLButtonElement>("#sb-theme-toggle");
+      const label = toggle?.querySelector(".sd-btn__label");
+      // With no data-theme the page follows the system setting, so that's the current theme.
+      const current = () =>
+        root.dataset.theme ?? (systemDark.matches ? "dark" : "light");
+      const render = () => {
+        if (label)
+          label.textContent = current() === "dark" ? "Paper" : "Night shift";
+      };
+      systemDark.addEventListener("change", render);
+      toggle?.addEventListener("click", () => {
+        const next = current() === "dark" ? "light" : "dark";
+        root.dataset.theme = next;
+        try {
+          localStorage.setItem("sandbox-theme", next);
+        } catch {}
+        render();
+      });
+      render();
+    </script>
+  </body>
 </html>
 
 <style>
-	.sb-bar {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: space-between;
-		gap: var(--space-3) var(--space-6);
-		padding: var(--space-3) var(--space-6);
-		border-bottom: var(--stroke-hairline) solid var(--rule);
-	}
-	.sb-nav {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2) var(--space-4);
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-	.sb-nav__link {
-		color: var(--ink-muted);
-		text-decoration: none;
-	}
-	.sb-nav__link:hover {
-		color: var(--ink);
-	}
-	/* current location is marker-blue */
-	.sb-nav__link[aria-current="page"] {
-		color: var(--ink);
-		text-decoration: underline;
-		text-decoration-color: var(--marker-blue);
-		text-decoration-thickness: 3px;
-		text-underline-offset: 4px;
-	}
-	.sb-nav__link:focus-visible {
-		outline: none;
-		border-radius: var(--radius-sm);
-		box-shadow:
-			0 0 0 2px var(--paper),
-			0 0 0 4px var(--focus);
-	}
-	.sb-main {
-		max-width: 72rem;
-		margin: 0 auto;
-		padding: var(--space-12) var(--space-6) var(--space-16);
-	}
-	.sb-title {
-		margin: 0 0 var(--space-4);
-	}
-	.sb-lede {
-		max-width: 34em;
-		margin: 0 0 var(--space-12);
-		font-size: 20px;
-		line-height: 32px;
-		color: var(--ink-muted);
-	}
+  .sb-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3) var(--space-6);
+    padding: var(--space-3) var(--space-6);
+    border-bottom: var(--stroke-hairline) solid var(--rule);
+  }
+  .sb-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sb-nav__link {
+    color: var(--ink-muted);
+    text-decoration: none;
+  }
+  .sb-nav__link:hover {
+    color: var(--ink);
+  }
+  /* current location is marker-blue */
+  .sb-nav__link[aria-current="page"] {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--marker-blue);
+    text-decoration-thickness: 0.125em;
+    text-underline-offset: 4px;
+  }
+  .sb-nav__link:focus-visible {
+    outline: none;
+    border-radius: var(--radius-sm);
+    box-shadow:
+      0 0 0 2px var(--paper),
+      0 0 0 4px var(--focus);
+  }
+  .sb-main {
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: var(--space-12) var(--space-6) var(--space-16);
+  }
+  .sb-title {
+    margin: 0 0 var(--space-4);
+  }
+  .sb-lede {
+    max-width: 34em;
+    margin: 0 0 var(--space-12);
+    font-size: 20px;
+    line-height: 32px;
+    color: var(--ink-muted);
+  }
 </style>

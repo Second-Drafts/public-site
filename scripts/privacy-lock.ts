@@ -2,7 +2,7 @@
 // Usage: npm run privacy:lock [-- --bump=minor|major] [-- --confirm=<code>]
 // A requested bump can raise the proposal, never lower it. Anything a person must check blocks the write until
 // they re-run with the code printed for that exact list, and the lock records how each change was reviewed.
-import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../src/lib/analytics/events.ts";
+import { LOCKED_ANALYTICS_SCHEMA } from "../src/lib/analytics/events.ts";
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import {
@@ -66,7 +66,7 @@ function confirmedByPerson(reviews: ReviewItem[]): boolean {
 }
 
 const previous: Lock = JSON.parse(readFileSync(LOCK_PATH, "utf8"));
-const snapshot = buildSnapshot({ events: EVENT_SCHEMA, context: SESSION_CONTEXT_SCHEMA });
+const snapshot = buildSnapshot(LOCKED_ANALYTICS_SCHEMA);
 const changes = diffSnapshots(snapshotOf(previous), snapshot);
 
 if (changes.length === 0) {

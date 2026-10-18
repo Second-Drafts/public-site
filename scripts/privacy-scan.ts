@@ -12,6 +12,8 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	analyticsEventNames,
+	undeclaredAnalyticsEvents,
 	type Exposure,
 	type Observation,
 	type RecordedRequest,
@@ -29,6 +31,7 @@ const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
 // Past the draft analysis tool's 2s settle before it reports, plus its rhythm recompute.
 const DRAFT_SETTLE_MS = 2500;
+const BALL_SETTLE_MS = 2500;
 const SENTINEL = "SENTINEL-do-not-leak-4f9a1c";
 
 const RECORD_CSP_VIOLATIONS = `
@@ -57,6 +60,7 @@ const READ_STORAGE_IN_PAGE = `(async () => ({
 interface PageReport {
 	storage: string[];
 	origins: string[];
+	analyticsEvents: string[];
 }
 
 function freePort(): Promise<number> {
@@ -121,6 +125,9 @@ const SENTINEL_FORMS = [
 ];
 const DRAFT_ANALYSIS_PATH = "/tools/draft-analysis/";
 
+// Site search is off in Google Analytics. If it comes back on, this page sends an undeclared view_search_results.
+const SEARCH_QUERY_PATH = "/blog/?q=scan-search-query";
+
 function shareLink(): string {
 	return `${TELEPROMPTER_PATH}#s=${ENCODED_SHARE_PAYLOAD}`;
 }
@@ -170,7 +177,23 @@ async function withdrawAnalytics(page: Page, requests: RecordedRequest[]): Promi
 	await Promise.all([page.waitForEvent("load"), page.click("[data-consent-save]")]);
 }
 
+// Lets enhanced measurement's scroll event fire, so the scan checks it like every other hit.
+async function scrollToBottom(page: Page): Promise<void> {
+	await page.evaluate(() => window.scrollTo(0, Number.MAX_SAFE_INTEGER));
+}
+
+// Google Analytics holds hits for about five seconds and sends them early when the page is hidden, as when a visitor
+// leaves. Hiding the page makes it send them before the scan reads its requests.
+const HIDE_PAGE = `
+Object.defineProperty(document, "visibilityState", { value: "hidden", configurable: true });
+Object.defineProperty(document, "hidden", { value: true, configurable: true });
+document.dispatchEvent(new Event("visibilitychange"));
+window.dispatchEvent(new Event("pagehide"));
+`;
+
 async function settle(page: Page): Promise<void> {
+	await page.waitForLoadState("networkidle");
+	await page.evaluate(HIDE_PAGE);
 	await page.waitForLoadState("networkidle");
 	await page.waitForTimeout(300);
 }
@@ -202,6 +225,8 @@ async function scanPage(
 	const page = await context.newPage();
 	await page.goto(origin + path);
 	await chooseConsent(page, state, requests);
+	await page.waitForLoadState("networkidle");
+	await scrollToBottom(page);
 	await settle(page);
 
 	const observation: Observation = {
@@ -210,12 +235,14 @@ async function scanPage(
 		cspViolations: await page.evaluate(() => (window as unknown as { __cspViolations: string[] }).__cspViolations),
 	};
 	await context.close();
-	const violations = findViolations(state, observation, origin).map((message) => `[${state}] ${path}: ${message}`);
+	const violations = [...findViolations(state, observation, origin), ...undeclaredAnalyticsEvents(requests)].map(
+		(message) => `[${state}] ${path}: ${message}`,
+	);
 	const storage = observation.storage.map(({ area, name }) => `${area}:${name}`).sort();
 	const origins = observation.requestOrigins.map((requestOrigin) =>
 		requestOrigin === origin ? "self" : requestOrigin,
 	);
-	return { report: { storage, origins }, violations };
+	return { report: { storage, origins, analyticsEvents: analyticsEventNames(requests).sort() }, violations };
 }
 
 interface WritingTool {
@@ -262,6 +289,14 @@ async function writeSprint(page: Page): Promise<void> {
 	await page.click("#ws-stop");
 }
 
+async function askTheBall(page: Page): Promise<void> {
+	await page.fill("#m8-question", SENTINEL);
+	await page.click("#m8-shake");
+	await page.waitForTimeout(BALL_SETTLE_MS);
+	await page.click("#m8-share-open");
+	await page.keyboard.press("Escape");
+}
+
 async function analyseDraft(page: Page): Promise<void> {
 	await page.fill("#da-text", SENTINEL);
 	await page.waitForTimeout(DRAFT_SETTLE_MS);
@@ -282,6 +317,7 @@ const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
 	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
 	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyseDraft },
+	{ name: "magic 8 ball", path: "/tools/magic-8-ball/", write: askTheBall },
 	{
 		name: "draft analysis from a sprint",
 		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,
@@ -389,6 +425,7 @@ async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, to
 	const sendsForm = tool.sendsForm ?? false;
 	if (sendsForm) await standInForFormsWorker(context);
 	const collectExposures = await watchForLeaks(context, { sendsForm });
+	const { requests } = trackRequests(context);
 	const page = await context.newPage();
 	await page.goto(origin + tool.path);
 	await page.click("[data-consent-accept]");
@@ -396,7 +433,9 @@ async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, to
 	await settle(page);
 	const exposures = await collectExposures();
 	await context.close();
-	return findSentinelLeaks(exposures, SENTINEL_FORMS).map((leak) => `[${tool.name}] ${leak}`);
+	return [...findSentinelLeaks(exposures, SENTINEL_FORMS), ...undeclaredAnalyticsEvents(requests)].map(
+		(problem) => `[${tool.name}] ${problem}`,
+	);
 }
 
 function sourceRevision(): { sourceCommit: string; sourceDirty: boolean } {
@@ -412,7 +451,7 @@ async function main(): Promise<void> {
 	buildForScan();
 	const preview = await startPreview();
 	const browser = await launchBrowser();
-	const paths = [...sitemapPaths(), shareLink()];
+	const paths = [...sitemapPaths(), shareLink(), SEARCH_QUERY_PATH];
 	const violations: string[] = [];
 	const states: Record<string, Record<string, PageReport>> = {};
 

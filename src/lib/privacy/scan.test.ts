@@ -5,6 +5,7 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	undeclaredAnalyticsEvents,
 	type Observation,
 } from "./scan";
 
@@ -92,6 +93,33 @@ describe("form requests", () => {
 		expect(findViolations("accepted", observation, SELF)).toEqual(
 			FORM_ORIGINS.map((origin) => `request to the forms Worker (${origin}) before anything was submitted`),
 		);
+	});
+});
+
+describe("undeclaredAnalyticsEvents", () => {
+	const COLLECT = "https://region1.google-analytics.com/g/collect";
+
+	it("accepts events in the lock, whether the site or Google sends them", () => {
+		const requests = [
+			{ url: `${COLLECT}?v=2&en=page_view`, body: "" },
+			{ url: `${COLLECT}?v=2`, body: "en=scroll&epn.percent_scrolled=90\nen=tp_play" },
+		];
+		expect(undeclaredAnalyticsEvents(requests)).toEqual([]);
+	});
+
+	it("names each undeclared event once, in the query or a batched body", () => {
+		const requests = [
+			{ url: `${COLLECT}?v=2&en=rogue`, body: "" },
+			{ url: `${COLLECT}?v=2`, body: "en=page_view\nen=rogue\nen=other" },
+		];
+		expect(undeclaredAnalyticsEvents(requests)).toEqual([
+			'analytics event "rogue" is not in registry.lock.json',
+			'analytics event "other" is not in registry.lock.json',
+		]);
+	});
+
+	it("ignores requests that are not analytics hits", () => {
+		expect(undeclaredAnalyticsEvents([{ url: "https://a.test/?en=rogue", body: "" }])).toEqual([]);
 	});
 });
 

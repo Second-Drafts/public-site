@@ -2,15 +2,13 @@
 import LegalPage from "../layouts/LegalPage.astro";
 import Button from "../components/Button.astro";
 import Link from "../components/Link.astro";
-import { analyticsEvents, sessionContextProperties, vendorSections } from "../components/privacy/privacyPolicyModel";
+import { vendorSections } from "../components/privacy/privacyPolicyModel";
 import { CONTACT_EMAIL, DOMAIN, ORGANISATION, POSTAL_ADDRESS } from "../lib/privacy/organisation";
 import { VENDORS } from "../lib/privacy/registry";
 
 const vendors = vendorSections();
 const hosting = VENDORS["github-pages"];
 const analytics = VENDORS["google-analytics"];
-const events = analyticsEvents();
-const contextProperties = sessionContextProperties();
 ---
 
 <LegalPage title="Privacy policy" description={`How ${DOMAIN} handles personal data, who we share it with, and your rights.`}>
@@ -39,6 +37,10 @@ const contextProperties = sessionContextProperties();
 			carries your text after the <code>#</code> in the address, which browsers never send to a server. The only writing
 			we receive is what you choose to send us in a form.
 		</li>
+		<li>
+			We don't receive your phone's motion. The Magic 8 Ball reads it on the page, only to notice a shake, and only
+			once you allow it where your device asks. The readings are never stored or sent.
+		</li>
 	</ul>
 
 	<h2>Hosting</h2>
@@ -55,26 +57,18 @@ const contextProperties = sessionContextProperties();
 	</p>
 	<p>
 		In plain terms, we record which pages you visit, which tool settings you use, roughly how long your text is (in ranges of word counts),
-		how you reach the site, how long you use a tool, and your device type. We never record what you write.
+		how you reach the site, how long you use a tool, and your device type. For the Magic 8 Ball, we record whether you typed a question, but never the question itself. We never record what you write.
+		{analytics.name} also measures some things itself: how far down a page you scroll, which links to other sites you
+		follow, when you start and submit a form (never what you type into it), and any file downloads and video plays.
 		Google also receives what it collects automatically, such as your IP address and browser details. For the cookies
 		involved and how long they last, see the <Link href="/cookie-policy">cookie policy</Link>.
 	</p>
-	<details>
-		<summary>The exact events we send</summary>
-		<ul class="events">
-			{
-				events.map((event) => (
-					<li>
-						<code>{event.name}</code>
-						{event.properties.length > 0 && <span>: {event.properties.join(", ")}</span>}
-					</li>
-				))
-			}
-		</ul>
-		<p>
-			Every event also includes: {contextProperties.join(", ")}.
-		</p>
-	</details>
+	<p>
+		We have linked {analytics.name} to Google Search Console, which shows us which Google searches lead people to this site.
+		The link works both ways: Search Console's search statistics appear in our analytics reports, and aggregate site
+		statistics from {analytics.name}, such as how many people visit a page, are shared with Search Console. Neither product
+		is told who any individual visitor is.
+	</p>
 	<p><Button variant="secondary" data-open-cookie-settings>Change your cookie settings</Button></p>
 
 	<h2 id="waitlists-and-forms">Waitlists and forms</h2>
@@ -188,15 +182,5 @@ const contextProperties = sessionContextProperties();
 	}
 	li {
 		margin-block-end: var(--space-2);
-	}
-	details {
-		margin-block-end: var(--space-6);
-	}
-	summary {
-		cursor: pointer;
-		margin-block-end: var(--space-3);
-	}
-	.events {
-		font-size: 0.9em;
 	}
 </style>

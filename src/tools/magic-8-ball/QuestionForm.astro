@@ -1,0 +1,103 @@
+---
+import Button from "../../components/Button.astro";
+import TextField from "../../components/TextField.astro";
+import { DECK_NAMES, type Deck } from "./lib/answers";
+
+const decks = Object.entries(DECK_NAMES) as [Deck, string][];
+---
+
+<form id="m8-form" class="m8-form" autocomplete="off">
+	<div class="m8-form__ask">
+		<TextField
+			id="m8-question"
+			class="m8-form__field"
+			label="Your question"
+			placeholder="Should I start the second draft today?"
+			hint="Optional. You can keep it in your head."
+			maxlength="200"
+		/>
+		<Button id="m8-shake" type="submit" variant="accent">Shake</Button>
+	</div>
+
+	<fieldset id="m8-deck" class="m8-decks">
+		<legend class="sd-text-label">Answers from</legend>
+		{
+			decks.map(([deck, name]) => (
+				<label class="m8-deck">
+					<input type="radio" name="m8-deck" value={deck} checked={deck === "classic"} />
+					<span>{name}</span>
+				</label>
+			))
+		}
+	</fieldset>
+</form>
+
+<style>
+	.m8-form {
+		display: grid;
+		gap: var(--space-6);
+		inline-size: min(100%, 32rem);
+		text-align: start;
+	}
+	.m8-form__ask {
+		display: flex;
+		align-items: start;
+		gap: var(--space-3);
+	}
+	.m8-form__field {
+		flex: 1;
+	}
+	.m8-form__ask :global(.sd-btn) {
+		margin-block-start: calc(16px + var(--space-2));
+	}
+	.m8-decks {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3);
+		margin: 0;
+		padding: 0;
+		border: 0;
+		min-inline-size: 0;
+	}
+	.m8-decks legend {
+		float: inline-start;
+		margin-inline-end: var(--space-2);
+		padding: 0;
+	}
+	.m8-deck {
+		position: relative;
+		cursor: pointer;
+	}
+	.m8-deck input {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.m8-deck span {
+		display: inline-block;
+		padding: var(--space-1) var(--space-3);
+		font-family: var(--font-mono);
+		font-size: 15px;
+		line-height: 24px;
+		color: var(--ink);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-pill);
+	}
+	.m8-deck input:checked + span {
+		color: var(--m8-ground);
+		background: var(--m8-glow-text);
+		border-color: var(--m8-glow-text);
+	}
+	.m8-deck input:focus-visible + span {
+		outline: 2px solid var(--focus);
+		outline-offset: 2px;
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.m8-deck input:not(:checked):hover + span {
+			border-color: var(--ink);
+		}
+	}
+</style>

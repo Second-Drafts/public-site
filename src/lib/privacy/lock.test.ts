@@ -11,7 +11,7 @@ import {
 	type Snapshot,
 } from "./lock";
 import type { Retention } from "./registry";
-import { EVENT_SCHEMA, SESSION_CONTEXT_SCHEMA } from "../analytics/events";
+import { LOCKED_ANALYTICS_SCHEMA } from "../analytics/events";
 
 function baseSnapshot(): Snapshot {
 	return {
@@ -78,7 +78,7 @@ function bumpFor(change: (snapshot: Snapshot) => void): string {
 }
 
 function snapshotOfRegistry() {
-	return buildSnapshot({ events: EVENT_SCHEMA, context: SESSION_CONTEXT_SCHEMA });
+	return buildSnapshot(LOCKED_ANALYTICS_SCHEMA);
 }
 
 describe("registry lock", () => {

@@ -13,19 +13,27 @@ interface Tool {
 const tools: Record<string, Tool> = {
 	"word-counter": {
 		title: "Word Counter",
-		description: "Count words and characters, check a limit for an essay, story or post, and see how long your text takes to read aloud. Your text stays in your browser.",
+		description:
+			"Count words, characters, or even reading time. Nudge it until it's just right. Target social platforms, writing submissions, and more.",
 	},
 	"writing-sprint": {
 		title: "Writing Sprint",
-		description: "Set a timer for 10, 15, 25 minutes or your own, write without stopping, and see how many words you got down. Your draft stays in your browser.",
+		description:
+			"Sometimes it's good to just get words out. Give yourself a prompt or just a free write session. Just a simple timer at your side.",
 	},
 	"draft-analysis": {
 		title: "Draft Analysis",
-		description: "See the length of every sentence at a glance, with long ones flagged. Your draft stays in your browser.",
+		description:
+			"Sometimes data can tell you more than you'd expect about your writing. Here is some basic analysis of your draft.",
 	},
 	teleprompter: {
 		title: "Teleprompter",
-		description: "Read your script from the screen. Free, with no account and no time limits, in fonts and colours that are easy on the eyes.",
+		description:
+			"Take that draft you honed and get your lighting set up. Scroll your words at adjustable speeds and styles for a great performance.",
+	},
+	"magic-8-ball": {
+		title: "Magic 8-Ball",
+		description: "Have a question? Ask it to the Magic 8-Ball. It's a little silly, but it's fun.",
 	},
 	"continuity-checker": {
 		title: "Continuity Checker",
@@ -36,7 +44,10 @@ const tools: Record<string, Tool> = {
 ---
 
 <Base title="Tools">
-	<PageHeader title="Tools">Our collection of writing tools</PageHeader>
+	<PageHeader title="Tools">
+		Tools to help you write. Tools to unblock you. Tools to help you go deeper, go further, go bigger, go smaller.
+		We're collecting tools that help you tell the best story you can.
+	</PageHeader>
 
 	<ul class="tools">
 		{

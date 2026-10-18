@@ -1,4 +1,4 @@
-import { clamp } from "./math";
+import { clamp } from "../../../lib/math";
 
 export const MAX_DT_MS = 100;
 export const MANUAL_SCROLL_THRESHOLD_PX = 1;

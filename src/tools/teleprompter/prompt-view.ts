@@ -1,9 +1,9 @@
 import { required } from "../../lib/dom";
+import { clamp } from "../../lib/math";
 import { inertOutside } from "./lib/dom";
 import { createScrollEngine } from "./lib/engine";
 import type { ScrollEngine } from "./lib/engine";
 import type { PromptAction } from "./lib/keyboard";
-import { clamp } from "./lib/math";
 import { createPlayback } from "./lib/playback";
 import type { PlayState } from "./lib/playback";
 import {
