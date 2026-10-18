@@ -1,35 +1,352 @@
 ---
+import Button from "../components/Button.astro";
+import HighlightedBand from "../components/HighlightedBand.astro";
+import Link from "../components/Link.astro";
 import Logo from "../components/Logo.astro";
+import Mark from "../components/Mark.astro";
+import ProofreaderMark from "../components/ProofreaderMark.astro";
 import Base from "../layouts/Base.astro";
-// This is server-side code. This will log in the terminal, not the browser console.
-console.log("Homepage loaded");
+import { formatDate, getPublishedPosts } from "../lib/blog";
+import ExampleFlag from "../tools/continuity-checker/ExampleFlag.astro";
+import { EXAMPLE_FLAGS } from "../tools/continuity-checker/example-flags";
+import { WAITLIST_URL } from "../tools/continuity-checker/waitlist";
+
+const freeTools = [
+	{
+		slug: "word-counter",
+		title: "Word Counter",
+		description: "Count words, characters, or even reading time. Target social platforms, submissions, and more.",
+	},
+	{
+		slug: "writing-sprint",
+		title: "Writing Sprint",
+		description: "Sometimes it's good to just get words out. A prompt or a free write, with a simple timer at your side.",
+	},
+	{
+		slug: "draft-analysis",
+		title: "Draft Analysis",
+		description: "Data can tell you more than you'd expect about your writing. Some basic analysis of your draft.",
+	},
+	{
+		slug: "teleprompter",
+		title: "Teleprompter",
+		description: "Take the draft you honed and scroll your words at adjustable speeds and styles for a great performance.",
+	},
+];
+
+const ideas = ["Research notes", "Outlines", "Plot checks", "Worldbuilding", "Sources and citations", "Interview transcripts", "So much more"];
+
+const [doorFlag] = EXAMPLE_FLAGS;
+const [latestPost] = await getPublishedPosts();
 ---
 
-<Base headerLogo={false}>
-	<h1 class="masthead">
-		<Logo width={360} />
-	</h1>
-	<p>
-		Welcome! You're one of the very first to have found us. We promise there's much more to come for storytellers of
-		all types.
-	</p>
-	<p class="signature">– The Department</p>
+<Base headerLogo={false} wide>
+	<div class="home home--top">
+		<header class="home__hero">
+			<h1 class="home__masthead">
+				<Logo width={624} />
+			</h1>
+			<p class="home__tagline">
+				<span class="home__tagline-lead">A workstation for storytellers.</span>
+				<span>Modern tools for an age-old craft.</span>
+			</p>
+			<p class="home__lede">Free tools for writing and editing are ready now. Bigger things are in development.</p>
+			<div class="home__actions">
+				<Button href="/tools" variant="primary" size="lg">Try a tool</Button>
+				<Button href="#continuity-checker" variant="secondary" size="lg">See what's coming</Button>
+			</div>
+		</header>
+
+		<section class="home__section" aria-labelledby="home-tools">
+			<div class="home__heading-row">
+				<h2 id="home-tools" class="sd-text-title">Free tools, <Mark>no sign-up</Mark></h2>
+				<ProofreaderMark name="stet" color="marker-green" size={64} rotate={-6} class="home__deco" />
+			</div>
+			<ul class="home__tools">
+				{
+					freeTools.map((tool) => (
+						<li class="home__tool">
+							<h3 class="sd-text-heading">
+								<Link href={`/tools/${tool.slug}`}>{tool.title}</Link>
+							</h3>
+							<p>{tool.description}</p>
+						</li>
+					))
+				}
+			</ul>
+			<p class="home__connect">
+				The tools work together: count your words, then send them straight to the teleprompter.
+			</p>
+			<div class="home__tools-footer">
+				<p class="home__aside">
+					Procrastinating? Ask the <Link href="/tools/magic-8-ball">Magic 8-Ball</Link>. It's a little silly, but it's
+					fun.
+				</p>
+				<Link href="/tools">All tools →</Link>
+			</div>
+		</section>
+	</div>
+
+	<HighlightedBand id="continuity-checker" aria-labelledby="home-cc">
+		<div class="home__cc">
+			<div class="home__cc-copy">
+				<p class="sd-text-label">Coming soon</p>
+				<h2 id="home-cc" class="home__cc-headline">Did the green door in chapter 3 become red in 12?</h2>
+				<p>
+					The Continuity Checker reads your whole manuscript and points out details that change, even a hundred pages
+					apart. It never rewrites a word.
+				</p>
+				<div class="home__actions">
+					<Button href={WAITLIST_URL} variant="primary" size="lg" data-waitlist-placement="home">Join the waitlist</Button>
+					<Link href="/tools/continuity-checker">More about the Continuity Checker</Link>
+				</div>
+			</div>
+			<div class="home__cc-flag">
+				<ExampleFlag flag={doorFlag} />
+			</div>
+		</div>
+	</HighlightedBand>
+
+	<div class="home">
+		<section class="home__section" aria-labelledby="home-direction">
+			<div class="home__heading-row">
+				<h2 id="home-direction" class="sd-text-title">Where this is going</h2>
+				<ProofreaderMark name="transpose" color="marker-orange" size={68} rotate={4} class="home__deco" />
+			</div>
+			<p>
+				We're starting simple, with a few free tools, while we build the bigger features. Eventually, this will be one
+				place for all of your writing and editing.
+			</p>
+			<ul class="home__chips">
+				{ideas.map((idea) => <li>{idea}</li>)}
+			</ul>
+		</section>
+
+		{
+			latestPost && (
+				<section class="home__section" aria-labelledby="home-blog">
+					<div class="home__heading-row">
+						<h2 id="home-blog" class="sd-text-title">From the blog</h2>
+						<ProofreaderMark name="pilcrow" color="marker-blue" size={64} rotate={8} class="home__deco" />
+					</div>
+					<article class="home__post">
+						<h3 class="sd-text-heading">
+							<Link href={`/blog/${latestPost.id}`}>{latestPost.data.title}</Link>
+						</h3>
+						<p class="sd-text-meta">
+							<time datetime={latestPost.data.date.toISOString()}>{formatDate(latestPost.data.date)}</time>
+						</p>
+						<p>{latestPost.data.description}</p>
+					</article>
+					<Link href="/blog">All posts →</Link>
+				</section>
+			)
+		}
+
+		<p class="home__signature">– The Department</p>
+		<ProofreaderMark name="closeUp" color="marker-pink" size={68} rotate={-4} class="home__deco home__deco--signoff" />
+	</div>
 </Base>
 
+<script>
+	import { mountWaitlistLinks } from "../tools/continuity-checker/waitlist";
+
+	mountWaitlistLinks();
+</script>
+
 <style>
-	.masthead {
+	.home {
+		--content: 40rem;
+
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-16);
+		width: min(100% - var(--space-6) * 2, var(--content));
+		margin-inline: auto;
+		padding-block: var(--space-16);
+	}
+	.home p,
+	.home h1,
+	.home h2,
+	.home h3,
+	.home ul,
+	.home__cc p,
+	.home__cc h2 {
+		margin: 0;
+	}
+	.home--top {
+		padding-block-start: var(--space-4);
+	}
+	.home p,
+	.home__cc p {
+		text-wrap: pretty;
+	}
+	.home h2,
+	.home h3,
+	.home__cc h2 {
+		text-wrap: balance;
+	}
+
+	.home__deco {
+		display: none;
+	}
+	@media (min-width: 40rem) {
+		.home__deco {
+			display: block;
+		}
+	}
+	.home__deco--signoff {
+		align-self: end;
+		margin-block-start: calc(var(--space-12) * -1);
+	}
+
+	.home__hero {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-6);
+		text-align: center;
+	}
+	.home__masthead {
 		display: flex;
 		justify-content: center;
-		margin: 0 0 var(--space-8);
+		margin-block-end: var(--space-4);
 	}
-	p {
-		margin: 0 0 var(--space-6);
-		text-wrap: pretty;
+	.home__masthead :global(img) {
+		max-width: 100%;
+		height: auto;
+	}
+	.home .home__tagline {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		font-size: clamp(1.25rem, 3.5vw, 1.625rem);
+		line-height: 1.25;
+		font-weight: 600;
+		text-wrap: balance;
+	}
+	.home__tagline-lead {
+		font-size: clamp(2rem, 5.2vw, 3rem);
+		line-height: 1.1;
+	}
+	@media (min-width: 40rem) {
+		.home__hero {
+			margin-inline: calc((100% - min(56rem, 100vw - var(--space-6) * 2)) / 2);
+		}
+		.home__tagline > span {
+			white-space: nowrap;
+		}
+	}
+	.home__lede {
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+	}
+	.home__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: inherit;
+		gap: var(--space-4) var(--space-6);
+	}
+	.home__hero .home__actions {
+		justify-content: center;
+	}
+
+	.home__section {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.home__heading-row {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
+	}
+	.home__tools {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+		gap: var(--space-8) var(--space-12);
+		padding: 0;
+		list-style: none;
+	}
+	.home__tool {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding-block-start: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	.home__tool p,
+	.home__connect,
+	.home__aside {
+		color: var(--ink-muted);
+	}
+	.home__tools-footer {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: var(--space-4);
+	}
+	.home__aside {
+		font-style: italic;
+	}
+
+	.home__cc {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+		gap: var(--space-12);
+		align-items: center;
+		padding-block: var(--space-8);
+	}
+	.home__cc-copy {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-6);
+	}
+	.home__cc-copy > p {
 		font-size: 20px;
 		line-height: 32px;
 	}
-	.signature {
+	.home__cc-headline {
+		font-size: clamp(2rem, 5.5vw, 3.5rem);
+		line-height: 1.08;
+	}
+	.home__cc-flag {
+		rotate: -1.5deg;
+	}
+
+	.home__chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		padding: 0;
+		list-style: none;
+	}
+	.home__chips li {
+		padding: var(--space-1) var(--space-3);
+		border: var(--stroke-hairline) dashed var(--rule-strong);
+		border-radius: 999px;
+		color: var(--ink-muted);
+	}
+
+	.home__post {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	.home__post p:last-child {
+		color: var(--ink-muted);
+	}
+
+	.home__signature {
 		text-align: right;
 		font-style: italic;
+		font-size: 20px;
 	}
 </style>

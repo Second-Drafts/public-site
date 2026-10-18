@@ -14,7 +14,7 @@ export type ScriptSource = "paste" | "typed" | "sample" | "share_link" | "word_c
 export type CounterTextSource = "paste" | "typed" | "restored";
 export type DraftTextSource = CounterTextSource | "writing_sprint";
 export type FakeDoorFeature = "voice_scroll" | "record_video" | "phone_remote";
-export type WaitlistPlacement = "hero" | "band";
+export type WaitlistPlacement = "hero" | "band" | "home";
 export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "arrowKeys" | "guideColor";
 
 export type Primitive = string | number | boolean;

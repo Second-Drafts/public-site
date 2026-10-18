@@ -1,0 +1,58 @@
+---
+/*
+ * ProofreaderMark — an editor's proofreading mark, scattered as decoration.
+ *
+ *   <ProofreaderMark name="caret" color="red-pen" size={48} rotate={-8} />
+ *
+ * Always aria-hidden: the marks never carry meaning the text doesn't already say.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+const STROKES = {
+	caret: ["M6 40 L24 8 L42 40"],
+	delete: ["M4 30 C 14 30, 22 24, 26 14 C 30 4, 42 6, 40 16 C 38 26, 26 28, 28 18 C 30 10, 40 12, 44 4"],
+	stet: ["M6 24 L42 24", "M6 36 L42 36"],
+	transpose: ["M4 30 C 8 10, 22 10, 24 24 C 26 38, 40 38, 44 18"],
+	pilcrow: ["M28 8 L28 42", "M36 8 L36 42", "M40 8 L22 8 C 12 8, 10 26, 22 26 L28 26"],
+	closeUp: ["M6 18 C 10 6, 22 6, 24 18", "M24 30 C 26 42, 38 42, 42 30"],
+	insertSpace: ["M24 4 L24 44", "M10 18 L38 18", "M10 30 L38 30"],
+} satisfies Record<string, string[]>;
+
+type MarkName = keyof typeof STROKES;
+type MarkColor = "red-pen" | "marker-blue" | "marker-green" | "marker-orange" | "marker-pink" | "ink-muted";
+
+interface Props extends HTMLAttributes<"svg"> {
+	name: MarkName;
+	color?: MarkColor;
+	size?: number;
+	rotate?: number;
+}
+
+const { name, color = "red-pen", size = 40, rotate = 0, class: className, ...rest } = Astro.props;
+---
+
+<svg
+	{...rest}
+	class:list={["sd-proof-mark", className]}
+	viewBox="0 0 48 48"
+	width={size}
+	height={size}
+	aria-hidden="true"
+	focusable="false"
+	style={`--proof-color: var(--${color}); --proof-rotate: ${rotate}deg`}
+>
+	{STROKES[name].map((path) => <path d={path} />)}
+</svg>
+
+<style>
+	.sd-proof-mark {
+		flex: none;
+		fill: none;
+		stroke: var(--proof-color);
+		stroke-width: 3;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		rotate: var(--proof-rotate);
+		pointer-events: none;
+	}
+</style>
