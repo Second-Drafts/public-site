@@ -54,7 +54,7 @@ Form work, tested end to end against `npm run forms:dev`:
    - Delete everything for one email, for removal requests.
    - Set `answers = NULL` on rows older than 12 months.
 2. **Done:** the site setting, client, field components and the Continuity Checker form. See Progress.
-5. **Teleprompter:** fill in `subscribe()` with form `teleprompter:<feature>` and remove `EMAIL_CAPTURE_ENABLED`. Today `fake-doors.ts` subscribes an email even when the visitor answers "Not really". Decide whether that should happen. Name the feature in the dialog's hint and link to the policy.
+5. **Done:** the teleprompter's coming-soon dialog saves an optional email as `teleprompter:<feature>`, only when the visitor answers "Yes". It names the feature, links to the policy, and shows a problem when the email is incomplete or can't be saved. `EMAIL_CAPTURE_ENABLED` and `lib/interest.ts` are gone.
 6. **Records:** a Cloudflare entry in `VENDORS`, a `privacy/vendors.md` section, `npm run privacy:lock`, and `TOOLS_VISITORS_WRITE_IN` entries for both forms.
 7. **Review:** run the `privacy-reviewer` agent.
 8. **Ship:** `npm run forms:deploy`, fill in the production URL, run `npm run predeploy`, check the live round trip, then merge #33 and this ticket.
@@ -99,6 +99,6 @@ For our own form:
 - [x] Tool chosen and retention decided.
 - [ ] Privacy policy, records and email guard updated in the same release as the form.
 - [ ] Both Join the waitlist buttons lead to the form. `WAITLIST_URL` in `src/tools/continuity-checker/waitlist.ts` is replaced or points at it.
-- [ ] The teleprompter's coming-soon email signup saves to the same Worker.
+- [x] The teleprompter's coming-soon email signup saves to the same Worker.
 - [ ] The Worker is deployed, and a signup from the live site reaches the live database.
 - [ ] `npm run predeploy` passes.
