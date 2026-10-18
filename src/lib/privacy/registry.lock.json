@@ -1,10 +1,10 @@
 {
-	"version": "2.5.0",
-	"updated": "2026-10-13",
+	"version": "2.6.0",
+	"updated": "2026-10-18",
 	"reviews": [
 		{
-			"subject": "analytics property cc_waitlist_clicked.placement",
-			"outcome": "checked-by-hand"
+			"subject": "vendor cloudflare (Cloudflare) as processor in forms",
+			"outcome": "role-confirmed"
 		}
 	],
 	"analytics": {
@@ -108,6 +108,11 @@
 			"label": "Analytics",
 			"description": "Helps us understand which pages, tools and settings people use, so we know what to improve. Never includes what you write."
 		},
+		"forms": {
+			"requiresConsent": false,
+			"label": "Forms",
+			"description": "Sends us what you enter in a form, like a waitlist signup, only when you submit it. Submitting is your consent."
+		},
 		"necessary": {
 			"requiresConsent": false,
 			"label": "Strictly necessary",
@@ -115,6 +120,17 @@
 		}
 	},
 	"vendors": {
+		"cloudflare": {
+			"name": "Cloudflare",
+			"category": "forms",
+			"role": "processor",
+			"transfer": "EU–US Data Privacy Framework",
+			"privacyUrl": "https://www.cloudflare.com/privacypolicy/",
+			"origins": {
+				"scripts": [],
+				"data": ["https://forms.seconddrafts.workers.dev"]
+			}
+		},
 		"github-pages": {
 			"name": "GitHub Pages",
 			"category": "necessary",

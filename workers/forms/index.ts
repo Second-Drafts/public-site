@@ -64,9 +64,9 @@ async function saveSurveyAnswers(db: D1Database, body: unknown): Promise<Reply> 
 	const survey = parseSurveyAnswers(body);
 	if (!survey) return { status: 400 };
 
-	await db
+	const { meta } = await db
 		.prepare("UPDATE submissions SET answers = ? WHERE id = ? AND answers IS NULL")
 		.bind(JSON.stringify(survey.answers), survey.signupId)
 		.run();
-	return { status: 204 };
+	return { status: meta.changes === 1 ? 204 : 409 };
 }

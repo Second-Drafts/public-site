@@ -38,10 +38,10 @@ Forms in use: the Continuity Checker waitlist and survey, and the teleprompter's
 - **Data categories:** Email address; which form and feature the signup came from; the options ticked; the time sent; answers to optional questions. These may include free text about the visitor's own writing, possibly quoting it. No IP address is stored.
 - **Data subjects:** Visitors who send a form.
 - **Recipients:** Cloudflare (processor), which stores submissions in a D1 database restricted to the EU jurisdiction and sees the IP address in transit for rate limiting. Our email provider, when we send. Nobody else.
-- **Transfers:** Stored in the EU. Cloudflare is a US company, so any access from the US falls under the EU–US Data Privacy Framework.
+- **Transfers:** Stored in the EU. Each request is handled at the nearest Cloudflare location, which may be outside the EU, and Cloudflare is a US company; both are covered by the EU–US Data Privacy Framework and the standard contractual clauses in Cloudflare's Data Processing Addendum.
 - **Retention:** An email address is kept until we've sent what the visitor asked for, or until they ask to be removed, whichever comes first. Answers to optional questions are deleted 12 months after submission.
-- **Security measures:** HTTPS. The Worker accepts requests only from seconddrafts.com, with a honeypot field and a rate limit. Data is reachable only through our Cloudflare account. The pre-deploy privacy scan checks that form values reach only our Worker. Analytics never carries form values or email addresses.
-- **Legal basis:** Consent (Art. 6(1)(a)), given separately for each form and each option. Withdrawn by replying to any email or writing to privacy@seconddrafts.com.
+- **Security measures:** HTTPS. The Worker accepts requests only from seconddrafts.com, with a honeypot field and a rate limit. Data is reachable only through our Cloudflare account. For the Continuity Checker waitlist and the teleprompter's coming-soon signup, the pre-deploy privacy scan checks that form values reach only the body of a request to our Worker, and that no page contacts the Worker before something is submitted. Forms post rather than navigate if their script hasn't loaded, so values never land in a page URL. Analytics never carries form values or email addresses.
+- **Legal basis:** Consent (Art. 6(1)(a)), given separately for each form and each option. Consent is given by submitting; the address isn't verified with a confirmation email, so anyone could enter someone else's. We therefore send only the email the form promised, and act at once on a reply saying they didn't sign up. Withdrawn by replying to any email or writing to privacy@seconddrafts.com.
 
 ## Not yet in use
 

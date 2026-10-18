@@ -15,6 +15,12 @@ export const CATEGORIES = {
 		description:
 			"Makes the tools work the way you asked them to, like keeping your work between visits. These stay on your device and are never sent to us.",
 	},
+	forms: {
+		requiresConsent: false,
+		label: "Forms",
+		description:
+			"Sends us what you enter in a form, like a waitlist signup, only when you submit it. Submitting is your consent.",
+	},
 	analytics: {
 		requiresConsent: true,
 		label: "Analytics",
@@ -70,6 +76,14 @@ export const VENDORS = {
 		role: "processor",
 		transfer: "EU–US Data Privacy Framework",
 		privacyUrl: "https://policies.google.com/privacy",
+	},
+	cloudflare: {
+		name: "Cloudflare",
+		category: "forms",
+		origins: { scripts: [], data: ["https://forms.seconddrafts.workers.dev"] },
+		role: "processor",
+		transfer: "EU–US Data Privacy Framework",
+		privacyUrl: "https://www.cloudflare.com/privacypolicy/",
 	},
 } as const satisfies Record<string, Vendor>;
 

@@ -52,7 +52,7 @@ const writingTools = [
 ---
 
 <div class="ccw">
-	<form class="ccw__step" data-waitlist-signup novalidate>
+	<form class="ccw__step" method="post" data-waitlist-signup novalidate>
 		<TextField
 			label="Email"
 			name="email"
@@ -66,7 +66,7 @@ const writingTools = [
 			<span>I’d like to try an early version</span>
 		</label>
 		<div class="ccw__trap" aria-hidden="true">
-			<label>Website <input name={HONEYPOT_FIELD} tabindex="-1" autocomplete="off" /></label>
+			<label>Reference code <input name={HONEYPOT_FIELD} tabindex="-1" autocomplete="off" /></label>
 		</div>
 		<div class="ccw__send">
 			<Button type="submit" variant="accent" size="lg">Email me when it launches</Button>
@@ -93,7 +93,7 @@ const writingTools = [
 		<p>We’ll email you when the Continuity Checker launches.</p>
 	</div>
 
-	<form class="ccw__step ccw__survey" data-waitlist-survey aria-labelledby="ccw-survey" hidden>
+	<form class="ccw__step ccw__survey" method="post" data-waitlist-survey aria-labelledby="ccw-survey" hidden>
 		<header class="ccw__intro">
 			<h2 id="ccw-survey" class="sd-text-title ccw__heading">Help us build it</h2>
 			<p>
@@ -158,6 +158,9 @@ const writingTools = [
 
 		<div class="ccw__send">
 			<Button type="submit" variant="accent" size="lg">Send answers</Button>
+			<p class="ccw__purpose">
+				We read your answers to decide what to build. <Link href={POLICY_URL}>How we handle your answers</Link>.
+			</p>
 		</div>
 		<div role="alert" class="ccw__problems">
 			<p class="ccw__problem" data-problem="empty" hidden>

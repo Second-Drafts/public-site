@@ -48,16 +48,16 @@ Form work, tested end to end against `npm run forms:dev`:
 
 ## Next steps
 
-1. **Maintenance scripts** (npm scripts that wrap `wrangler d1 execute --remote`):
+1. **Deferred until we first need them:** maintenance scripts that wrap `wrangler d1 execute --remote`:
    - Export one form's emails, comma-separated in groups of 100 for BCC. Record the time of the export.
-   - After sending, set `email = NULL` for that form's rows created up to the export time, so later signups aren't cleared.
+   - After sending, set `email = NULL` for that form's rows created up to the export time, so later signups aren't cleared. Clear `answers` on those rows too, or say in the policy that answers can't be looked up by email once it's cleared: the policy's "Your rights" asks people to write from the address they gave us.
    - Delete everything for one email, for removal requests.
-   - Set `answers = NULL` on rows older than 12 months.
+   - Set `answers = NULL` on rows older than 12 months. The policy promises this, so the first run is due 12 months after the first answers arrive.
 2. **Done:** the site setting, client, field components and the Continuity Checker form. See Progress.
 5. **Done:** the teleprompter's coming-soon dialog saves an optional email as `teleprompter:<feature>`, only when the visitor answers "Yes". It names the feature, links to the policy, and shows a problem when the email is incomplete or can't be saved. `EMAIL_CAPTURE_ENABLED` and `lib/interest.ts` are gone.
-6. **Records:** a Cloudflare entry in `VENDORS`, a `privacy/vendors.md` section, `npm run privacy:lock`, and `TOOLS_VISITORS_WRITE_IN` entries for both forms.
-7. **Review:** run the `privacy-reviewer` agent.
-8. **Ship:** `npm run forms:deploy`, fill in the production URL, run `npm run predeploy`, check the live round trip, then merge #33 and this ticket.
+6. **Done:** the `forms` category and Cloudflare vendor in the registry, the `privacy/vendors.md` section, `PUBLIC_FORMS_URL` in `.env.production`, and both forms in the pre-deploy scan. `npm run privacy:lock` wrote 2.6.0 with Cloudflare's processor role confirmed.
+7. **Done:** the `privacy-reviewer` pass. Fixed: forms post rather than put values in the URL when their script hasn't loaded; the honeypot is `reference_code` instead of the autofilled `website`; the survey links to the policy; the Worker returns 409 when answers match no signup; the scan flags a request to the Worker when nothing was submitted; the cookie policy, `processing-record.md` and `vendors.md` wording on transfers, logs and unverified consent.
+8. **Ship:** the Worker is deployed at `https://forms.seconddrafts.workers.dev` (redeploy with `npm run forms:deploy` after changing it). Run `npm run predeploy`, check the live round trip, then merge #33 and this ticket.
 
 ## What
 

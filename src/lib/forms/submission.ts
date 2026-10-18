@@ -16,7 +16,7 @@ export interface SurveyAnswers {
 }
 
 // Hidden from people, so only bots fill it in.
-export const HONEYPOT_FIELD = "website";
+export const HONEYPOT_FIELD = "reference_code";
 
 // A form name, optionally followed by the feature it's about: "continuity-checker", "teleprompter:voice_scroll".
 const FORM_PATTERN = /^[a-z0-9-]{1,40}(:[a-z0-9_-]{1,40})?$/;

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { findSentinelLeaks, findViolations, pageUrlExposure, requestExposures, type Observation } from "./scan";
+import {
+	FORM_ORIGINS,
+	findSentinelLeaks,
+	findViolations,
+	pageUrlExposure,
+	requestExposures,
+	type Observation,
+} from "./scan";
 
 const SELF = "http://localhost:4399";
 
@@ -79,9 +86,21 @@ describe("CSP violations", () => {
 	});
 });
 
+describe("form requests", () => {
+	it("flags a request to the forms Worker when nothing was submitted", () => {
+		const observation = observe({ requestOrigins: [...FORM_ORIGINS] });
+		expect(findViolations("accepted", observation, SELF)).toEqual(
+			FORM_ORIGINS.map((origin) => `request to the forms Worker (${origin}) before anything was submitted`),
+		);
+	});
+});
+
 describe("findSentinelLeaks", () => {
 	const leaksIn = (...requests: { url: string; body: string }[]) =>
-		findSentinelLeaks(requests.flatMap(requestExposures), ["SENTINEL"]);
+		findSentinelLeaks(
+			requests.flatMap((request) => requestExposures(request, { sendsForm: false })),
+			["SENTINEL"],
+		);
 
 	it("finds a sentinel in a request URL or body", () => {
 		expect(
@@ -96,13 +115,38 @@ describe("findSentinelLeaks", () => {
 		]);
 	});
 
+	describe("when the visitor sends a form", () => {
+		const formsOrigin = FORM_ORIGINS[0];
+		const leaksFromForm = (request: { url: string; body: string }) =>
+			findSentinelLeaks(requestExposures(request, { sendsForm: true }), ["SENTINEL"]);
+
+		it("allows what they wrote in the body sent to the forms Worker", () => {
+			expect(leaksFromForm({ url: `${formsOrigin}/signups`, body: '{"email":"SENTINEL"}' })).toEqual([]);
+		});
+
+		it("still finds it in the forms Worker's URL", () => {
+			expect(leaksFromForm({ url: `${formsOrigin}/signups?e=SENTINEL`, body: "" })).toEqual([
+				`request to ${formsOrigin}/signups contains "SENTINEL"`,
+			]);
+		});
+
+		it("still finds it in a body sent anywhere else", () => {
+			expect(leaksFromForm({ url: "https://b.test/collect", body: "text=SENTINEL" })).toEqual([
+				'request body sent to https://b.test/collect contains "SENTINEL"',
+			]);
+		});
+	});
+
 	it("finds nothing when no request carries it", () => {
 		expect(leaksIn({ url: "https://c.test/ok", body: "" })).toEqual([]);
 	});
 
 	it("finds a percent-encoded sentinel", () => {
 		const sentinel = "a+b$c";
-		const exposures = requestExposures({ url: `https://a.test/?q=${encodeURIComponent(sentinel)}`, body: "" });
+		const exposures = requestExposures(
+			{ url: `https://a.test/?q=${encodeURIComponent(sentinel)}`, body: "" },
+			{ sendsForm: false },
+		);
 		expect(findSentinelLeaks(exposures, [sentinel])).toEqual(['request to https://a.test/ contains "a+b$c"']);
 	});
 

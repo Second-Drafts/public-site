@@ -5,8 +5,12 @@ import { cookieTableModel } from "./cookieTableModel";
 const rows = () => cookieTableModel().flatMap((category) => category.rows);
 
 describe("cookieTableModel", () => {
-	it("has one group per category, in registry order", () => {
-		expect(cookieTableModel().map((category) => category.id)).toEqual(Object.keys(CATEGORIES));
+	it("has one group per category that stores something, in registry order", () => {
+		const storingCategories = Object.keys(CATEGORIES).filter((id) =>
+			Object.values(STORAGE).some((entry) => entry.category === id),
+		);
+		expect(cookieTableModel().map((category) => category.id)).toEqual(storingCategories);
+		expect(storingCategories).not.toContain("forms");
 	});
 
 	it("lists every storage entry exactly once", () => {

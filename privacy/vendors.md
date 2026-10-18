@@ -27,3 +27,15 @@ Last reviewed: 2026-10-11
 - **Transfer mechanism:** EU–US Data Privacy Framework.
 - **Privacy terms:** https://policies.google.com/privacy
 - **Retention:** Event data 2 months, user data 14 months (property settings, recorded in `google-analytics.md`); stated on the privacy policy.
+
+## Cloudflare
+
+Last reviewed: 2026-10-18
+
+- **What it does for us:** Runs the forms Worker (`workers/forms`, served at `https://forms.seconddrafts.workers.dev`) and stores what visitors send through our forms, such as waitlist signups and survey answers, in a D1 database created in the `eu` jurisdiction.
+- **Data involved:** What a visitor submits: email address, which form and feature it came from, the options ticked, answers to optional questions and the time sent. Cloudflare also sees the visitor's IP address and browser details while handling the request; the Worker uses the IP only for its rate limit and never stores it, and Workers observability (request logs) is turned off in `wrangler.jsonc`.
+- **Role:** processor. Cloudflare's Data Processing Addendum covers customer content stored on its services and applies to self-serve accounts through the subscription agreement. Recheck at each review that it still applies to the Free plan.
+- **Terms accepted:** Cloudflare Self-Serve Subscription Agreement and its Data Processing Addendum, accepted with the account (founders@seconddrafts.com) on 2026-10-16.
+- **Transfer mechanism:** EU–US Data Privacy Framework. Stored data stays in the EU through the D1 jurisdiction, but each request is handled at the nearest Cloudflare location, which may be outside the EU. The framework covers that and any access from the US, and the addendum also includes the standard contractual clauses.
+- **Privacy terms:** https://www.cloudflare.com/privacypolicy/
+- **Retention:** What we store, we delete as the privacy policy says: an email once we've sent what the visitor asked for or when they ask to be removed, answers after 12 months. We turn off Workers observability, so we hold no request logs; Cloudflare keeps its own operational and security logs under its privacy policy.

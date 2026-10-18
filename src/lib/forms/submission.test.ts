@@ -59,7 +59,7 @@ describe("parseSurveyAnswers", () => {
 
 describe("isFromBot", () => {
 	it("is true only when the honeypot field is filled in", () => {
-		expect(isFromBot({ [HONEYPOT_FIELD]: "https://spam.example" })).toBe(true);
+		expect(isFromBot({ [HONEYPOT_FIELD]: "spam" })).toBe(true);
 		expect(isFromBot({ [HONEYPOT_FIELD]: "" })).toBe(false);
 		expect(isFromBot({})).toBe(false);
 	});
