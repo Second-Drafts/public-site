@@ -1,0 +1,135 @@
+---
+/*
+ * ChoiceField — a labelled group of radio buttons, or checkboxes when more than one answer fits.
+ * Guidelines: design-system/components/ChoiceField/README.md
+ *
+ *   <ChoiceField label="Draft" name="stage" options={[{ value: "first", label: "First draft" }, …]} />
+ *   <ChoiceField label="Tools" name="tools" multiple hint="Pick all that apply." options={…} />
+ *   <ChoiceField label="Tools" name="tools" options={…} other={{ label: "Something else", detail: "Which app?" }} />
+ */
+import { uniqueId } from "../lib/uniqueId";
+import TextField from "./TextField.astro";
+
+export interface Choice {
+	value: string;
+	label: string;
+}
+
+interface Props {
+	/** The question, in sentence case. */
+	label: string;
+	name: string;
+	options: readonly Choice[];
+	/** Checkboxes instead of radio buttons. */
+	multiple?: boolean;
+	/** Helper text between the question and its options. */
+	hint?: string;
+	/**
+	 * A last option, valued "other", that reveals a text field named `<name>_other` while it's picked.
+	 * `detail` labels that field, in the short uppercase label style.
+	 */
+	other?: { label: string; detail: string };
+	class?: string;
+}
+
+const OTHER_VALUE = "other";
+const MAX_DETAIL_LENGTH = 200;
+
+const { label, name, options, multiple = false, hint, other, class: className } = Astro.props;
+const id = uniqueId("sd-choice");
+const hintId = `${id}-hint`;
+const allOptions = other ? [...options, { value: OTHER_VALUE, label: other.label }] : options;
+---
+
+<fieldset class:list={["sd-choice", className]} aria-describedby={hint ? hintId : undefined}>
+	<legend class="sd-choice__label">{label}</legend>
+	{hint && <p id={hintId} class="sd-choice__hint">{hint}</p>}
+	<div class="sd-choice__options">
+		{
+			allOptions.map((option) => (
+				<label class="sd-choice__option">
+					<input class="sd-choice__input" type={multiple ? "checkbox" : "radio"} name={name} value={option.value} />
+					<span>{option.label}</span>
+				</label>
+			))
+		}
+	</div>
+	{
+		other && (
+			<TextField
+				class="sd-choice__other"
+				label={other.detail}
+				name={`${name}_${OTHER_VALUE}`}
+				maxlength={MAX_DETAIL_LENGTH}
+			/>
+		)
+	}
+</fieldset>
+
+<style>
+	.sd-choice {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-inline-size: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	.sd-choice__label {
+		padding: 0;
+		margin-block-end: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 17px;
+		line-height: 24px;
+		font-weight: 600;
+		color: var(--ink);
+	}
+	.sd-choice__hint {
+		margin: calc(-1 * var(--space-2)) 0 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	.sd-choice__options {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+		gap: var(--space-1) var(--space-4);
+	}
+	.sd-choice__option {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: var(--space-3);
+		padding-block: var(--space-2);
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 24px;
+		color: var(--ink);
+		cursor: pointer;
+	}
+	.sd-choice__input {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 2px 0 0;
+		accent-color: var(--marker-blue);
+		cursor: pointer;
+	}
+	.sd-choice__input:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+	.sd-choice > :global(.sd-choice__other) {
+		display: none;
+		margin-block-start: var(--space-2);
+	}
+	.sd-choice:has(.sd-choice__input[value="other"]:checked) > :global(.sd-choice__other) {
+		display: flex;
+	}
+	.sd-choice__input:disabled,
+	.sd-choice__option:has(:disabled) {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+</style>

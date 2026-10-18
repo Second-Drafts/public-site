@@ -50,10 +50,11 @@ function rowFor(name: StorageName): CookieTableRow {
 
 export function cookieTableModel(): CookieTableCategory[] {
 	const names = Object.keys(STORAGE) as StorageName[];
-	return CATEGORY_IDS.map((id) => ({
+	const categories = CATEGORY_IDS.map((id) => ({
 		id,
 		label: CATEGORIES[id].label,
 		description: CATEGORIES[id].description,
 		rows: names.filter((name) => STORAGE[name].category === id).map(rowFor),
 	}));
+	return categories.filter((category) => category.rows.length > 0);
 }

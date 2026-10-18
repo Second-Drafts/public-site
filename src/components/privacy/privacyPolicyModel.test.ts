@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { VENDORS } from "../../lib/privacy/registry";
-import { EMAIL_CAPTURE_ENABLED } from "../../tools/teleprompter/lib/interest";
 import { vendorSections } from "./privacyPolicyModel";
 
 describe("vendorSections", () => {
@@ -11,11 +10,5 @@ describe("vendorSections", () => {
 				.map((vendor) => vendor.name)
 				.sort(),
 		);
-	});
-});
-
-describe("email addresses", () => {
-	it("are not collected, as the privacy policy states; update the policy and #13 together before enabling signup", () => {
-		expect(EMAIL_CAPTURE_ENABLED).toBe(false);
 	});
 });

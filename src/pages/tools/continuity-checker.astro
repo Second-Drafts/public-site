@@ -1,0 +1,336 @@
+---
+import Button from "../../components/Button.astro";
+import HighlightedBand from "../../components/HighlightedBand.astro";
+import MarginNote from "../../components/MarginNote.astro";
+import Mark from "../../components/Mark.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import Base from "../../layouts/Base.astro";
+import ExampleFlag from "../../tools/continuity-checker/ExampleFlag.astro";
+import { EXAMPLE_FLAGS } from "../../tools/continuity-checker/example-flags";
+import { WAITLIST_URL } from "../../tools/continuity-checker/waitlist";
+
+const pageTitle = "Continuity Checker: Catch It Before Your Reader Does";
+const pageDescription =
+	"A continuity checker for your manuscript. It reads the whole book and points out details that change, even a hundred pages apart. Coming soon.";
+const ogImageAlt = "A flag marked Contradiction, quoting a green door in chapter 3 and a red one in chapter 12.";
+
+const checks = [
+	{ title: "Details that change", text: "Eye colors, names, addresses, the color of a door." },
+	{ title: "Your world’s own rules", text: "Magic that costs something, a curse with conditions, a law of the city." },
+	{ title: "Where people and things are", text: "Someone speaking from two valleys away, a letter that burned last chapter." },
+	{ title: "Timelines and counts", text: "Ages, dates, how many days have passed, how many guests sat down." },
+];
+
+const differences = [
+	{
+		title: "It knows your book",
+		text: "It checks your story against itself, not against the real world. If your moon rises in the west, that’s your rule, and it holds you to it.",
+	},
+	{
+		title: "It shows its work",
+		text: "Every flag quotes both passages exactly, so you can judge it in a few seconds.",
+	},
+	{
+		title: "Sure things first",
+		text: "Clear contradictions come first, the maybes after. Short on time? Start at the top.",
+	},
+	{
+		title: "It never rewrites",
+		text: "It points things out. What to change, and whether to change it, is up to you.",
+	},
+];
+---
+
+<Base title="Continuity Checker" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		ogImage="continuity-checker"
+		ogImageAlt={ogImageAlt}
+	/>
+
+	<div class="cc">
+		<div class="cc__stage">
+			<header class="cc__hero">
+				<h1 class="sd-text-headline cc__headline">Catch it before your <Mark kind="circle">reader</Mark> does.</h1>
+				<p class="cc__lede">
+					Green door in chapter 3, red door in chapter 12. Your reader will notice, so the Continuity Checker makes sure you
+					do first. It reads your whole manuscript and points out details that change, even a hundred pages apart. It
+					never rewrites a word.
+				</p>
+				<Button href={WAITLIST_URL} variant="accent" size="lg" data-waitlist-placement="hero">Join the waitlist</Button>
+			</header>
+
+			<div class="cc__examples" role="group" aria-label="Example flags from a sample story, The Door in the Hill">
+				<div class="cc__flags">
+					{
+						EXAMPLE_FLAGS.map((flag) => (
+							<div class="cc__flag">
+								<ExampleFlag flag={flag} />
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</div>
+
+		<section class="cc__section cc__section--wide" aria-labelledby="cc-checks">
+			<h2 id="cc-checks" class="sd-text-title">What it looks for</h2>
+			<ul class="cc__list cc__list--staggered">
+				{
+					checks.map((check) => (
+						<li>
+							<h3 class="sd-text-heading">
+								<Mark>{check.title}</Mark>
+							</h3>
+							<p>{check.text}</p>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+
+		<section class="cc__section cc__section--margin" aria-labelledby="cc-different">
+			<h2 id="cc-different" class="sd-text-title">A second pair of eyes</h2>
+			<ul class="cc__list">
+				{
+					differences.map((difference) => (
+						<li>
+							<h3 class="sd-text-heading">
+								<Mark kind="underline">{difference.title}</Mark>
+							</h3>
+							<p>{difference.text}</p>
+						</li>
+					))
+				}
+			</ul>
+			<div class="cc__aside">
+				<MarginNote author="The Department">
+					<p>
+						Not instead of your editor or beta readers. Before them, so their notes can go on the story instead of
+						the door.
+					</p>
+				</MarginNote>
+			</div>
+		</section>
+	</div>
+
+	<HighlightedBand as="aside" aria-labelledby="cc-band">
+		<div class="cc__band">
+			<h2 id="cc-band" class="sd-text-title">
+				Find it before your <Mark kind="strike">reader</Mark> editor does.
+			</h2>
+			<p>Join the waitlist and tell us about your project. It helps us decide what to build first.</p>
+			<Button href={WAITLIST_URL} variant="primary" size="lg" data-waitlist-placement="band">Join the waitlist</Button>
+		</div>
+	</HighlightedBand>
+</Base>
+
+<script>
+	import { mountWaitlistLinks } from "../../tools/continuity-checker/waitlist";
+
+	mountWaitlistLinks();
+</script>
+
+<style>
+	.cc {
+		--gutter: var(--space-6);
+		--content: 34em;
+		--breakout: 72rem;
+
+		display: grid;
+		grid-template-columns:
+			[full-width-start] minmax(var(--gutter), 1fr)
+			[breakout-start] minmax(0, calc((var(--breakout) - var(--content)) / 2))
+			[content-start] min(100% - var(--gutter) * 2, var(--content)) [content-end]
+			minmax(0, calc((var(--breakout) - var(--content)) / 2)) [breakout-end]
+			minmax(var(--gutter), 1fr) [full-width-end];
+		row-gap: var(--space-16);
+		padding-block: var(--space-16);
+	}
+	.cc > * {
+		grid-column: content;
+	}
+	.cc > .cc__stage,
+	.cc > .cc__section--wide {
+		grid-column: breakout;
+	}
+	.cc p,
+	.cc h1,
+	.cc h2,
+	.cc h3,
+	.cc ul {
+		margin: 0;
+	}
+	.cc ::selection {
+		background: var(--marker-yellow);
+		color: var(--on-marker);
+	}
+
+	.cc__stage {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+		gap: var(--space-12) var(--space-16);
+		align-items: start;
+	}
+	.cc__hero {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-6);
+	}
+	@media (min-width: 56rem) {
+		.cc__hero {
+			position: sticky;
+			top: var(--space-12);
+		}
+	}
+	.cc__headline {
+		font-size: clamp(2.75rem, 7vw, 5rem);
+		line-height: 1.04;
+		font-weight: 600;
+		text-wrap: balance;
+		margin-block-end: var(--space-4);
+	}
+	.cc__lede {
+		font-size: 20px;
+		line-height: 32px;
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+
+	.cc__examples {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.cc__flags {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+	.cc__flag {
+		transform: rotate(var(--tilt, 0deg));
+	}
+	.cc__flag:nth-child(1) {
+		--tilt: -1.6deg;
+		margin-inline-end: var(--space-6);
+	}
+	.cc__flag:nth-child(2) {
+		--tilt: 1.2deg;
+		margin-inline-start: var(--space-6);
+	}
+	.cc__flag:nth-child(3) {
+		--tilt: -0.7deg;
+		margin-inline-end: var(--space-3);
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		.cc__flag {
+			animation: cc-slip-in 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+			animation-delay: calc(var(--slot, 0) * 140ms + 200ms);
+		}
+		.cc__flag:nth-child(2) {
+			--slot: 1;
+		}
+		.cc__flag:nth-child(3) {
+			--slot: 2;
+		}
+	}
+	@keyframes cc-slip-in {
+		from {
+			opacity: 0;
+			transform: translateY(1.5rem) rotate(calc(var(--tilt, 0deg) * 3));
+		}
+	}
+
+	.cc__section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.cc__section h2 {
+		text-wrap: balance;
+	}
+	.cc__section p {
+		text-wrap: pretty;
+	}
+	.cc__list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		padding: 0;
+		list-style: none;
+	}
+	.cc__list li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+	.cc__list p {
+		color: var(--ink-muted);
+	}
+	.cc__list--staggered {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+		gap: var(--space-8) var(--space-12);
+	}
+	@media (min-width: 48rem) {
+		.cc__list--staggered li:nth-child(even) {
+			margin-block-start: var(--space-8);
+		}
+	}
+
+	.cc__aside :global(.sd-note) {
+		max-width: none;
+	}
+	.cc__section--margin .cc__list {
+		gap: 0;
+	}
+	.cc__section--margin .cc__list li {
+		padding-block: var(--space-4);
+		border-block-start: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	@media (min-width: 56rem) {
+		.cc > .cc__section--margin {
+			grid-column: breakout;
+			display: grid;
+			grid-template-columns: subgrid;
+			align-items: start;
+			gap: 0;
+		}
+		.cc__section--margin h2 {
+			grid-column: 1;
+			padding-inline-end: var(--space-8);
+			position: sticky;
+			top: var(--space-12);
+			text-align: end;
+		}
+		.cc__section--margin .cc__list {
+			grid-column: 2;
+		}
+		.cc__section--margin .cc__aside {
+			grid-column: 3;
+			align-self: end;
+			padding-inline-start: var(--space-8);
+		}
+	}
+
+	.cc__band {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-6);
+		max-width: 40em;
+		margin-inline: auto;
+	}
+	.cc__band h2 {
+		font-size: clamp(2rem, 5.5vw, 3.5rem);
+		line-height: 1.08;
+		text-wrap: balance;
+	}
+	.cc__band h2,
+	.cc__band p {
+		margin: 0;
+	}
+</style>

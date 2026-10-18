@@ -19,6 +19,10 @@ export interface RecordedRequest {
 	body: string;
 }
 
+export const FORM_ORIGINS: readonly string[] = Object.values(VENDORS)
+	.filter((vendor) => vendor.category === "forms")
+	.flatMap((vendor) => vendor.origins.data);
+
 function isGranted(state: ScanState, category: CategoryId): boolean {
 	if (!CATEGORIES[category].requiresConsent) return true;
 	return state === "accepted";
@@ -46,6 +50,7 @@ function storageViolation(state: ScanState, { area, name }: Observation["storage
 
 function requestViolation(state: ScanState, selfOrigin: string, origin: string): string | undefined {
 	if (origin === selfOrigin) return undefined;
+	if (FORM_ORIGINS.includes(origin)) return `request to the forms Worker (${origin}) before anything was submitted`;
 	const vendors = vendorsContacting(origin);
 	if (vendors.length === 0) return `request to unregistered origin ${origin}`;
 	const denied = vendors.find((vendor) => !isGranted(state, vendor.category));
@@ -84,11 +89,16 @@ function analyticsParameterExposures(endpoint: string, request: RecordedRequest)
 	);
 }
 
-export function requestExposures(request: RecordedRequest): Exposure[] {
+/**
+ * When the visitor sends a form, the body of its request to our forms Worker is meant to carry what they wrote.
+ * Its URL, and every other request, still mustn't.
+ */
+export function requestExposures(request: RecordedRequest, opts: { sendsForm: boolean }): Exposure[] {
 	const endpoint = request.url.split(/[?#]/)[0];
+	const isFormSubmission = opts.sendsForm && FORM_ORIGINS.includes(new URL(request.url).origin);
 	return [
 		{ channel: `request to ${endpoint}`, text: request.url },
-		{ channel: `request body sent to ${endpoint}`, text: request.body },
+		...(isFormSubmission ? [] : [{ channel: `request body sent to ${endpoint}`, text: request.body }]),
 		...analyticsParameterExposures(endpoint, request),
 	];
 }

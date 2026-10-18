@@ -1,69 +1,88 @@
 ---
 import Link from "../components/Link.astro";
 import PageHeader from "../components/PageHeader.astro";
+import SoonTag from "../components/SoonTag.astro";
 import Base from "../layouts/Base.astro";
 
-const tools = {
-  "word-counter": {
-    title: "Word Counter",
-    description:
-      "Count words, characters, or even reading time. Nudge it until it's just right. Target social platforms, writing submissions, and more.",
-  },
-  "writing-sprint": {
-    title: "Writing Sprint",
-    description:
-      "Sometimes it's good to just get words out. Give yourself a prompt or just a free write session. Just a simple timer at your side.",
-  },
-  "draft-analysis": {
-    title: "Draft Analysis",
-    description:
-      "Sometimes data can tell you more than you'd expect about your writing. Here is some basic analysis of your draft.",
-  },
-  teleprompter: {
-    title: "Teleprompter",
-    description:
-      "Take that draft you honed and get your lighting set up. Scroll your words at adjustable speeds and styles for a great performance.",
-  },
-  "magic-8-ball": {
-    title: "Magic 8-Ball",
-    description:
-      "Have a question? Ask it to the Magic 8-Ball. It's a little silly, but it's fun.",
-  },
+interface Tool {
+	title: string;
+	description: string;
+	comingSoon?: boolean;
+}
+
+const tools: Record<string, Tool> = {
+	"word-counter": {
+		title: "Word Counter",
+		description:
+			"Count words, characters, or even reading time. Nudge it until it's just right. Target social platforms, writing submissions, and more.",
+	},
+	"writing-sprint": {
+		title: "Writing Sprint",
+		description:
+			"Sometimes it's good to just get words out. Give yourself a prompt or just a free write session. Just a simple timer at your side.",
+	},
+	"draft-analysis": {
+		title: "Draft Analysis",
+		description:
+			"Sometimes data can tell you more than you'd expect about your writing. Here is some basic analysis of your draft.",
+	},
+	teleprompter: {
+		title: "Teleprompter",
+		description:
+			"Take that draft you honed and get your lighting set up. Scroll your words at adjustable speeds and styles for a great performance.",
+	},
+	"magic-8-ball": {
+		title: "Magic 8-Ball",
+		description: "Have a question? Ask it to the Magic 8-Ball. It's a little silly, but it's fun.",
+	},
+	"continuity-checker": {
+		title: "Continuity Checker",
+		description: "Reads your whole manuscript and points out details that change, even a hundred pages apart.",
+		comingSoon: true,
+	},
 };
 ---
 
 <Base title="Tools">
-  <PageHeader title="Tools">
-    Tools to help you write. Tools to unblock you. Tools to help you go deeper,
-    go further, go bigger, go smaller. We're collecting tools that help you tell
-    the best story you can.
-  </PageHeader>
+	<PageHeader title="Tools">
+		Tools to help you write. Tools to unblock you. Tools to help you go deeper, go further, go bigger, go smaller.
+		We're collecting tools that help you tell the best story you can.
+	</PageHeader>
 
-  <ul class="tools">
-    {
-      Object.entries(tools).map(([key, tool]) => (
-        <li>
-          <Link href={`/tools/${key}`} class="sd-text-heading">
-            {tool.title}
-          </Link>
-          <p>{tool.description}</p>
-        </li>
-      ))
-    }
-  </ul>
+	<ul class="tools">
+		{
+			Object.entries(tools).map(([key, tool]) => (
+				<li>
+					<span class="tools__title">
+						<Link href={`/tools/${key}`} class="sd-text-heading">
+							{tool.title}
+						</Link>
+						{tool.comingSoon && <SoonTag />}
+					</span>
+					<p>{tool.description}</p>
+				</li>
+			))
+		}
+	</ul>
 </Base>
 
 <style>
-  .tools {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-8);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .tools p {
-    margin: var(--space-2) 0 0;
-    color: var(--ink-muted);
-  }
+	.tools {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.tools__title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-3);
+	}
+	.tools p {
+		margin: var(--space-2) 0 0;
+		color: var(--ink-muted);
+	}
 </style>

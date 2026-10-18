@@ -1,0 +1,143 @@
+---
+/*
+ * ScaleField — a question answered on a scale from 1 to 5, with words for both ends.
+ * Guidelines: design-system/components/ScaleField/README.md
+ *
+ *   <ScaleField label="How useful was it?" name="useful" low="Not at all" high="Very" />
+ *
+ * Each input carries data-number, so readAnswers (src/lib/forms/answers.ts) sends the answer as a number.
+ */
+import { uniqueId } from "../lib/uniqueId";
+
+interface Props {
+	/** The question, in sentence case. */
+	label: string;
+	name: string;
+	/** What 1 means. */
+	low: string;
+	/** What 5 means. */
+	high: string;
+	hint?: string;
+	class?: string;
+}
+
+const STEPS = [1, 2, 3, 4, 5];
+
+const { label, name, low, high, hint, class: className } = Astro.props;
+const id = uniqueId("sd-scale");
+const hintId = `${id}-hint`;
+const endsId = `${id}-ends`;
+const describedBy = [hint && hintId, endsId].filter(Boolean).join(" ");
+---
+
+<fieldset class:list={["sd-scale", className]} aria-describedby={describedBy}>
+	<legend class="sd-scale__label">{label}</legend>
+	{hint && <p id={hintId} class="sd-scale__hint">{hint}</p>}
+	<div class="sd-scale__steps">
+		{
+			STEPS.map((step) => (
+				<label class="sd-scale__step">
+					<input class="sd-scale__input" type="radio" name={name} value={step} data-number />
+					<span class="sd-scale__number">{step}</span>
+				</label>
+			))
+		}
+	</div>
+	<p id={endsId} class="sd-scale__ends">
+		<span>1: {low}</span>
+		<span>5: {high}</span>
+	</p>
+</fieldset>
+
+<style>
+	.sd-scale {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		min-inline-size: 0;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	.sd-scale__label {
+		padding: 0;
+		margin-block-end: var(--space-2);
+		font-family: var(--font-display);
+		font-size: 17px;
+		line-height: 24px;
+		font-weight: 600;
+		color: var(--ink);
+	}
+	.sd-scale__hint {
+		margin: calc(-1 * var(--space-2)) 0 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+	.sd-scale__steps {
+		display: grid;
+		grid-template-columns: repeat(5, minmax(0, 1fr));
+		max-inline-size: 24rem;
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-md);
+		overflow: clip;
+	}
+	.sd-scale__step {
+		position: relative;
+		display: grid;
+		place-items: center;
+		min-block-size: 44px;
+		font-family: var(--font-display);
+		font-size: 15px;
+		line-height: 20px;
+		font-weight: 600;
+		color: var(--ink);
+		background: var(--paper-raised);
+		cursor: pointer;
+		user-select: none;
+	}
+	.sd-scale__step + .sd-scale__step {
+		border-inline-start: var(--stroke-hairline) solid var(--rule-strong);
+	}
+	.sd-scale__input {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		opacity: 0;
+		cursor: pointer;
+	}
+	.sd-scale__number {
+		padding-block-start: 2px; /* Josefin rides high */
+	}
+	.sd-scale__step:has(:checked) {
+		background: var(--ink);
+		color: var(--ink-inverse);
+	}
+	.sd-scale__step:has(:focus-visible) {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: -3px;
+	}
+	.sd-scale__step:has(:checked:focus-visible) {
+		outline-color: var(--paper-raised);
+	}
+	.sd-scale__step:active {
+		filter: brightness(0.94);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.sd-scale__step:not(:has(:checked)):hover {
+			background: var(--paper-sunken);
+		}
+	}
+	.sd-scale__ends {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--space-4);
+		max-inline-size: 24rem;
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+</style>

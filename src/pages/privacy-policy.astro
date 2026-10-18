@@ -14,7 +14,7 @@ const analytics = VENDORS["google-analytics"];
 <LegalPage title="Privacy policy" description={`How ${DOMAIN} handles personal data, who we share it with, and your rights.`}>
 	<h2>Who we are</h2>
 	<p>
-		{ORGANISATION} ("we", "us") runs {DOMAIN}, a collection of free writing tools. To ask us anything about your data,
+		{ORGANISATION} ("we", "us") runs {DOMAIN}, a collection of writing tools. To ask us anything about your data,
 		email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link> or write to us at {POSTAL_ADDRESS}.
 	</p>
 
@@ -26,13 +26,16 @@ const analytics = VENDORS["google-analytics"];
 
 	<h2>What we don't do</h2>
 	<ul>
-		<li>There are no accounts, and we don't ask for your name or email address.</li>
+		<li>
+			There are no accounts. We never ask for your name, and we only have your email address if you give it to us.
+		</li>
 		<li>We don't show advertising or track you across other websites.</li>
 		<li>We don't sell your data.</li>
 		<li>We don't use personal data to train AI models.</li>
 		<li>
-			We don't receive what you write. It stays on your device, and when a tool makes a share link, the link carries
-			your text after the <code>#</code> in the address, which browsers never send to a server.
+			Our tools don't send us what you write. It stays on your device, and when a tool makes a share link, the link
+			carries your text after the <code>#</code> in the address, which browsers never send to a server. The only writing
+			we receive is what you choose to send us in a form.
 		</li>
 		<li>
 			We don't receive your phone's motion. The Magic 8 Ball reads it on the page, only to notice a shake, and only
@@ -67,6 +70,33 @@ const analytics = VENDORS["google-analytics"];
 		is told who any individual visitor is.
 	</p>
 	<p><Button variant="secondary" data-open-cookie-settings>Change your cookie settings</Button></p>
+
+	<h2 id="waitlists-and-forms">Waitlists and forms</h2>
+	<p>
+		Some pages invite you to join a waitlist or answer a few questions, for example to hear when a tool or feature is
+		ready. Every form is optional, says what it's for, and sends nothing to us until you submit.
+	</p>
+	<p>
+		If you give us your email address, we keep it with a note of which form you used and when, so we only email you
+		about what you asked about. If a form offers extra options, such as trying an early version, we only act on the
+		ones you tick. Joining one waitlist never signs you up for another.
+	</p>
+	<p>
+		If you answer optional questions, we read your answers to decide what to build and how. We don't publish them or
+		quote them anywhere without asking you first. Some questions may invite you to describe your own writing. Share
+		only what you're comfortable sending us.
+	</p>
+	<p>
+		Our legal basis is your consent, which you give separately for each form and each option you tick. Cloudflare
+		stores what you send in the EU on our behalf. It sees your IP address while handling the request and uses it to
+		block abuse, but we don't store it with your details. When we email you, the email goes through our email provider.
+		We don't add you to any other mailing list or share your address with anyone else.
+	</p>
+	<p>
+		To leave a waitlist, reply to any email from us or write to <Link href={`mailto:${CONTACT_EMAIL}`}
+			>{CONTACT_EMAIL}</Link
+		>. You can withdraw from one form or one option and keep the rest, or ask us to delete everything you've sent us.
+	</p>
 
 	<h2>Who we share data with</h2>
 	<ul class="vendors">
@@ -110,11 +140,12 @@ const analytics = VENDORS["google-analytics"];
 		To exercise a right, email <Link href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</Link>. Analytics data is linked
 		only to a random ID stored in your browser, not to your name, so we usually can't find one person's data. If you want us to
 		try, tell us the value of the <code>_ga</code> cookie from your browser. Turning analytics off in the cookie settings
-		stops any further collection.
+		stops any further collection. For anything you sent us in a form, write from the email address you gave us, so we
+		can find your details.
 	</p>
 	<p>
-		If you are in the EU or UK, our legal bases are your consent for analytics, and our legitimate interest in running
-		and securing the site for hosting. If a browser sends a Global Privacy Control signal, we treat it as a refusal of
+		If you are in the EU or UK, our legal bases are your consent for analytics and for forms, and our legitimate
+		interest in running and securing the site for hosting. If a browser sends a Global Privacy Control signal, we treat it as a refusal of
 		analytics. We don't respond to Do Not Track, as there is no common standard for it.
 	</p>
 
@@ -133,6 +164,11 @@ const analytics = VENDORS["google-analytics"];
 		{analytics.name} deletes the record of each event, such as a page view, after 2 months, and data linked to the random ID
 		in your browser after 14 months. The totals in its reports, such as how many people visited a page, are kept longer
 		but aren't linked to you.
+	</p>
+	<p>
+		We keep what you send through a form, your email address and any answers, until we've sent what you asked for, such
+		as the email saying a tool has launched. If we decide not to build it, we'll tell you and delete it then. You can
+		ask us to delete it sooner at any time.
 	</p>
 
 	<h2>Changes to this policy</h2>

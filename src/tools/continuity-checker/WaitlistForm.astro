@@ -1,0 +1,286 @@
+---
+import Button from "../../components/Button.astro";
+import ChoiceField from "../../components/ChoiceField.astro";
+import Link from "../../components/Link.astro";
+import ScaleField from "../../components/ScaleField.astro";
+import TextField from "../../components/TextField.astro";
+import { HONEYPOT_FIELD } from "../../lib/forms/submission";
+import { CONTACT_EMAIL } from "../../lib/privacy/organisation";
+
+const POLICY_URL = "/privacy-policy/#waitlists-and-forms";
+const MAX_TEXT_LENGTH = 2000;
+
+const projects = [
+	{ value: "novel", label: "A novel" },
+	{ value: "series", label: "A series" },
+	{ value: "short_fiction", label: "Short fiction" },
+	{ value: "screenplay", label: "A screenplay" },
+	{ value: "narrative_nonfiction", label: "Narrative nonfiction" },
+];
+const lengths = [
+	{ value: "under_50k", label: "Under 50,000 words" },
+	{ value: "50k_100k", label: "50,000–100,000" },
+	{ value: "100k_150k", label: "100,000–150,000" },
+	{ value: "over_150k", label: "Over 150,000" },
+	{ value: "series", label: "A whole series" },
+];
+const stages = [
+	{ value: "first_draft", label: "First draft" },
+	{ value: "revising", label: "Revising" },
+	{ value: "readers_soon", label: "Going to readers, an agent, or an editor soon" },
+	{ value: "published", label: "Published" },
+];
+const currentChecks = [
+	{ value: "memory", label: "My memory" },
+	{ value: "notes", label: "Notes or a story bible" },
+	{ value: "beta_readers", label: "Beta readers" },
+	{ value: "editor", label: "An editor" },
+	{ value: "software", label: "Software" },
+	{ value: "none", label: "I don’t" },
+];
+const checkTimings = [
+	{ value: "each_session", label: "After each writing session" },
+	{ value: "before_readers", label: "Before it goes to readers" },
+	{ value: "both", label: "Both" },
+];
+const writingTools = [
+	{ value: "word", label: "Word" },
+	{ value: "google_docs", label: "Google Docs" },
+	{ value: "scrivener", label: "Scrivener" },
+	{ value: "plain_text", label: "Markdown or plain text" },
+];
+---
+
+<div class="ccw">
+	<form class="ccw__step" method="post" data-waitlist-signup novalidate>
+		<TextField
+			label="Email"
+			name="email"
+			type="email"
+			autocomplete="email"
+			required
+			placeholder="e.g. you@example.com"
+		/>
+		<label class="ccw__check">
+			<input class="ccw__check-input" type="checkbox" name="early_access" />
+			<span>I’d like to try an early version</span>
+		</label>
+		<div class="ccw__trap" aria-hidden="true">
+			<label>Reference code <input name={HONEYPOT_FIELD} tabindex="-1" autocomplete="off" /></label>
+		</div>
+		<div class="ccw__send">
+			<Button type="submit" variant="accent" size="lg">Email me when it launches</Button>
+			<p class="ccw__purpose">
+				We’ll email you when the Continuity Checker launches. <Link href={POLICY_URL}>How we handle your email</Link>.
+			</p>
+		</div>
+		<div role="alert" class="ccw__problems">
+			<p class="ccw__problem" data-problem="email" hidden>
+				That email address doesn’t look complete. Check it reads like name@example.com.
+			</p>
+			<p class="ccw__problem" data-problem="save" hidden>
+				We couldn’t save your email. Try again in a minute, or write to{" "}
+				<Link href={`mailto:${CONTACT_EMAIL}?subject=Continuity%20Checker%20waitlist`}>{CONTACT_EMAIL}</Link> and we’ll
+				add you by hand.
+			</p>
+		</div>
+	</form>
+
+	<div class="ccw__step ccw__confirmation" data-waitlist-joined hidden>
+		<h2 class="sd-text-title ccw__heading" tabindex="-1" data-waitlist-joined-heading>
+			You’re on the list.
+		</h2>
+		<p>We’ll email you when the Continuity Checker launches.</p>
+	</div>
+
+	<form class="ccw__step ccw__survey" method="post" data-waitlist-survey aria-labelledby="ccw-survey" hidden>
+		<header class="ccw__intro">
+			<h2 id="ccw-survey" class="sd-text-title ccw__heading">Help us build it</h2>
+			<p>
+				If you have time, answer any of the questions below to help us decide what to focus on first.
+			</p>
+		</header>
+
+		<ChoiceField
+			label="What are you working on?"
+			name="project"
+			options={projects}
+			other={{ label: "Something else", detail: "What is it?" }}
+		/>
+		<TextField label="Genre" name="genre" maxlength={200} placeholder="e.g. Cozy fantasy" />
+		<ChoiceField label="How long is it?" name="length" options={lengths} />
+		<ChoiceField label="Where is it now?" name="stage" options={stages} />
+		<ChoiceField
+			label="How do you catch continuity slips today?"
+			name="current_checks"
+			multiple
+			hint="Pick all that apply."
+			options={currentChecks}
+		/>
+		<TextField
+			label="The slip"
+			name="slip_story"
+			multiline
+			rows={4}
+			maxlength={MAX_TEXT_LENGTH}
+			hint="Tell us about a continuity slip you or a reader caught."
+		/>
+		<ChoiceField label="When would you run a check?" name="check_timing" options={checkTimings} />
+		<ChoiceField
+			label="What do you write in?"
+			name="writing_tools"
+			multiple
+			hint="Pick all that apply."
+			options={writingTools}
+			other={{ label: "Something else", detail: "Which app?" }}
+		/>
+		<TextField
+			label="Price"
+			name="price"
+			maxlength={MAX_TEXT_LENGTH}
+			hint="What would you expect to pay to check one full manuscript?"
+		/>
+		<ScaleField
+			label="How do you feel about sending your manuscript to an AI service for checking?"
+			name="ai_comfort"
+			low="Not at all comfortable"
+			high="Completely comfortable"
+		/>
+		<TextField
+			label="Reassurance"
+			name="ai_reassurance"
+			multiline
+			rows={3}
+			maxlength={MAX_TEXT_LENGTH}
+			hint="What would make you comfortable sending it?"
+		/>
+
+		<div class="ccw__send">
+			<Button type="submit" variant="accent" size="lg">Send answers</Button>
+			<p class="ccw__purpose">
+				We read your answers to decide what to build. <Link href={POLICY_URL}>How we handle your answers</Link>.
+			</p>
+		</div>
+		<div role="alert" class="ccw__problems">
+			<p class="ccw__problem" data-problem="empty" hidden>
+				Nothing to send yet. Answer any question you like, then send. You’re on the list either way.
+			</p>
+			<p class="ccw__problem" data-problem="save" hidden>
+				We couldn’t save your answers. Try again in a minute, or write to{" "}
+				<Link href={`mailto:${CONTACT_EMAIL}?subject=Continuity%20Checker%20answers`}>{CONTACT_EMAIL}</Link>.
+			</p>
+		</div>
+	</form>
+
+	<div class="ccw__step ccw__confirmation" data-waitlist-thanks hidden>
+		<h2 class="sd-text-title ccw__heading" tabindex="-1" data-waitlist-thanks-heading>Thank you.</h2>
+		<p>
+			Stamped and sent. Your answers help us decide what to build first, and we’ll email you when the
+			Continuity Checker launches.
+		</p>
+		<p class="ccw__onward"><Link href="/tools/">Try our other tools</Link></p>
+	</div>
+</div>
+
+<script>
+	import { mountWaitlistForm } from "./waitlist-form";
+
+	mountWaitlistForm();
+</script>
+
+<style>
+	.ccw {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-12);
+	}
+	.ccw p,
+	.ccw h2 {
+		margin: 0;
+	}
+	.ccw__step {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+	.ccw__step[hidden],
+	.ccw__problem[hidden] {
+		display: none;
+	}
+	.ccw__survey {
+		gap: var(--space-8);
+	}
+	.ccw__confirmation {
+		gap: var(--space-3);
+	}
+	.ccw__confirmation p {
+		text-wrap: pretty;
+	}
+	.ccw__onward {
+		margin-block-start: var(--space-3);
+	}
+	.ccw__intro {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+	}
+	.ccw__intro p {
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+	.ccw__heading:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 4px;
+	}
+
+	.ccw__check {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: start;
+		column-gap: var(--space-3);
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 24px;
+		cursor: pointer;
+	}
+	.ccw__check-input {
+		inline-size: 20px;
+		block-size: 20px;
+		margin: 2px 0 0;
+		accent-color: var(--marker-blue);
+		cursor: pointer;
+	}
+	.ccw__check-input:focus-visible {
+		outline: var(--stroke-pen) solid var(--focus);
+		outline-offset: 2px;
+	}
+
+	.ccw__trap {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		overflow: clip;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+
+	.ccw__send {
+		display: flex;
+		flex-direction: column;
+		align-items: start;
+		gap: var(--space-3);
+	}
+	.ccw__purpose {
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+	.ccw__problem {
+		padding-inline-start: var(--space-3);
+		border-inline-start: var(--stroke-pen) solid var(--red-pen);
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--red-pen);
+	}
+</style>

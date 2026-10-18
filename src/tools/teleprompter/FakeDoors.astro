@@ -2,9 +2,11 @@
 import Button from "../../components/Button.astro";
 import TextField from "../../components/TextField.astro";
 import Dialog from "../../components/Dialog.astro";
-import { EMAIL_CAPTURE_ENABLED } from "./lib/interest";
+import Link from "../../components/Link.astro";
+import SoonTag from "../../components/SoonTag.astro";
+import { CONTACT_EMAIL } from "../../lib/privacy/organisation";
 
-const emailCapture = EMAIL_CAPTURE_ENABLED;
+const POLICY_URL = "/privacy-policy/#waitlists-and-forms";
 
 const doors = [
 	{ feature: "voice_scroll", name: "Voice scroll", subtitle: "Scrolls as you speak" },
@@ -22,7 +24,7 @@ const doors = [
 					<button type="button" class="fd__door" data-fake-door={door.feature} aria-haspopup="dialog">
 						<span class="fd__head">
 							<span class="fd__name sd-text-button">{door.name}</span>
-							<span class="fd__tag">Soon</span>
+							<SoonTag />
 						</span>
 						<span class="fd__sub">{door.subtitle}</span>
 					</button>
@@ -33,28 +35,41 @@ const doors = [
 
 	<Dialog aria-labelledby="fd-dialog-title" data-fake-door-dialog width="28rem">
 		<div class="fd__body" data-fake-door-ask>
-			<h3 id="fd-dialog-title" class="sd-dialog__title sd-text-title">Coming soon.</h3>
-			<p class="sd-dialog__text">
-				<span data-fake-door-name>This feature</span> isn't built yet. Would you use it?
-			</p>
-			{
-				emailCapture && (
-					<TextField
-						label="Email me when it's ready"
-						name="email"
-						type="email"
-						autocomplete="email"
-						hint="Optional. We'll only email about this."
-					/>
-				)
-			}
+			<h3 id="fd-dialog-title" class="fd__title sd-dialog__title sd-text-title">
+				<span data-fake-door-name>This feature</span>
+				<SoonTag />
+			</h3>
+			<p class="sd-dialog__text">This feature isn't built yet. Would you use it?</p>
+			<TextField
+				label="Email me when it's ready"
+				name="email"
+				type="email"
+				autocomplete="email"
+				hint="Optional. We only save it if you say yes."
+			/>
 			<div class="sd-dialog__actions">
 				<Button variant="primary" data-answer="yes">Yes, I want this</Button>
 				<Button variant="secondary" data-answer="no">Not really</Button>
 			</div>
+			<p class="fd__purpose">
+				We'll only email you about “<span data-fake-door-name>this feature</span>.”{" "}
+				<Link href={POLICY_URL}>How we handle your email</Link>.
+			</p>
+			<div role="alert">
+				<p class="fd__problem" data-fake-door-problem="email" hidden>
+					That email address doesn't look complete. Check it reads like name@example.com.
+				</p>
+				<p class="fd__problem" data-fake-door-problem="save" hidden>
+					We couldn't save your email. Try again in a minute, or write to{" "}
+					<Link href={`mailto:${CONTACT_EMAIL}?subject=Teleprompter%20features`}>{CONTACT_EMAIL}</Link>.
+				</p>
+			</div>
 		</div>
 		<div class="fd__body" data-fake-door-done hidden>
-			<p class="sd-dialog__text">Noted. Thanks for telling us.</p>
+			<p class="sd-dialog__text" data-fake-door-noted>Noted. Thanks for telling us.</p>
+			<p class="sd-dialog__text" data-fake-door-subscribed hidden>
+				Noted. We'll email you when “<span data-fake-door-name>this feature</span>” is ready.
+			</p>
 			<div class="sd-dialog__actions">
 				<Button variant="secondary" data-close>Close</Button>
 			</div>
@@ -128,23 +143,9 @@ const doors = [
 	}
 	.fd__head {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-2);
-	}
-	/* Josefin rides high */
-	.fd__tag {
-		font-family: var(--font-display);
-		font-size: 11px;
-		line-height: 14px;
-		font-weight: 600;
-		letter-spacing: 0.1em;
-		text-transform: uppercase;
-		color: var(--ink-muted);
-		border: var(--stroke-hairline) solid var(--rule-strong);
-		border-radius: var(--radius-pill);
-		padding: 3px var(--space-2) 1px;
-		white-space: nowrap;
 	}
 	.fd__sub {
 		font-family: var(--font-prose);
@@ -153,11 +154,35 @@ const doors = [
 		color: var(--ink-muted);
 	}
 
+	.fd__title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-2);
+	}
+
 	.fd__body {
 		display: grid;
 		gap: var(--space-4);
 	}
-	.fd__body[hidden] {
+	.fd__body[hidden],
+	.fd__body p[hidden] {
 		display: none;
+	}
+	.fd__body p {
+		margin: 0;
+	}
+	.fd__purpose {
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+	.fd__problem {
+		padding-inline-start: var(--space-3);
+		border-inline-start: var(--stroke-pen) solid var(--red-pen);
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--red-pen);
 	}
 </style>

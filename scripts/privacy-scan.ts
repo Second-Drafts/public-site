@@ -6,6 +6,7 @@ import lzString from "lz-string";
 
 import lock from "../src/lib/privacy/registry.lock.json" with { type: "json" };
 import {
+	FORM_ORIGINS,
 	SCAN_STATES,
 	findSentinelLeaks,
 	findViolations,
@@ -114,8 +115,10 @@ const ENCODED_SHARE_PAYLOAD = compressToEncodedURIComponent(JSON.stringify({ v: 
 const ENCODED_SPRINT_HANDOFF_PAYLOAD = compressToEncodedURIComponent(
 	JSON.stringify({ v: 1, t: SENTINEL, o: "writing_sprint" }),
 );
+const SENTINEL_EMAIL = `${SENTINEL}@example.com`;
 const SENTINEL_FORMS = [
 	SENTINEL,
+	SENTINEL.toLowerCase(),
 	ENCODED_SHARE_PAYLOAD,
 	ENCODED_SPRINT_HANDOFF_PAYLOAD,
 	compressToEncodedURIComponent(SENTINEL),
@@ -246,6 +249,7 @@ interface WritingTool {
 	name: string;
 	path: string;
 	write: (page: Page) => Promise<void>;
+	sendsForm?: boolean;
 }
 
 async function playSharedScript(page: Page): Promise<void> {
@@ -319,6 +323,18 @@ const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,
 		write: analyseSprintDraft,
 	},
+	{
+		name: "continuity checker waitlist",
+		path: "/tools/continuity-checker/waitlist/",
+		write: joinContinuityCheckerWaitlist,
+		sendsForm: true,
+	},
+	{
+		name: "teleprompter coming-soon signup",
+		path: TELEPROMPTER_PATH,
+		write: askForTeleprompterFeature,
+		sendsForm: true,
+	},
 ];
 
 const REPORT_TITLES = `
@@ -339,12 +355,54 @@ new MutationObserver((records) => {
 }).observe(document, { subtree: true, childList: true, characterData: true });
 `;
 
+async function joinContinuityCheckerWaitlist(page: Page): Promise<void> {
+	await page.fill('input[name="email"]', SENTINEL_EMAIL);
+	await page.check('input[name="early_access"]');
+	await page.click("[data-waitlist-signup] button[type=submit]");
+	await page.waitForSelector("[data-waitlist-survey]:not([hidden])");
+	await page.check('input[name="project"][value="other"]', { force: true });
+	for (const name of ["project_other", "genre", "slip_story", "price", "ai_reassurance"]) {
+		await page.fill(`[name="${name}"]`, SENTINEL);
+	}
+	await page.click("[data-waitlist-survey] button[type=submit]");
+	await page.waitForSelector("[data-waitlist-thanks]:not([hidden])");
+}
+
+async function askForTeleprompterFeature(page: Page): Promise<void> {
+	await page.click('[data-fake-door="voice_scroll"]');
+	await page.fill('[data-fake-door-dialog] input[name="email"]', SENTINEL_EMAIL);
+	await page.click('[data-answer="yes"]');
+	await page.waitForSelector("[data-fake-door-subscribed]:not([hidden])");
+}
+
+const STAND_IN_SIGNUP_ID = "00000000-0000-4000-8000-000000000000";
+
+// The scan must never write to the live database, so a stand-in answers for the forms Worker.
+async function standInForFormsWorker(context: BrowserContext): Promise<void> {
+	for (const origin of FORM_ORIGINS) {
+		await context.route(`${origin}/**`, (route) =>
+			route.fulfill({
+				status: route.request().method() === "OPTIONS" ? 204 : 200,
+				headers: {
+					"Access-Control-Allow-Origin": "*",
+					"Access-Control-Allow-Headers": "Content-Type",
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id: STAND_IN_SIGNUP_ID }),
+			}),
+		);
+	}
+}
+
 async function consoleExposure(message: ConsoleMessage): Promise<Exposure> {
 	const values = await Promise.all(message.args().map((arg) => arg.jsonValue().catch(() => "")));
 	return { channel: `console.${message.type()}`, text: [message.text(), JSON.stringify(values)].join("\n") };
 }
 
-async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exposure[]>> {
+async function watchForLeaks(
+	context: BrowserContext,
+	opts: { sendsForm: boolean },
+): Promise<() => Promise<Exposure[]>> {
 	const exposures: Exposure[] = [];
 	const pending: Promise<Exposure>[] = [];
 	await context.exposeBinding("__scanReportTitle", (_source, title: string) => {
@@ -352,7 +410,7 @@ async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exp
 	});
 	await context.addInitScript(REPORT_TITLES);
 	context.on("request", (request) => {
-		exposures.push(...requestExposures({ url: request.url(), body: request.postData() ?? "" }));
+		exposures.push(...requestExposures({ url: request.url(), body: request.postData() ?? "" }, opts));
 	});
 	context.on("page", (page) => {
 		page.on("framenavigated", (frame) => exposures.push(pageUrlExposure(frame.url())));
@@ -364,7 +422,9 @@ async function watchForLeaks(context: BrowserContext): Promise<() => Promise<Exp
 
 async function checkToolDoesNotLeak(openContext: OpenContext, origin: string, tool: WritingTool): Promise<string[]> {
 	const context = await openContext("accepted");
-	const collectExposures = await watchForLeaks(context);
+	const sendsForm = tool.sendsForm ?? false;
+	if (sendsForm) await standInForFormsWorker(context);
+	const collectExposures = await watchForLeaks(context, { sendsForm });
 	const { requests } = trackRequests(context);
 	const page = await context.newPage();
 	await page.goto(origin + tool.path);

@@ -14,6 +14,7 @@ export type ScriptSource = "paste" | "typed" | "sample" | "share_link" | "word_c
 export type CounterTextSource = "paste" | "typed" | "restored";
 export type DraftTextSource = CounterTextSource | "writing_sprint";
 export type FakeDoorFeature = "voice_scroll" | "record_video" | "phone_remote";
+export type WaitlistPlacement = "hero" | "band";
 export type TrackedSetting = "font" | "theme" | "mirror" | "flip" | "guide" | "arrowKeys" | "guideColor";
 
 export type Primitive = string | number | boolean;
@@ -65,6 +66,7 @@ export const EVENT_SCHEMA = {
 	ws_opened_analysis: { word_bucket: text<WordBucket>() },
 	da_text_entered: { word_bucket: text<WordBucket>(), source: text<DraftTextSource>() },
 	da_rhythm_sentence_clicked: {},
+	cc_waitlist_clicked: { placement: text<WaitlistPlacement>() },
 	m8_shaken: { method: text<ShakeMethod>(), asked: flag(), deck: text<Deck>(), too_soon: flag() },
 	m8_shared: { method: text<ShareMethod>() },
 	m8_motion_permission: { granted: flag() },

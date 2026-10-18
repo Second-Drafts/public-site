@@ -1,0 +1,93 @@
+---
+import Mark from "../../components/Mark.astro";
+import { CERTAINTY_LABELS, splitAroundMark, type ExampleFlag } from "./example-flags";
+
+interface Props {
+	flag: ExampleFlag;
+}
+
+const { flag } = Astro.props;
+---
+
+<article class="flag">
+	<p class:list={["flag__certainty", "sd-text-label", `flag__certainty--${flag.certainty}`]}>
+		{CERTAINTY_LABELS[flag.certainty]}
+	</p>
+	<p class="flag__summary">{flag.summary}</p>
+	<ul class="flag__passages">
+		{
+			flag.passages.map((passage) => {
+				const { before, marked, after } = splitAroundMark(passage);
+				return (
+					<li>
+						<span class="sd-text-meta flag__chapter">{passage.chapter}</span>
+						<blockquote class="flag__quote">
+							“{before}<Mark>{marked}</Mark>{after}”
+						</blockquote>
+					</li>
+				);
+			})
+		}
+	</ul>
+	<p class="flag__reason">{flag.reason}</p>
+</article>
+
+<style>
+	.flag {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: var(--space-4) var(--space-6) var(--space-6);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule);
+		border-radius: var(--radius-md);
+	}
+	.flag p,
+	.flag blockquote,
+	.flag ul {
+		margin: 0;
+	}
+	.flag__certainty {
+		align-self: start;
+		padding: 3px var(--space-3) 1px;
+		border-radius: var(--radius-pill);
+		color: var(--on-marker);
+	}
+	.flag__certainty--contradiction {
+		background: var(--marker-pink);
+	}
+	.flag__certainty--possible {
+		background: var(--marker-yellow);
+	}
+	.flag__summary {
+		font-weight: 600;
+		text-wrap: pretty;
+	}
+	.flag__passages {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding: 0;
+		list-style: none;
+	}
+	.flag__passages li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		padding-inline-start: var(--space-3);
+		border-inline-start: var(--stroke-pen) solid var(--rule);
+	}
+	.flag__chapter {
+		color: var(--ink-muted);
+	}
+	.flag__quote {
+		font-style: italic;
+		text-wrap: pretty;
+	}
+	.flag__reason {
+		font-size: 15px;
+		line-height: 22px;
+		color: var(--ink-muted);
+		text-wrap: pretty;
+	}
+</style>
