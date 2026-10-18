@@ -2,16 +2,11 @@
 import { defineConfig } from "astro/config";
 
 import sitemap from "@astrojs/sitemap";
-import favicons from "astro-favicons";
 
 import { buildCsp } from "./src/lib/privacy/csp.ts";
 import { VENDORS } from "./src/lib/privacy/registry.ts";
-import tokens from "./design-system/tokens.json" with { type: "json" };
 
 const { directives, scriptResources, styleResources } = buildCsp(VENDORS);
-
-const paper = tokens.color.tokens.find((token) => token.name === "paper")?.value;
-if (!paper?.light) throw new Error("design-system/tokens.json needs a light paper colour");
 
 /**
  *
@@ -44,18 +39,5 @@ export default defineConfig({
 			},
 		},
 		sitemap({ filter: (page) => !isInternalPage(page) }),
-		// Head tags live in Base.astro: the plugin's own tags would make home-screen saves open as a standalone app.
-		favicons({
-			background: paper.light,
-			output: { html: false },
-			icons: {
-				favicons: ["favicon.ico"],
-				appleIcon: ["apple-touch-icon.png"],
-				android: false,
-				appleStartup: false,
-				windows: false,
-				yandex: false,
-			},
-		}),
 	],
 });
