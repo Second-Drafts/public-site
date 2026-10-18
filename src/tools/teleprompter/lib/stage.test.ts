@@ -41,7 +41,7 @@ describe("stageLook", () => {
 		expect(look.guide).toBe("arrows");
 	});
 
-	it("uses the custom colours for the custom theme", () => {
+	it("uses the custom colors for the custom theme", () => {
 		const custom = { text: "#123456", background: "#abcdef" };
 		const look = stageLook(settings({ theme: "custom", custom }));
 		expect(look.vars["--tp-fg"]).toBe(custom.text);
@@ -50,13 +50,13 @@ describe("stageLook", () => {
 		expect(stageLook(settings({ theme: "custom", custom, guideColor: "#ff0000" })).vars["--tp-guide"]).toBe("#ff0000");
 	});
 
-	it("centres the column by default and passes the position through", () => {
+	it("centers the column by default and passes the position through", () => {
 		expect(stageLook(settings()).vars["--tp-colpos"]).toBe("0.5");
 		expect(stageLook(settings({ columnPosition: 0 })).vars["--tp-colpos"]).toBe("0");
 		expect(stageLook(settings({ columnPosition: 1 })).vars["--tp-colpos"]).toBe("1");
 	});
 
-	it("uses the guide colour override in every theme, and the theme's own for auto", () => {
+	it("uses the guide color override in every theme, and the theme's own for auto", () => {
 		expect(stageLook(settings({ theme: "paper", guideColor: "#5b8fdb" })).vars["--tp-guide"]).toBe("#5b8fdb");
 		expect(stageLook(settings({ theme: "paper", guideColor: "auto" })).vars["--tp-guide"]).toBe(
 			THEMES.paper.colors.guide,
@@ -88,13 +88,13 @@ describe("relativeLuminance", () => {
 		expect(relativeLuminance("#fff")).toBeCloseTo(1, 6);
 	});
 
-	it("matches the WCAG value for a mid grey", () => {
+	it("matches the WCAG value for a mid gray", () => {
 		// #777777: channel 0.4667 → linear 0.1845
 		expect(relativeLuminance("#777777")).toBeCloseTo(0.1845, 3);
 	});
 
-	it("treats an invalid colour as black", () => {
-		expect(relativeLuminance("not a colour")).toBeNull();
+	it("treats an invalid color as black", () => {
+		expect(relativeLuminance("not a color")).toBeNull();
 	});
 });
 

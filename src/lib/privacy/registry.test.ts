@@ -54,7 +54,7 @@ describe("describeRetention", () => {
 		expect(describeRetention("until-cleared")).toBe("Until you clear your browser data");
 	});
 
-	it("pluralises months and converts whole years", () => {
+	it("pluralizes months and converts whole years", () => {
 		expect(describeRetention({ months: 1 })).toBe("1 month");
 		expect(describeRetention({ months: 13 })).toBe("13 months");
 		expect(describeRetention({ months: 12 })).toBe("1 year");

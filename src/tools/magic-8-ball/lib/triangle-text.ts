@@ -21,7 +21,7 @@ export interface TriangleFitOptions {
 	measure: (text: string, fontSize: number) => number;
 }
 
-export const PREFERRED_CENTRE_RATIO = 0.64;
+export const PREFERRED_CENTER_RATIO = 0.64;
 
 interface Placement {
 	lines: FittedLine[];
@@ -74,13 +74,13 @@ function wrapIntoLineCount(
 
 function placeLines(
 	lines: string[],
-	centre: number,
+	center: number,
 	fontSize: number,
 	box: TriangleBox,
 	options: TriangleFitOptions,
 ): Placement {
 	const lineBoxHeight = fontSize * options.lineHeight;
-	const blockTop = centre - (lines.length * lineBoxHeight) / 2;
+	const blockTop = center - (lines.length * lineBoxHeight) / 2;
 	const placed = lines.map((text, index) => ({
 		text,
 		y: blockTop + (index + 0.5) * lineBoxHeight,
@@ -95,14 +95,14 @@ function placeLines(
 
 function placeLowEnough(lines: string[], fontSize: number, box: TriangleBox, options: TriangleFitOptions): Placement {
 	const blockHeight = lines.length * fontSize * options.lineHeight;
-	const lowestCentre = Math.max(box.height - blockHeight / 2, PREFERRED_CENTRE_RATIO * box.height);
-	const preferred = placeLines(lines, PREFERRED_CENTRE_RATIO * box.height, fontSize, box, options);
+	const lowestCenter = Math.max(box.height - blockHeight / 2, PREFERRED_CENTER_RATIO * box.height);
+	const preferred = placeLines(lines, PREFERRED_CENTER_RATIO * box.height, fontSize, box, options);
 	if (preferred.overflow <= 0) return preferred;
-	const lowest = placeLines(lines, lowestCentre, fontSize, box, options);
+	const lowest = placeLines(lines, lowestCenter, fontSize, box, options);
 	if (lowest.overflow > 0) return lowest;
 
-	let high = lowestCentre;
-	let low = PREFERRED_CENTRE_RATIO * box.height;
+	let high = lowestCenter;
+	let low = PREFERRED_CENTER_RATIO * box.height;
 	for (let iteration = 0; iteration < 10; iteration++) {
 		const middle = (low + high) / 2;
 		if (placeLines(lines, middle, fontSize, box, options).overflow <= 0) high = middle;

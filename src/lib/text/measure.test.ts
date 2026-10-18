@@ -136,7 +136,7 @@ describe("speakingSeconds", () => {
 		expect(speakingSeconds(0)).toBe(0);
 	});
 
-	it("honours a custom pace", () => {
+	it("honors a custom pace", () => {
 		expect(speakingSeconds(100, 200)).toBe(30);
 	});
 });

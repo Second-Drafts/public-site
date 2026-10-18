@@ -10,4 +10,4 @@ Mark draws one of the logo's marker strokes over inline text — the brand's sig
 
 Consumer provides: `kind` and short inline `children` (a word or phrase; `highlight` may wrap lines, the others should not). Strokes draw on once in 240ms and appear finished under reduced motion.
 
-Do: use at most two Marks in a paragraph, and make sure the words say the thing — strokes are decoration. Don't: use Mark for headings in product UI (marketing only), stack two kinds on one phrase, or recolour a stroke.
+Do: use at most two Marks in a paragraph, and make sure the words say the thing — strokes are decoration. Don't: use Mark for headings in product UI (marketing only), stack two kinds on one phrase, or recolor a stroke.

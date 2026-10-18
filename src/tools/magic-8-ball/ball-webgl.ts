@@ -116,7 +116,7 @@ const TEXTURED_UNIFORMS = ["projection", "modelView", "opacity", "fogged"] as co
 const glslFloat = (value: number) => (Number.isInteger(value) ? value.toFixed(1) : String(value));
 const glslVector = (vector: readonly number[]) => `vec${vector.length}(${vector.map(glslFloat).join(", ")})`;
 
-/** Clear at the glass, solid water at the chamber floor, mixed in display colours as three's fog was. */
+/** Clear at the glass, solid water at the chamber floor, mixed in display colors as three's fog was. */
 const WATER_FOG = `
 	vec3 underWater(vec3 color, float viewDepth) {
 		float depth = smoothstep(${glslFloat(CAMERA_DISTANCE - GLASS_Z)}, ${glslFloat(CAMERA_DISTANCE - LIQUID_FLOOR_Z)}, viewDepth);
@@ -258,7 +258,7 @@ function seededRandom(seed: number) {
 	};
 }
 
-/** Soft blobs in the cloud's final colour: the pale blue three's tint made of them. */
+/** Soft blobs in the cloud's final color: the pale blue three's tint made of them. */
 function drawCloud() {
 	const size = 256;
 	const canvas = document.createElement("canvas");

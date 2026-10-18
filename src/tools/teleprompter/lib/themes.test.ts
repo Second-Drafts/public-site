@@ -8,7 +8,7 @@ describe("contrastRatio", () => {
 		expect(contrastRatio("#000000", "#ffffff")).toBeCloseTo(21, 10);
 	});
 
-	it("gives 1 for the same colour", () => {
+	it("gives 1 for the same color", () => {
 		expect(contrastRatio("#3a7bd5", "#3a7bd5")).toBe(1);
 	});
 
@@ -30,7 +30,7 @@ describe("contrastRatio", () => {
 	});
 
 	it("returns 1 for invalid input", () => {
-		expect(contrastRatio("not a colour", "#ffffff")).toBe(1);
+		expect(contrastRatio("not a color", "#ffffff")).toBe(1);
 		expect(contrastRatio("#ffffff", "#ffff")).toBe(1);
 		expect(contrastRatio("#gggggg", "#000000")).toBe(1);
 		expect(contrastRatio("", "")).toBe(1);
@@ -54,16 +54,16 @@ describe("THEMES contrast", () => {
 	});
 });
 
-describe("guide colour and band contrast", () => {
+describe("guide color and band contrast", () => {
 	const base = validateSettings({});
 
-	it("uses the theme's guide colour on auto and the override otherwise", () => {
+	it("uses the theme's guide color on auto and the override otherwise", () => {
 		expect(resolveTheme({ ...base, theme: "classic" }).guide).toBe(THEMES.classic.colors.guide);
 		expect(resolveTheme({ ...base, theme: "classic", guideColor: "#f499bf" }).guide).toBe("#f499bf");
 		expect(resolveTheme({ ...base, theme: "custom", guideColor: "#7cc778" }).guide).toBe("#7cc778");
 	});
 
-	it("mixes colours like a translucent layer", () => {
+	it("mixes colors like a translucent layer", () => {
 		expect(mixHex("#ffffff", "#000000", 0)).toBe("#000000");
 		expect(mixHex("#ffffff", "#000000", 1)).toBe("#ffffff");
 		expect(mixHex("#ffffff", "#000000", 0.5)).toBe("#808080");

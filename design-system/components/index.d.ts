@@ -30,7 +30,7 @@ export interface StatusTagProps {
 }
 export declare function StatusTag(props: StatusTagProps): React.ReactElement;
 
-/** A labelled text input or textarea in the prose face. */
+/** A labeled text input or textarea in the prose face. */
 export interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: React.ReactNode;
   /** Helper text under the field. */

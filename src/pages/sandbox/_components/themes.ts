@@ -12,7 +12,7 @@ export const SANDBOX_PAGES = [
 	{
 		href: "/sandbox/tokens",
 		label: "Tokens",
-		description: "Colour per theme, type styles, space, radius, stroke and shadow, read from tokens.json.",
+		description: "Color per theme, type styles, space, radius, stroke and shadow, read from tokens.json.",
 	},
 	{
 		href: "/sandbox/button",
@@ -29,7 +29,7 @@ export const SANDBOX_PAGES = [
 	{
 		href: "/sandbox/text-field",
 		label: "TextField",
-		description: "Labelled inputs and textareas, with hints and errors.",
+		description: "Labeled inputs and textareas, with hints and errors.",
 	},
 	{
 		href: "/sandbox/choice-field",

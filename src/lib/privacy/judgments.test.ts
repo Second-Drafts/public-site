@@ -131,11 +131,11 @@ describe("reviewChanges", () => {
 		expect(review.toCheck).toHaveLength(1);
 	});
 
-	it("asks a person to confirm the role of a new or relabelled vendor", async () => {
+	it("asks a person to confirm the role of a new or relabeled vendor", async () => {
 		const added = await reviewsAfter((next) => (next.vendors.other = { ...next.vendors.stats, name: "Other" }));
-		const relabelled = await reviewsAfter((next) => (next.vendors.stats.role = "controller"));
+		const relabeled = await reviewsAfter((next) => (next.vendors.stats.role = "controller"));
 		const moved = await reviewsAfter((next) => (next.vendors.stats.category = "necessary"));
-		for (const [review] of [added, relabelled, moved]) {
+		for (const [review] of [added, relabeled, moved]) {
 			expect(review.outcome).toBe("role-confirmed");
 			expect(review.toCheck.join()).toContain("https://stats.example/privacy");
 		}

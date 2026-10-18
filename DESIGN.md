@@ -2,7 +2,7 @@ The Department of Second Drafts makes the creative workstation for storytellers 
 
 ## Principles
 
-- **The page comes first.** `paper` and `ink` do almost all the work. Marker colours are annotations on top, never backgrounds for whole regions — with one deliberate exception, the Highlighted band (below).
+- **The page comes first.** `paper` and `ink` do almost all the work. Marker colors are annotations on top, never backgrounds for whole regions — with one deliberate exception, the Highlighted band (below).
 - **Every marker means one thing.** Five markers, five jobs (below). Don't use one for decoration where it would read as its meaning.
 - **Rough over slick.** Marker strokes are hand-drawn and slightly off-axis. UI chrome is crisp. The contrast between the two is the brand — don't make the chrome hand-drawn, and don't make the markers geometric.
 - **For every kind of storyteller.** Nothing in the UI or copy should assume fiction, academia or video. Say "story", "draft", "piece", "collaborator".
@@ -26,9 +26,9 @@ Examples:
 | Error: invalid input | That title is already in this project. Try another. |
 | No documents found | Nothing in your in-tray yet. Start a draft. |
 
-## Colour
+## Color
 
-The logo has six colours: black ink and five markers. They map to the product like this:
+The logo has six colors: black ink and five markers. They map to the product like this:
 
 | Marker | Logo gesture | Means | Use |
 | --- | --- | --- | --- |
@@ -42,20 +42,20 @@ The logo has six colours: black ink and five markers. They map to the product li
 Rules:
 
 - Grounds are `paper`, `paper-raised`, `paper-sunken`. Text is `ink` or `ink-muted` on any of them.
-- Markers are **fills and strokes, not text**. Text on a marker fill is `on-marker` (black in both themes); on a `marker-blue` fill it is `on-blue` (white in Paper, dark in Night shift). When a marker colour must be text or an icon, use its `-ink` token (`blue-ink`, `green-ink`, `pink-ink`, `orange-ink`), each ≥4.5:1 on paper in both themes.
-- Links are `ink` text with a `marker-green` underline (`Mark kind="underline"` or `text-decoration-color: var(--marker-green)`, 3px, offset 3px). The underline is the cue; the colour is identity.
-- Never let colour alone carry status: every status has a word, a strike or a check. Success (orange check) and error (red pen) also differ strongly in lightness.
-- Collaborators are assigned markers in the order yellow, pink, blue, green, orange; agents are marked with the word AGENT, not a special colour.
+- Markers are **fills and strokes, not text**. Text on a marker fill is `on-marker` (black in both themes); on a `marker-blue` fill it is `on-blue` (white in Paper, dark in Night shift). When a marker color must be text or an icon, use its `-ink` token (`blue-ink`, `green-ink`, `pink-ink`, `orange-ink`), each ≥4.5:1 on paper in both themes.
+- Links are `ink` text with a `marker-green` underline (`Mark kind="underline"` or `text-decoration-color: var(--marker-green)`, 3px, offset 3px). The underline is the cue; the color is identity.
+- Never let color alone carry status: every status has a word, a strike or a check. Success (orange check) and error (red pen) also differ strongly in lightness.
+- Collaborators are assigned markers in the order yellow, pink, blue, green, orange; agents are marked with the word AGENT, not a special color.
 - Marker strokes (`Mark`) are decoration over text that already says the thing — pink and yellow strokes are under 3:1 on paper by design and never stand alone.
 - No gradients. One shadow, `shadow-lift`, for floating surfaces only.
 
-Both themes — **Paper** (`light`) and **Night shift** (`dark`) — keep yellow, pink, green and orange at the logo's values; paper, ink, rules and the `-ink` variants change. `marker-blue` is the exception because it is the action colour and must read as text and as a focus ring: `#306abb` in Paper (a shade deeper than the logo's `#346fc2`) and `#5b8fdb` in Night shift, ≥4.7:1 on every paper ground. The logo file keeps its own blue.
+Both themes — **Paper** (`light`) and **Night shift** (`dark`) — keep yellow, pink, green and orange at the logo's values; paper, ink, rules and the `-ink` variants change. `marker-blue` is the exception because it is the action color and must read as text and as a focus ring: `#306abb` in Paper (a shade deeper than the logo's `#346fc2`) and `#5b8fdb` in Night shift, ≥4.7:1 on every paper ground. The logo file keeps its own blue.
 
 ### The Highlighted band
 
 A page sometimes needs one band that changes the light — a closing call to action, a footer, a pull quote. Never drop the *other* page theme in for this (Night shift inside Paper reads as dark mode pasted onto a light site). Instead, the band is **highlighted**: the whole section takes the pink marker, as if someone ran a highlighter across the bottom of the page. It is the same band on both Paper and Night shift.
 
-- Set it with `data-theme="highlighted"` on the band. Every token and component inside adapts: black ink, a deep navy `marker-blue`, darkened `-ink` colours; every text pair clears 4.5:1.
+- Set it with `data-theme="highlighted"` on the band. Every token and component inside adapts: black ink, a deep navy `marker-blue`, darkened `-ink` colors; every text pair clears 4.5:1.
 - One Highlighted band per page. It is the brand's loudest moment, not a layout pattern.
 - Full-bleed and square-cornered; never a card or a rounded panel.
 - **No pink inside it.** No `Mark kind="circle"`, no In-review tag, no pink collaborator nib — they vanish. Reach for `strike`, `highlight` or `check` instead; the house headline is a struck-through first draft: "Your ~~first~~ second draft starts here."
@@ -86,7 +86,7 @@ A page sometimes needs one band that changes the light — a closing call to act
 
 - **Focus:** `stroke-pen` solid `focus` ring with a 2px `paper` gap (`box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--focus)`). Always visible on keyboard focus.
 - **Hover:** ink fills darken under a 14% black overlay; blue fills take a 14% `ink` overlay (darker in Paper, lighter in Night shift) so `on-blue` text keeps its contrast; secondary buttons drop to `paper-sunken`; quiet buttons gain a `marker-yellow` highlight.
-- **Disabled:** 40% opacity, no pointer. Never grey out with a new colour.
+- **Disabled:** 40% opacity, no pointer. Never gray out with a new color.
 - **Error:** `red-pen` border and message text, plus the word saying what's wrong.
 
 ## Motion
@@ -98,7 +98,7 @@ Markers draw on: a stroke animates its dash from 0 to full over 240ms ease-out, 
 - **Headers:** `sd-word-single_line-marked.svg` (Night shift: `sd-word-single_line-marked-night.svg`) at 32px tall, 24px minimum — `<Logo variant="header" />`. It keeps two of the logo's gestures, the pink loop and the green underline, so the brand reads at nav size without the full lockup's weight.
 - **Full lockup:** `logo.svg` on Paper and on the Highlighted band; `logo-white.svg` (ink lightened, markers unchanged) on Night shift — `<Logo />`. For footers, covers and anywhere the logo is the subject. Minimum width 160px. Clear space all round equal to the height of the "D" in DEPARTMENT.
 - **Mark:** `mark.svg` (in the design system's assets) for favicons, avatars and app icons — places the name can't fit.
-- Never recolour the markers, re-letter the name, or animate the logo's strokes.
+- Never recolor the markers, re-letter the name, or animate the logo's strokes.
 
 ## Iconography
 

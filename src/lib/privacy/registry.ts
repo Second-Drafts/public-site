@@ -128,7 +128,7 @@ export const STORAGE = {
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-display-settings",
-		purpose: "Remembers how you set up the teleprompter, such as font, text size and colours.",
+		purpose: "Remembers how you set up the teleprompter, such as font, text size and colors.",
 		retention: "until-cleared",
 	},
 	"wc:text": {
@@ -152,7 +152,7 @@ export const STORAGE = {
 		area: "local",
 		category: "necessary",
 		purposeId: "remember-analysed-draft",
-		purpose: "Keeps the draft you're analysing in your browser, so it's still there when you come back.",
+		purpose: "Keeps the draft you're analyzing in your browser, so it's still there when you come back.",
 		retention: "until-cleared",
 	},
 	"wc:settings:v1": {

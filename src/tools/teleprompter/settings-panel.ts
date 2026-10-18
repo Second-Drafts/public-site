@@ -137,10 +137,7 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 		if (ratio !== null && ratio < MIN_CONTRAST) {
 			// Round down, so a ratio just under the line never reads as "4.5:1".
 			const shown = `${(Math.floor(ratio * 10) / 10).toFixed(1)}:1`;
-			showWarning(
-				bandWarn,
-				`The band makes the line hard to read: ${shown}. Lower the opacity or pick another colour.`,
-			);
+			showWarning(bandWarn, `The band makes the line hard to read: ${shown}. Lower the opacity or pick another color.`);
 		} else {
 			clearWarning(bandWarn);
 		}
@@ -201,7 +198,7 @@ export function mountSettingsPanel(root: HTMLElement, store: Store): void {
 	resetButton.addEventListener("click", async () => {
 		const confirmed = await askConfirm({
 			title: "Reset all settings?",
-			body: "Font, colours, layout and playback go back to their defaults. Your script stays as it is.",
+			body: "Font, colors, layout and playback go back to their defaults. Your script stays as it is.",
 			confirmLabel: "Reset settings",
 			cancelLabel: "Keep them",
 		});

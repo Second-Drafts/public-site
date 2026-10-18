@@ -3,7 +3,7 @@
 Run from the repo root:
   /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup -P scripts/models/magic-8-ball.py
 
-The ball is modelled with the window on +Z and "up" on +Y. Before export the
+The ball is modeled with the window on +Z and "up" on +Y. Before export the
 whole model is baked into Blender's Z-up space so the glTF (Y-up) result has
 the window facing +Z, toward the page's camera at rest.
 

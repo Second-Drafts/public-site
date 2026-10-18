@@ -1,4 +1,4 @@
-import { DOMAIN } from "./organisation";
+import { DOMAIN } from "./organization";
 import { findStorageEntry, STORAGE, type CategoryId, type FirstPartyKey, type StorageArea } from "./registry";
 
 const COOKIE_DOMAIN = `.${DOMAIN}`;

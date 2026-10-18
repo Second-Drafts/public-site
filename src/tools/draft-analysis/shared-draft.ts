@@ -10,7 +10,7 @@ export async function openSharedDraft(store: Store, usage: UsageHooks): Promise<
 	const current = store.get().text;
 	if (current.trim() !== "" && current !== shared.text) {
 		const replace = await askConfirm({
-			title: "Analyse this draft?",
+			title: "Analyze this draft?",
 			body: "It will replace the draft saved in this browser. Your current draft can't be recovered after this.",
 			confirmLabel: "Replace my draft",
 			cancelLabel: "Keep mine",

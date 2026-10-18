@@ -15,12 +15,12 @@ const QUESTION_MAX_LINES = 4;
 const ELLIPSIS = "…";
 
 const GROUND = "#05060c";
-const VIGNETTE_CENTRE = "#141238";
-const META_COLOUR = "#9a9bbd";
-const QUESTION_COLOUR = "#ecebf5";
-const TRIANGLE_COLOUR = "#1f2cff";
+const VIGNETTE_CENTER = "#141238";
+const META_COLOR = "#9a9bbd";
+const QUESTION_COLOR = "#ecebf5";
+const TRIANGLE_COLOR = "#1f2cff";
 const TRIANGLE_GLOW = "#3b5bff";
-const ANSWER_COLOUR = "#f4f6ff";
+const ANSWER_COLOR = "#f4f6ff";
 
 type Measure = (text: string) => number;
 
@@ -69,21 +69,21 @@ function paintGround(ctx: CanvasRenderingContext2D, size: number): void {
 	ctx.fillStyle = GROUND;
 	ctx.fillRect(0, 0, size, size);
 	const vignette = ctx.createRadialGradient(size / 2, size * 0.55, 0, size / 2, size * 0.55, size * 0.75);
-	vignette.addColorStop(0, VIGNETTE_CENTRE);
+	vignette.addColorStop(0, VIGNETTE_CENTER);
 	vignette.addColorStop(1, GROUND);
 	ctx.fillStyle = vignette;
 	ctx.fillRect(0, 0, size, size);
 }
 
-function setFont(ctx: CanvasRenderingContext2D, font: string, colour: string): void {
+function setFont(ctx: CanvasRenderingContext2D, font: string, color: string): void {
 	ctx.font = font;
-	ctx.fillStyle = colour;
+	ctx.fillStyle = color;
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 }
 
 function paintMeta(ctx: CanvasRenderingContext2D, text: string, y: number, unit: number): void {
-	setFont(ctx, `400 ${26 * unit}px "IBM Plex Mono"`, META_COLOUR);
+	setFont(ctx, `400 ${26 * unit}px "IBM Plex Mono"`, META_COLOR);
 	ctx.letterSpacing = `${3 * unit}px`;
 	ctx.fillText(text, ctx.canvas.width / 2 + 1.5 * unit, y);
 	ctx.letterSpacing = "0px";
@@ -93,7 +93,7 @@ function paintQuestion(ctx: CanvasRenderingContext2D, question: string, unit: nu
 	const silent = question.trim() === "";
 	const fontSize = 52 * unit;
 	const lineHeight = 70 * unit;
-	setFont(ctx, `${silent ? "italic " : ""}400 ${fontSize}px "Literata"`, QUESTION_COLOUR);
+	setFont(ctx, `${silent ? "italic " : ""}400 ${fontSize}px "Literata"`, QUESTION_COLOR);
 	const measure: Measure = (text) => ctx.measureText(text).width;
 	const lines = silent
 		? [SILENT_QUESTION]
@@ -105,17 +105,17 @@ function paintQuestion(ctx: CanvasRenderingContext2D, question: string, unit: nu
 function paintTriangle(ctx: CanvasRenderingContext2D, answerText: string, unit: number): void {
 	const width = 700 * unit;
 	const height = 606 * unit;
-	const centreX = ctx.canvas.width / 2;
+	const centerX = ctx.canvas.width / 2;
 	const top = 440 * unit;
 
 	ctx.save();
 	ctx.shadowColor = TRIANGLE_GLOW;
 	ctx.shadowBlur = 90 * unit;
-	ctx.fillStyle = TRIANGLE_COLOUR;
+	ctx.fillStyle = TRIANGLE_COLOR;
 	ctx.beginPath();
-	ctx.moveTo(centreX, top);
-	ctx.lineTo(centreX + width / 2, top + height);
-	ctx.lineTo(centreX - width / 2, top + height);
+	ctx.moveTo(centerX, top);
+	ctx.lineTo(centerX + width / 2, top + height);
+	ctx.lineTo(centerX - width / 2, top + height);
 	ctx.closePath();
 	ctx.fill();
 	ctx.restore();
@@ -136,8 +136,8 @@ function paintTriangle(ctx: CanvasRenderingContext2D, answerText: string, unit: 
 			},
 		},
 	);
-	setFont(ctx, fontFor(fit.fontSize), ANSWER_COLOUR);
-	for (const line of fit.lines) ctx.fillText(line.text, centreX, top + line.y);
+	setFont(ctx, fontFor(fit.fontSize), ANSWER_COLOR);
+	for (const line of fit.lines) ctx.fillText(line.text, centerX, top + line.y);
 }
 
 export async function loadShareCardFonts(): Promise<void> {

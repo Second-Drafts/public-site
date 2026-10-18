@@ -27,7 +27,7 @@ describe("createTapRecognizer", () => {
 		expect(onTap).not.toHaveBeenCalled();
 	});
 
-	it("ignores an ignored press, a cancelled press and a release from another pointer", () => {
+	it("ignores an ignored press, a canceled press and a release from another pointer", () => {
 		const { recognizer, onTap, tap } = setup();
 		tap(0, { ignored: true });
 		recognizer.press({ id: 1, x: 0, y: 0, t: 1000, target: null, ignored: false });

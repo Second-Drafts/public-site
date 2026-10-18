@@ -95,7 +95,7 @@
   color: var(--on-marker);
   border-radius: var(--radius-sm);
   box-shadow: 0 -0.14em 0 3px var(--marker-yellow);
-} /* Josefin rides high: lift the highlight so caps and baseline sit centred */
+} /* Josefin rides high: lift the highlight so caps and baseline sit centered */
 
 /* ---------- Mark ---------- */
 .sd-mark {

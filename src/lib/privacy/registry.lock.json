@@ -1,14 +1,14 @@
 {
-	"version": "2.8.0",
+	"version": "2.9.0",
 	"updated": "2026-10-18",
 	"reviews": [
 		{
-			"subject": "analytics property cc_waitlist_clicked.placement",
+			"subject": "storage da:text (purposeId remember-analysed-draft)",
 			"outcome": "checked-by-hand"
 		},
 		{
-			"subject": "vendor cloudflare (Cloudflare) as processor in forms",
-			"outcome": "role-confirmed"
+			"subject": "storage tp:settings:v1 (purposeId remember-display-settings)",
+			"outcome": "checked-by-hand"
 		}
 	],
 	"analytics": {
@@ -258,7 +258,7 @@
 			"area": "local",
 			"category": "necessary",
 			"purposeId": "remember-analysed-draft",
-			"purpose": "Keeps the draft you're analysing in your browser, so it's still there when you come back.",
+			"purpose": "Keeps the draft you're analyzing in your browser, so it's still there when you come back.",
 			"retention": "until-cleared"
 		},
 		"privacy:consent": {
@@ -290,7 +290,7 @@
 			"area": "local",
 			"category": "necessary",
 			"purposeId": "remember-display-settings",
-			"purpose": "Remembers how you set up the teleprompter, such as font, text size and colours.",
+			"purpose": "Remembers how you set up the teleprompter, such as font, text size and colors.",
 			"retention": "until-cleared"
 		},
 		"wc:settings:v1": {

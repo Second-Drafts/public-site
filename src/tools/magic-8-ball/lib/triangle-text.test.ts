@@ -72,7 +72,7 @@ describe("fitTextInTriangle", () => {
 		}
 	});
 
-	it("centres a one-line block near the preferred height", () => {
+	it("centers a one-line block near the preferred height", () => {
 		const { lines } = fitTextInTriangle("YES.", box, options);
 		expect(lines[0].y / box.height).toBeCloseTo(0.64, 1);
 	});

@@ -19,7 +19,7 @@ import {
 	type RecordedRequest,
 	type ScanState,
 } from "../src/lib/privacy/scan.ts";
-import { DOMAIN } from "../src/lib/privacy/organisation.ts";
+import { DOMAIN } from "../src/lib/privacy/organization.ts";
 
 const { compressToEncodedURIComponent } = lzString;
 
@@ -297,13 +297,13 @@ async function askTheBall(page: Page): Promise<void> {
 	await page.keyboard.press("Escape");
 }
 
-async function analyseDraft(page: Page): Promise<void> {
+async function analyzeDraft(page: Page): Promise<void> {
 	await page.fill("#da-text", SENTINEL);
 	await page.waitForTimeout(DRAFT_SETTLE_MS);
 	await page.click("#da-rhythm-strip");
 }
 
-async function analyseSprintDraft(page: Page): Promise<void> {
+async function analyzeSprintDraft(page: Page): Promise<void> {
 	await page.waitForFunction(
 		(sentinel) => (document.querySelector<HTMLTextAreaElement>("#da-text")?.value ?? "").includes(sentinel),
 		SENTINEL,
@@ -316,12 +316,12 @@ const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "teleprompter editor", path: TELEPROMPTER_PATH, write: typeAndPlayScript },
 	{ name: "word counter", path: "/tools/word-counter/", write: countWords },
 	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
-	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyseDraft },
+	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyzeDraft },
 	{ name: "magic 8 ball", path: "/tools/magic-8-ball/", write: askTheBall },
 	{
 		name: "draft analysis from a sprint",
 		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,
-		write: analyseSprintDraft,
+		write: analyzeSprintDraft,
 	},
 	{
 		name: "continuity checker waitlist",

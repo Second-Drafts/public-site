@@ -86,7 +86,7 @@ describe("validateSettings", () => {
 		});
 	});
 
-	describe("custom colours", () => {
+	describe("custom colors", () => {
 		it("normalizes #rgb and uppercase to lowercase #rrggbb", () => {
 			const r = validateSettings({ custom: { text: "#ABC", background: "#FFAA00", guide: "#0f0" } });
 			expect(r.custom).toEqual({ text: "#aabbcc", background: "#ffaa00" });
@@ -106,7 +106,7 @@ describe("validateSettings", () => {
 			"red; background:url(x)",
 			5,
 			null,
-		])("rejects %j per colour", (bad) => {
+		])("rejects %j per color", (bad) => {
 			const r = validateSettings({ custom: { text: bad, background: "#000", guide: bad } });
 			expect(r.custom).toEqual({ text: "#ffffff", background: "#000000" });
 		});
@@ -159,14 +159,14 @@ describe("validateSettings", () => {
 		expect(validateSettings({}).arrowKeys).toBe("paragraphs");
 	});
 
-	it("accepts a guide colour of auto or a hex, normalised", () => {
+	it("accepts a guide color of auto or a hex, normalized", () => {
 		expect(validateSettings({ guideColor: "auto" }).guideColor).toBe("auto");
 		expect(validateSettings({ guideColor: "#ABC" }).guideColor).toBe("#aabbcc");
 		expect(validateSettings({ guideColor: "red" }).guideColor).toBe("auto");
 		expect(validateSettings({}).guideColor).toBe("auto");
 	});
 
-	it("clamps the column position to 0–1 and defaults to centred", () => {
+	it("clamps the column position to 0–1 and defaults to centered", () => {
 		expect(validateSettings({}).columnPosition).toBe(0.5);
 		expect(validateSettings({ columnPosition: -2 }).columnPosition).toBe(0);
 		expect(validateSettings({ columnPosition: 7 }).columnPosition).toBe(1);

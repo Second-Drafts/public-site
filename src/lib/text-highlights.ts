@@ -5,7 +5,7 @@
  *
  * Each highlighted range is a `span[data-highlight]` listing its kinds ("cut", "cut sentence"), for the caller's CSS
  * to style with `[data-highlight~="cut"]`. A span may break across lines and segments; the piece where a span
- * begins also lists its kind in `data-highlight-start`. Text colour is transparent, so style backgrounds and
+ * begins also lists its kind in `data-highlight-start`. Text color is transparent, so style backgrounds and
  * decorations only.
  *
  * The mirror holds one block per line and replaces only the lines that changed, so a keystroke in a long text

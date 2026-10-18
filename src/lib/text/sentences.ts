@@ -6,7 +6,7 @@ export interface Sentence extends Span {
 
 const sentenceSegmenter = segmenter("sentence");
 
-// Abbreviations that are followed by a capitalised name far more often than they end a sentence.
+// Abbreviations that are followed by a capitalized name far more often than they end a sentence.
 const TITLE_ABBREVIATIONS = new Set([
 	"mr.",
 	"mrs.",

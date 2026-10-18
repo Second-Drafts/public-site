@@ -37,10 +37,10 @@ export function parseSignup(body: unknown): Signup | null {
 	if (typeof form !== "string" || !FORM_PATTERN.test(form)) return null;
 	if (typeof email !== "string") return null;
 
-	const normalisedEmail = email.trim().toLowerCase();
-	if (normalisedEmail.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(normalisedEmail)) return null;
+	const normalizedEmail = email.trim().toLowerCase();
+	if (normalizedEmail.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(normalizedEmail)) return null;
 
-	return { form, email: normalisedEmail, earlyAccess: earlyAccess === true };
+	return { form, email: normalizedEmail, earlyAccess: earlyAccess === true };
 }
 
 export function parseSurveyAnswers(body: unknown): SurveyAnswers | null {

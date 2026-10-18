@@ -14,7 +14,7 @@ type Themed = Partial<Record<Theme, string>>;
 // A theme without its own value inherits Paper's; "{marker-blue}" means an alias.
 const valueFor = (value: Themed, theme: Theme) => value[theme] ?? value.light ?? "";
 
-const colours = tokens.color.tokens.map((token) => ({ ...token, value: token.value as Themed }));
+const colors = tokens.color.tokens.map((token) => ({ ...token, value: token.value as Themed }));
 const typeGroups = tokens.type.groups;
 const shadow = tokens.shadow.tokens[0];
 ---
@@ -24,12 +24,12 @@ const shadow = tokens.shadow.tokens[0];
 	description="The page comes first: paper and ink do almost all the work. Markers are annotations on top."
 >
 	<section class="sb-section">
-		<h2 class="sd-text-title">Colour</h2>
+		<h2 class="sd-text-title">Color</h2>
 		<p class="sb-note">
-			Markers are fills and strokes, not text; when a marker colour must be text, use its <code>-ink</code> token.
+			Markers are fills and strokes, not text; when a marker color must be text, use its <code>-ink</code> token.
 		</p>
 		<div class="sb-scroll">
-			<table class="sb-colours">
+			<table class="sb-colors">
 				<thead>
 					<tr>
 						<th class="sd-text-label" scope="col">Token</th>
@@ -44,14 +44,14 @@ const shadow = tokens.shadow.tokens[0];
 				</thead>
 				<tbody>
 					{
-						colours.map((token) => (
+						colors.map((token) => (
 							<tr>
-								<th scope="row" class="sb-colours__token">
+								<th scope="row" class="sb-colors__token">
 									<code class="sd-text-code">{token.name}</code>
-									<span class="sb-colours__usage">{token.usage}</span>
+									<span class="sb-colors__usage">{token.usage}</span>
 								</th>
 								{THEMES.map((theme) => (
-									<td data-theme={theme} class="sb-colours__cell">
+									<td data-theme={theme} class="sb-colors__cell">
 										<span class="sb-swatch" style={`background: var(--${token.name})`} />
 										<code class="sd-text-meta">{valueFor(token.value, theme)}</code>
 									</td>
@@ -176,17 +176,17 @@ const shadow = tokens.shadow.tokens[0];
 	.sb-scroll {
 		overflow-x: auto;
 	}
-	.sb-colours {
+	.sb-colors {
 		width: 100%;
 		min-width: 40rem;
 		border-collapse: collapse;
 	}
-	.sb-colours th[scope="col"] {
+	.sb-colors th[scope="col"] {
 		padding: var(--space-2) var(--space-3);
 		text-align: left;
 		color: var(--ink-muted);
 	}
-	.sb-colours__token {
+	.sb-colors__token {
 		width: 40%;
 		padding: var(--space-3) var(--space-4) var(--space-3) 0;
 		text-align: left;
@@ -194,14 +194,14 @@ const shadow = tokens.shadow.tokens[0];
 		vertical-align: top;
 		border-top: var(--stroke-hairline) solid var(--rule);
 	}
-	.sb-colours__usage {
+	.sb-colors__usage {
 		display: block;
 		margin-top: var(--space-1);
 		font-size: 13px;
 		line-height: 20px;
 		color: var(--ink-muted);
 	}
-	.sb-colours__cell {
+	.sb-colors__cell {
 		padding: var(--space-3);
 		background: var(--paper);
 		color: var(--ink);

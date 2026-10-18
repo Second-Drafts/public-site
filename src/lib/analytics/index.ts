@@ -166,11 +166,11 @@ function discardQueueIfNoProviderMayStart(): void {
 
 function startProvider(provider: AnalyticsProvider): void {
 	providersAwaitingConsent = providersAwaitingConsent.filter((awaiting) => awaiting.provider !== provider);
-	const initialised = guarded(provider.name, "setup", () => {
+	const initialized = guarded(provider.name, "setup", () => {
 		provider.init?.();
 		return true;
 	});
-	if (!initialised) return;
+	if (!initialized) return;
 	startedProviders.push(provider);
 	for (const item of queue) dispatch(item.event, item.props, [provider]);
 }

@@ -22,7 +22,7 @@ describe("splitParagraphs", () => {
 	it("treats whitespace-only lines and runs of blank lines as one break", () => {
 		expect(splitParagraphs("A\n  \t\nB\n\n\n\nC")).toEqual(["A", "B", "C"]);
 	});
-	it("normalises Windows and old Mac line endings", () => {
+	it("normalizes Windows and old Mac line endings", () => {
 		expect(splitParagraphs("A\r\n\r\nB\rC")).toEqual(["A", "B\nC"]);
 	});
 	it("drops leading and trailing blank space", () => {
