@@ -1,0 +1,1 @@
+import{t as e}from"./waitlist.Bl_2-8pn.js";e();
