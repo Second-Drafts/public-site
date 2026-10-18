@@ -1,14 +1,22 @@
 {
-	"version": "2.9.0",
+	"version": "2.10.0",
 	"updated": "2026-10-18",
 	"reviews": [
 		{
-			"subject": "storage da:text (purposeId remember-analysed-draft)",
-			"outcome": "checked-by-hand"
+			"subject": "analytics property la_copied.rung_count",
+			"outcome": "clear"
 		},
 		{
-			"subject": "storage tp:settings:v1 (purposeId remember-display-settings)",
-			"outcome": "checked-by-hand"
+			"subject": "analytics property la_copied.view",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property la_rung_added.direction",
+			"outcome": "clear"
+		},
+		{
+			"subject": "analytics property la_rung_added.rung_count",
+			"outcome": "clear"
 		}
 	],
 	"analytics": {
@@ -46,6 +54,15 @@
 				"form_id": ["string"],
 				"form_name": ["string"],
 				"form_submit_text": ["string"]
+			},
+			"la_copied": {
+				"rung_count": ["number"],
+				"view": ["string"]
+			},
+			"la_example_loaded": {},
+			"la_rung_added": {
+				"direction": ["string"],
+				"rung_count": ["number"]
 			},
 			"m8_motion_permission": {
 				"granted": ["boolean"]
@@ -259,6 +276,14 @@
 			"category": "necessary",
 			"purposeId": "remember-analysed-draft",
 			"purpose": "Keeps the draft you're analyzing in your browser, so it's still there when you come back.",
+			"retention": "until-cleared"
+		},
+		"la:ladder:v1": {
+			"setBy": "us",
+			"area": "local",
+			"category": "necessary",
+			"purposeId": "remember-ladder",
+			"purpose": "Keeps the ladder you're building in your browser, so it's still there when you come back.",
 			"retention": "until-cleared"
 		},
 		"privacy:consent": {

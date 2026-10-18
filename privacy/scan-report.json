@@ -1,7 +1,7 @@
 {
-	"registryVersion": "2.9.0",
-	"sourceCommit": "dad11ebc511e35ef36edf8156ae379eef3f66de4",
-	"sourceDirty": false,
+	"registryVersion": "2.10.0",
+	"sourceCommit": "265f91775a906c83a473bf8b8ac1386547292d8d",
+	"sourceDirty": true,
 	"states": {
 		"no-decision": {
 			"/": {
@@ -68,6 +68,13 @@
 				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/ladder-of-abstraction/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -203,6 +210,15 @@
 				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/ladder-of-abstraction/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -429,6 +445,22 @@
 					"scroll"
 				]
 			},
+			"/tools/ladder-of-abstraction/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
 			"/tools/magic-8-ball/": {
 				"storage": [
 					"cookie:_ga",
@@ -601,6 +633,13 @@
 				],
 				"analyticsEvents": []
 			},
+			"/tools/ladder-of-abstraction/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/tools/magic-8-ball/": {
 				"storage": [],
 				"origins": [
@@ -730,6 +769,15 @@
 				"analyticsEvents": []
 			},
 			"/tools/draft-analysis/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/tools/ladder-of-abstraction/": {
 				"storage": [
 					"local:privacy:consent"
 				],

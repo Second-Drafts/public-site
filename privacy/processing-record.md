@@ -1,12 +1,12 @@
 # Record of processing activities (GDPR Art. 30)
 
-Last reviewed: 2026-10-13
+Last reviewed: 2026-10-18
 
 **Controller:** The Department of Second Drafts, seconddrafts.com. Contact: privacy@seconddrafts.com. **To fill:** registered entity name and postal address (the address is still a placeholder in `src/lib/privacy/organization.ts`).
 
 No data protection officer has been appointed. **To fill:** confirm whether one is required.
 
-Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, text a visitor writes in any tool (as opposed to a form they choose to send) stays on their device (the teleprompter, word counter and writing sprint keep it in the browser's local storage, and the teleprompter also puts it after the `#` of share links, which browsers never send to a server; the Magic 8 Ball keeps its optional question in memory only, and draws it onto an answer image only when the visitor chooses to copy, share or download it), motion-sensor readings the Magic 8 Ball uses to notice a phone shake never leave the page, and analytics only runs after consent.
+Common to all activities: data is protected in transit by HTTPS (GitHub Pages), the site sets no first-party cookies, text a visitor writes in any tool (as opposed to a form they choose to send) stays on their device (the teleprompter, word counter, writing sprint, draft analysis and ladder of abstraction keep it in the browser's local storage, and the teleprompter also puts it after the `#` of share links, which browsers never send to a server; the Magic 8 Ball keeps its optional question in memory only, and draws it onto an answer image only when the visitor chooses to copy, share or download it), motion-sensor readings the Magic 8 Ball uses to notice a phone shake never leave the page, and analytics only runs after consent.
 
 ## Hosting the website
 
@@ -22,7 +22,7 @@ Common to all activities: data is protected in transit by HTTPS (GitHub Pages), 
 ## Website analytics
 
 - **Purpose:** Understanding which tools and settings people use so we know what to improve.
-- **Data categories:** Events and session properties as recorded in `src/lib/privacy/registry.lock.json` (pages visited, tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Every page sends a page view; the teleprompter, word counter, writing sprint, draft analysis and Magic 8 Ball send tool events. The Magic 8 Ball's say how a shake was triggered, which answer deck was used, whether a question was typed (yes or no), whether a shake came too soon, how an answer image was shared, and whether motion access was allowed. Google's enhanced measurement adds scroll depth, outbound link clicks, form starts and submits (form id, name, destination and submit-button text, never field values), file downloads and video plays; the site has no video or tracked file types today. Site search measurement is off. Never the text a visitor writes in any tool.
+- **Data categories:** Events and session properties as recorded in `src/lib/privacy/registry.lock.json` (pages visited, tool settings, text length as a word-count range, time spent, landing source, referrer domain, device type), plus IP address and browser details collected by Google, and the `_ga` / `_ga_<ID>` identifiers. Every page sends a page view; the teleprompter, word counter, writing sprint, draft analysis, Magic 8 Ball and ladder of abstraction send tool events. The ladder's say which way a rung was added, how many rungs the ladder has, whether the ladder or the passage was copied, and when the example was loaded. The Magic 8 Ball's say how a shake was triggered, which answer deck was used, whether a question was typed (yes or no), whether a shake came too soon, how an answer image was shared, and whether motion access was allowed. Google's enhanced measurement adds scroll depth, outbound link clicks, form starts and submits (form id, name, destination and submit-button text, never field values), file downloads and video plays; the site has no video or tracked file types today. Site search measurement is off. Never the text a visitor writes in any tool.
 - **Data subjects:** Visitors who accept analytics.
 - **Recipients:** Google Analytics (processor, once the processor items in `google-analytics.md` are ticked; deploys are blocked until then).
 - **Transfers:** To the United States under the EU–US Data Privacy Framework.

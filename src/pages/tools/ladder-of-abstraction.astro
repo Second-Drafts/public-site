@@ -1,0 +1,55 @@
+---
+import ConfirmDialog from "../../components/ConfirmDialog.astro";
+import PageHeader from "../../components/PageHeader.astro";
+import ToolColumn from "../../components/ToolColumn.astro";
+import ToolHead from "../../components/ToolHead.astro";
+import Base from "../../layouts/Base.astro";
+import Ladder from "../../tools/ladder-of-abstraction/Ladder.astro";
+import Passage from "../../tools/ladder-of-abstraction/Passage.astro";
+import SeoContent from "../../tools/ladder-of-abstraction/SeoContent.astro";
+import { faq } from "../../tools/ladder-of-abstraction/faq";
+
+const pageTitle = "Ladder of Abstraction: Climb From Detail to Meaning";
+const pageDescription =
+	"Build a ladder of abstraction for your writing. Ask so what? to climb toward meaning and like what? to step down to detail, then read the rungs as a passage. Free, with no account.";
+const ogImageAlt =
+	"A ladder of five rungs, from the line 'We hold on to whatever proves we were loved' at the top down to the crack in a chipped blue mug at the bottom.";
+---
+
+<Base title="Ladder of Abstraction" seoTitle={pageTitle} description={pageDescription} wide>
+	<ToolHead
+		slot="head"
+		title={pageTitle}
+		description={pageDescription}
+		appName="Ladder of abstraction for writers"
+		ogImage="ladder-of-abstraction"
+		ogImageAlt={ogImageAlt}
+		faq={faq}
+	/>
+	<ToolColumn>
+		<PageHeader title="Ladder of Abstraction" compact>
+			Climb from a detail to what it means, or from an idea down to something a reader can see.
+		</PageHeader>
+		<p class="la-credit">
+			After S. I. Hayakawa's ladder of abstraction, from <cite>Language in Thought and Action</cite>.
+		</p>
+		<Ladder />
+		<Passage />
+	</ToolColumn>
+	<SeoContent />
+	<ConfirmDialog />
+</Base>
+
+<style>
+	.la-credit {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 15px;
+		line-height: 20px;
+		color: var(--ink-muted);
+	}
+</style>
+
+<script>
+	import "../../tools/ladder-of-abstraction/main";
+</script>

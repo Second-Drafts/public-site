@@ -6,6 +6,8 @@ import type { Deck } from "../../tools/magic-8-ball/lib/answers";
 import type { ShakeMethod } from "../../tools/magic-8-ball/lib/state";
 import type { ShareMethod } from "../../tools/magic-8-ball/share-dialog";
 import type { Unit } from "../text/measure";
+import type { Direction } from "../../tools/ladder-of-abstraction/lib/ladder";
+import type { CopiedView } from "../../tools/ladder-of-abstraction/ladder-tools";
 
 export type WordBucket = "0-50" | "51-200" | "201-600" | "601-2000" | "2001-10000" | "10000+";
 export type DeviceType = "phone" | "tablet" | "desktop";
@@ -70,6 +72,9 @@ export const EVENT_SCHEMA = {
 	m8_shaken: { method: text<ShakeMethod>(), asked: flag(), deck: text<Deck>(), too_soon: flag() },
 	m8_shared: { method: text<ShareMethod>() },
 	m8_motion_permission: { granted: flag() },
+	la_rung_added: { direction: text<Direction>(), rung_count: num() },
+	la_copied: { view: text<CopiedView>(), rung_count: num() },
+	la_example_loaded: {},
 } satisfies Record<string, PropSchema>;
 
 export const SESSION_CONTEXT_SCHEMA = { device_type: text<DeviceType>() } satisfies PropSchema;

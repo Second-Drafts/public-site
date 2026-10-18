@@ -1,0 +1,123 @@
+---
+import Button from "../../components/Button.astro";
+import { MAX_RUNGS } from "./lib/ladder";
+---
+
+<section class="la-ladder" aria-labelledby="la-ladder-title">
+	<h2 id="la-ladder-title" class="sd-visually-hidden">Your ladder</h2>
+	<p class="la-ladder__end sd-text-label" aria-hidden="true">More abstract</p>
+	<ol id="la-rungs" class="la-ladder__rungs"></ol>
+	<p class="la-ladder__end sd-text-label" aria-hidden="true">More concrete</p>
+	<p id="la-full" class="la-ladder__full" hidden>
+		That's {MAX_RUNGS} rungs, as many as a ladder holds here. Remove one to add another.
+	</p>
+	<div class="la-ladder__tools">
+		<Button id="la-copy-ladder" variant="secondary" size="sm">Copy ladder</Button>
+		<Button id="la-example" variant="quiet" size="sm">Try an example</Button>
+		<Button id="la-start-over" variant="quiet" size="sm">Start over</Button>
+	</div>
+	<p id="la-status" class="la-ladder__status" role="status"></p>
+</section>
+
+<template id="la-rung-template">
+	<li class="la-rung">
+		<label class="sd-visually-hidden" data-part="label"></label>
+		<textarea class="la-rung__text" data-part="text" rows="2" spellcheck="true" autocomplete="off"></textarea>
+		<div class="la-rung__moves">
+			<Button variant="quiet" size="sm" data-move="up">
+				<span aria-hidden="true">↑</span> So what?<span class="sd-visually-hidden">Add a broader rung above.</span>
+			</Button>
+			<Button variant="quiet" size="sm" data-move="down">
+				<span aria-hidden="true">↓</span> Like what?<span class="sd-visually-hidden">Add a concrete rung below.</span>
+			</Button>
+			<Button variant="quiet" size="sm" data-move="remove" class="la-rung__remove">
+				Remove<span class="sd-visually-hidden"> this rung</span>
+			</Button>
+		</div>
+	</li>
+</template>
+
+<style>
+	.la-ladder {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		margin-block: var(--space-6);
+	}
+	.la-ladder__end {
+		margin: 0;
+		color: var(--ink-muted);
+		text-align: center;
+	}
+	.la-ladder__rungs {
+		margin: 0;
+		padding: var(--space-2) 0;
+		list-style: none;
+		border-inline: 3px solid var(--ink);
+	}
+	.la-ladder__full {
+		margin: 0;
+		color: var(--ink-muted);
+	}
+	.la-ladder__full[hidden] {
+		display: none;
+	}
+	.la-ladder__tools {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+	}
+	.la-ladder__status {
+		margin: 0;
+		color: var(--ink-muted);
+	}
+	.la-ladder__status:empty {
+		display: none;
+	}
+	.la-rung {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
+		padding: var(--space-3) var(--space-4);
+	}
+	.la-rung + .la-rung {
+		border-block-start: 3px solid var(--ink);
+	}
+	.la-rung__text {
+		field-sizing: content;
+		min-block-size: 2lh;
+		max-block-size: 10lh;
+		inline-size: 100%;
+		box-sizing: border-box;
+		padding: 6px var(--space-3);
+		font-family: var(--font-prose);
+		font-size: 17px;
+		line-height: 28px;
+		color: var(--ink);
+		background: var(--paper-raised);
+		border: var(--stroke-hairline) solid var(--rule-strong);
+		border-radius: var(--radius-sm);
+		resize: none;
+	}
+	.la-rung__text::placeholder {
+		color: var(--ink-muted);
+		font-style: italic;
+		opacity: 1;
+	}
+	.la-rung__text:focus-visible {
+		outline: 2px solid var(--focus);
+		outline-offset: 1px;
+	}
+	.la-rung__moves {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-1);
+	}
+	.la-rung__remove {
+		margin-inline-start: auto;
+	}
+	.la-rung__remove[hidden] {
+		display: none;
+	}
+</style>

@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<style>
+			@font-face {
+				font-family: "Josefin Sans";
+				font-weight: 300 700;
+				src: url(../../public/fonts/josefin-sans.woff2);
+			}
+			@font-face {
+				font-family: Literata;
+				font-weight: 200 900;
+				src: url(../../public/fonts/literata.woff2);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+			}
+			body {
+				width: 1200px;
+				height: 630px;
+				background: #000;
+				color: #fff;
+				position: relative;
+				overflow: clip;
+			}
+			.strip {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 116px;
+				background: #111;
+				border-top: 2px solid #2a2a2a;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding: 0 56px;
+			}
+			.cap {
+				white-space: nowrap;
+				font-family: "Josefin Sans", sans-serif;
+				font-weight: 600;
+				font-size: 32px;
+				color: #fff;
+				padding-top: 4px;
+			}
+			.cap span {
+				color: #ffd400;
+				margin: 0 0.35em;
+			}
+			.strip img {
+				height: 40px;
+				width: 475px;
+				flex: none;
+			}
+			.stage {
+				position: absolute;
+				left: 56px;
+				right: 56px;
+				top: 38px;
+				display: grid;
+				grid-template-columns: 150px 1fr;
+				gap: 28px;
+			}
+			.axis {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+				font-family: "Josefin Sans", sans-serif;
+				font-weight: 600;
+				font-size: 20px;
+				letter-spacing: 0.1em;
+				text-transform: uppercase;
+				color: #888;
+				padding-block: 14px;
+			}
+			.axis b {
+				color: #ffd400;
+				font-size: 34px;
+			}
+			.ladder {
+				list-style: none;
+				padding: 6px 0;
+				border-inline: 5px solid #fff;
+			}
+			.ladder li {
+				padding: 22px 28px;
+				font-family: Literata, serif;
+				font-size: 27px;
+				line-height: 36px;
+				white-space: nowrap;
+				overflow: clip;
+				text-overflow: ellipsis;
+			}
+			.ladder li + li {
+				border-top: 5px solid #fff;
+			}
+			.ladder li:first-child,
+			.ladder li:last-child {
+				color: #ffd400;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="stage">
+			<div class="axis">
+				<div><b>↑</b><br />So what?</div>
+				<div>Like what?<br /><b>↓</b></div>
+			</div>
+			<ol class="ladder">
+				<li>We hold on to whatever proves we were loved.</li>
+				<li>Grief makes ordinary objects hard to give away.</li>
+				<li>She kept a few things from her mother's kitchen.</li>
+				<li>Every morning she drinks from her mother's chipped blue mug.</li>
+				<li>A hairline crack runs from the rim to the handle.</li>
+			</ol>
+		</div>
+		<div class="strip">
+			<div class="cap">Ladder of abstraction<span>·</span>No sign-up</div>
+			<img src="../../public/img/sd-word-single_line-marked-night.svg" alt="" />
+		</div>
+	</body>
+</html>

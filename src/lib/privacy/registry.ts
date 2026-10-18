@@ -155,6 +155,14 @@ export const STORAGE = {
 		purpose: "Keeps the draft you're analyzing in your browser, so it's still there when you come back.",
 		retention: "until-cleared",
 	},
+	"la:ladder:v1": {
+		setBy: "us",
+		area: "local",
+		category: "necessary",
+		purposeId: "remember-ladder",
+		purpose: "Keeps the ladder you're building in your browser, so it's still there when you come back.",
+		retention: "until-cleared",
+	},
 	"wc:settings:v1": {
 		setBy: "us",
 		area: "local",

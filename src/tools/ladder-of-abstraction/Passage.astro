@@ -1,0 +1,73 @@
+---
+import Button from "../../components/Button.astro";
+import ChoiceField from "../../components/ChoiceField.astro";
+
+const orders = [
+	{ value: "detail-first", label: "The detail" },
+	{ value: "idea-first", label: "The idea" },
+];
+---
+
+<section class="la-passage" aria-labelledby="la-passage-title">
+	<h2 id="la-passage-title" class="sd-text-title">Try it as a passage</h2>
+	<p class="la-passage__hint">
+		Your rungs, read in a row. Strike a line to leave it out; a high rung right beside a low one often says the most.
+	</p>
+	<ChoiceField label="Start with" name="la-order" options={orders} />
+	<p id="la-passage-empty" class="la-passage__empty">Write two or more rungs and they'll read here as a passage.</p>
+	<p id="la-passage-text" class="la-passage__text" hidden></p>
+	<div>
+		<Button id="la-copy-passage" variant="secondary" size="sm">Copy passage</Button>
+	</div>
+</section>
+
+<style>
+	.la-passage {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+		margin-block: var(--space-8);
+	}
+	.la-passage > h2,
+	.la-passage__hint,
+	.la-passage__empty {
+		margin: 0;
+	}
+	.la-passage__hint,
+	.la-passage__empty {
+		color: var(--ink-muted);
+	}
+	.la-passage__empty[hidden],
+	.la-passage__text[hidden] {
+		display: none;
+	}
+	.la-passage__text {
+		margin: 0;
+		font-family: var(--font-prose);
+		font-size: 19px;
+		line-height: 32px;
+		color: var(--ink);
+	}
+	.la-passage__text :global(.la-line) {
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+	}
+	.la-passage__text :global(.la-line[aria-pressed="false"]) {
+		color: var(--ink-muted);
+		text-decoration: line-through;
+		text-decoration-color: var(--red-pen);
+		text-decoration-thickness: 2px;
+	}
+	.la-passage__text :global(.la-line:focus-visible) {
+		outline: 2px solid var(--focus);
+		outline-offset: 2px;
+	}
+	.la-passage__text :global(.la-line:active) {
+		background: color-mix(in oklch, var(--marker-yellow) 40%, transparent);
+	}
+	@media (hover: hover) and (pointer: fine) {
+		.la-passage__text :global(.la-line:hover) {
+			background: color-mix(in oklch, var(--marker-yellow) 40%, transparent);
+		}
+	}
+</style>

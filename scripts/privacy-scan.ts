@@ -297,6 +297,14 @@ async function askTheBall(page: Page): Promise<void> {
 	await page.keyboard.press("Escape");
 }
 
+async function climbLadder(page: Page): Promise<void> {
+	await page.fill("#la-rungs textarea", SENTINEL);
+	await page.click('#la-rungs [data-move="up"]');
+	await page.locator("#la-rungs textarea").first().fill(SENTINEL);
+	await page.click("#la-copy-passage");
+	await page.click("#la-copy-ladder");
+}
+
 async function analyzeDraft(page: Page): Promise<void> {
 	await page.fill("#da-text", SENTINEL);
 	await page.waitForTimeout(DRAFT_SETTLE_MS);
@@ -318,6 +326,7 @@ const TOOLS_VISITORS_WRITE_IN: WritingTool[] = [
 	{ name: "writing sprint", path: "/tools/writing-sprint/", write: writeSprint },
 	{ name: "draft analysis", path: DRAFT_ANALYSIS_PATH, write: analyzeDraft },
 	{ name: "magic 8 ball", path: "/tools/magic-8-ball/", write: askTheBall },
+	{ name: "ladder of abstraction", path: "/tools/ladder-of-abstraction/", write: climbLadder },
 	{
 		name: "draft analysis from a sprint",
 		path: `${DRAFT_ANALYSIS_PATH}#s=${ENCODED_SPRINT_HANDOFF_PAYLOAD}`,
