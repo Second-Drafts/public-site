@@ -1,1 +1,0 @@
-import{n as e}from"./analytics.DdPC1QxP.js";var t=[`hero`,`band`,`home`];function n(e){return t.some(t=>t===e)}function r(){for(let t of document.querySelectorAll(`[data-waitlist-placement]`)){let r=t.dataset.waitlistPlacement;n(r)&&t.addEventListener(`click`,()=>e(`cc_waitlist_clicked`,{placement:r}))}}export{r as t};

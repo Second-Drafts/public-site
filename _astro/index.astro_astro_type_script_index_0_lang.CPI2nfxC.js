@@ -1,0 +1,1 @@
+import{t as e}from"./waitlist.-YkBJTBL.js";e();
