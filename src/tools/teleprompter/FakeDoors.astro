@@ -35,10 +35,11 @@ const doors = [
 
 	<Dialog aria-labelledby="fd-dialog-title" data-fake-door-dialog width="28rem">
 		<div class="fd__body" data-fake-door-ask>
-			<h3 id="fd-dialog-title" class="sd-dialog__title sd-text-title">Coming soon.</h3>
-			<p class="sd-dialog__text">
-				<span data-fake-door-name>This feature</span> isn't built yet. Would you use it?
-			</p>
+			<h3 id="fd-dialog-title" class="fd__title sd-dialog__title sd-text-title">
+				<span data-fake-door-name>This feature</span>
+				<SoonTag />
+			</h3>
+			<p class="sd-dialog__text">This feature isn't built yet. Would you use it?</p>
 			<TextField
 				label="Email me when it's ready"
 				name="email"
@@ -51,7 +52,7 @@ const doors = [
 				<Button variant="secondary" data-answer="no">Not really</Button>
 			</div>
 			<p class="fd__purpose">
-				We'll only email you about <span data-fake-door-name>this feature</span>.{" "}
+				We'll only email you about “<span data-fake-door-name>this feature</span>.”{" "}
 				<Link href={POLICY_URL}>How we handle your email</Link>.
 			</p>
 			<div role="alert">
@@ -67,7 +68,7 @@ const doors = [
 		<div class="fd__body" data-fake-door-done hidden>
 			<p class="sd-dialog__text" data-fake-door-noted>Noted. Thanks for telling us.</p>
 			<p class="sd-dialog__text" data-fake-door-subscribed hidden>
-				Noted. We'll email you when <span data-fake-door-name>it</span> is ready.
+				Noted. We'll email you when “<span data-fake-door-name>this feature</span>” is ready.
 			</p>
 			<div class="sd-dialog__actions">
 				<Button variant="secondary" data-close>Close</Button>
@@ -142,7 +143,7 @@ const doors = [
 	}
 	.fd__head {
 		display: flex;
-		align-items: baseline;
+		align-items: center;
 		justify-content: space-between;
 		gap: var(--space-2);
 	}
@@ -151,6 +152,13 @@ const doors = [
 		font-size: 15px;
 		line-height: 22px;
 		color: var(--ink-muted);
+	}
+
+	.fd__title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: var(--space-2);
 	}
 
 	.fd__body {

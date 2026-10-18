@@ -27,7 +27,7 @@ const lengths = [
 const stages = [
 	{ value: "first_draft", label: "First draft" },
 	{ value: "revising", label: "Revising" },
-	{ value: "readers_soon", label: "Going to readers, an agent or an editor soon" },
+	{ value: "readers_soon", label: "Going to readers, an agent, or an editor soon" },
 	{ value: "published", label: "Published" },
 ];
 const currentChecks = [
@@ -88,7 +88,7 @@ const writingTools = [
 
 	<div class="ccw__step ccw__confirmation" data-waitlist-joined hidden>
 		<h2 class="sd-text-title ccw__heading" tabindex="-1" data-waitlist-joined-heading>
-			Filed. You’re on the list.
+			You’re on the list.
 		</h2>
 		<p>We’ll email you when the Continuity Checker launches.</p>
 	</div>
@@ -97,8 +97,7 @@ const writingTools = [
 		<header class="ccw__intro">
 			<h2 id="ccw-survey" class="sd-text-title ccw__heading">Help us build it</h2>
 			<p>
-				Ten questions, all optional. Skip any you like. Your answers help us decide what to build first, and we won’t
-				publish or quote them without asking you.
+				If you have time, answer any of the questions below to help us decide what to focus on first.
 			</p>
 		</header>
 
@@ -108,7 +107,7 @@ const writingTools = [
 			options={projects}
 			other={{ label: "Something else", detail: "What is it?" }}
 		/>
-		<TextField label="Genre" name="genre" maxlength={200} placeholder="e.g. Cosy fantasy" />
+		<TextField label="Genre" name="genre" maxlength={200} placeholder="e.g. Cozy fantasy" />
 		<ChoiceField label="How long is it?" name="length" options={lengths} />
 		<ChoiceField label="Where is it now?" name="stage" options={stages} />
 		<ChoiceField
@@ -124,14 +123,14 @@ const writingTools = [
 			multiline
 			rows={4}
 			maxlength={MAX_TEXT_LENGTH}
-			hint="Tell us about a continuity slip you or a reader caught, in your own words. There’s no need to paste passages from your manuscript."
+			hint="Tell us about a continuity slip you or a reader caught."
 		/>
 		<ChoiceField label="When would you run a check?" name="check_timing" options={checkTimings} />
 		<ChoiceField
 			label="What do you write in?"
 			name="writing_tools"
 			multiple
-			hint="Pick all that apply. The first version will read plain text."
+			hint="Pick all that apply."
 			options={writingTools}
 			other={{ label: "Something else", detail: "Which app?" }}
 		/>
@@ -139,7 +138,7 @@ const writingTools = [
 			label="Price"
 			name="price"
 			maxlength={MAX_TEXT_LENGTH}
-			hint="What would you expect to pay to check one full manuscript? A one-off price, a subscription, or nothing at all."
+			hint="What would you expect to pay to check one full manuscript?"
 		/>
 		<ScaleField
 			label="How do you feel about sending your manuscript to an AI service for checking?"
@@ -176,10 +175,10 @@ const writingTools = [
 	<div class="ccw__step ccw__confirmation" data-waitlist-thanks hidden>
 		<h2 class="sd-text-title ccw__heading" tabindex="-1" data-waitlist-thanks-heading>Thank you.</h2>
 		<p>
-			Stamped and sent to the team. Your answers help us decide what to build first, and we’ll email you when the
+			Stamped and sent. Your answers help us decide what to build first, and we’ll email you when the
 			Continuity Checker launches.
 		</p>
-		<p class="ccw__onward"><Link href="/tools/">See our other tools</Link></p>
+		<p class="ccw__onward"><Link href="/tools/">Try our other tools</Link></p>
 	</div>
 </div>
 

@@ -3,6 +3,7 @@ import { asRecord } from "../validate";
 import { HONEYPOT_FIELD, type Signup, type SurveyAnswers } from "./submission";
 
 const FORMS_URL = import.meta.env.PUBLIC_FORMS_URL;
+const TIMEOUT_MS = 15_000;
 
 /** Saves a signup and returns the id its survey answers are filed under, or null when it couldn't be saved. */
 export async function sendSignup(opts: { signup: Signup; honeypot: string }): Promise<string | null> {
@@ -24,6 +25,7 @@ async function post(path: string, body: unknown): Promise<Response | null> {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify(body),
+			signal: AbortSignal.timeout(TIMEOUT_MS),
 		});
 	} catch {
 		return null;
