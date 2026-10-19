@@ -1,6 +1,6 @@
 {
 	"registryVersion": "2.10.0",
-	"sourceCommit": "1cd3f23a25e06f8153f44c03aefe83921e35a939",
+	"sourceCommit": "abf143a07a25e4140d7df11b07ee086ffae8798c",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -25,7 +25,7 @@
 				],
 				"analyticsEvents": []
 			},
-			"/blog/hello-world/": {
+			"/blog/bon-idee/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -155,7 +155,7 @@
 				],
 				"analyticsEvents": []
 			},
-			"/blog/hello-world/": {
+			"/blog/bon-idee/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -333,7 +333,7 @@
 					"scroll"
 				]
 			},
-			"/blog/hello-world/": {
+			"/blog/bon-idee/": {
 				"storage": [
 					"cookie:_ga",
 					"cookie:_ga_RPVQBR9DFV",
@@ -584,7 +584,7 @@
 				],
 				"analyticsEvents": []
 			},
-			"/blog/hello-world/": {
+			"/blog/bon-idee/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -714,7 +714,7 @@
 				],
 				"analyticsEvents": []
 			},
-			"/blog/hello-world/": {
+			"/blog/bon-idee/": {
 				"storage": [
 					"local:privacy:consent"
 				],
