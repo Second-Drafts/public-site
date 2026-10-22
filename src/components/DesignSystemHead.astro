@@ -6,14 +6,16 @@
  * Theme: an explicit data-theme always wins. Without one, the reader's system setting picks Paper or Night shift
  * through /theme-defaults.css (see src/styles/theme-defaults.ts), and the browser's own chrome follows it.
  */
-import tokens from "../../design-system/tokens.json";
+import josefinSans from "../../brand/fonts/josefin-sans.woff2?url";
+import literata from "../../brand/fonts/literata.woff2?url";
+import tokens from "../../brand/foundation/tokens.json";
 import "../styles/design-system.css";
 
 const paper = tokens.color.tokens.find((token) => token.name === "paper")!.value;
 ---
 
-<link rel="preload" href="/fonts/literata.woff2" as="font" type="font/woff2" crossorigin />
-<link rel="preload" href="/fonts/josefin-sans.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={literata} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={josefinSans} as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="/theme-defaults.css" />
 <meta name="theme-color" media="(prefers-color-scheme: light)" content={paper.light} />
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content={paper.dark} />

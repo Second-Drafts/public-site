@@ -7,7 +7,7 @@
 		".claude/**",
 		".agents/**",
 		".impeccable/**",
-		"design-system/**",
+		"brand/**",
 		"public/**",
 		"*.md",
 		"package-lock.json",

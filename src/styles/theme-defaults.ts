@@ -3,7 +3,7 @@
  * tokens.json at build time; they can't drift from the tokens.
  * Served as a stylesheet rather than an inline <style> so the CSP's 'self' covers it without a hash.
  */
-import tokens from "../../design-system/tokens.json";
+import tokens from "../../brand/foundation/tokens.json";
 
 type Themed = { light?: string; dark?: string };
 

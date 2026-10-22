@@ -14,6 +14,10 @@
  * Never recolor or animate it.
  */
 import type { HTMLAttributes } from "astro/types";
+import lockupNight from "../../brand/logos/logo-white.svg?url";
+import lockupPaper from "../../brand/logos/logo.svg?url";
+import wordmarkNight from "../../brand/logos/sd-word-single_line-marked-night.svg?url";
+import wordmarkPaper from "../../brand/logos/sd-word-single_line-marked.svg?url";
 
 interface Props extends Omit<HTMLAttributes<"span">, "style"> {
 	/** "lockup" (default): the full stacked logo. "header": the one-line wordmark for site headers. */
@@ -40,15 +44,15 @@ if (variant === "header") {
 	height = Math.max(24, requestedHeight);
 	width = Math.round(height * (570 / 48));
 	clearSpace = 0;
-	paperSrc = "/img/sd-word-single_line-marked.svg";
-	nightSrc = "/img/sd-word-single_line-marked-night.svg";
+	paperSrc = wordmarkPaper;
+	nightSrc = wordmarkNight;
 } else {
 	// stacked lockup, viewBox 639 × 332; clear space all round = height of the "D" in DEPARTMENT (48 of 639 units)
 	width = Math.max(160, requestedWidth);
 	height = Math.round(width * (332 / 639));
 	clearSpace = Math.round(width * (48 / 639));
-	paperSrc = "/img/logo.svg";
-	nightSrc = "/img/logo-white.svg";
+	paperSrc = lockupPaper;
+	nightSrc = lockupNight;
 }
 ---
 

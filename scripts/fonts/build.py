@@ -1,4 +1,5 @@
-"""Turns the Google Fonts downloads into the Latin-only WOFF2 files in public/fonts.
+"""Turns the Google Fonts downloads into the Latin-only WOFF2 files in public/fonts that the tools use.
+The brand fonts come from the second-drafts-kit brand skill instead, in brand/fonts.
 
     python3 -m venv .venv-fonts && .venv-fonts/bin/pip install fonttools brotli
     npm run fonts -- ~/Downloads/<fonts folder> [more folders...]
@@ -24,17 +25,8 @@ LATIN = (
     "U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
 )
 
-# Weights match the @font-face ranges in src/styles/fonts.css.
-# The optical sizes approximate the px sizes Literata is set at (13–24px today). Sizes outside the range
-# still render, just with the nearest optical size, so drift degrades gracefully. It saves ~40KB a style.
-LITERATA_AXES = {"wght": (400, 700), "opsz": (12, 24)}
-
+# Weights match the ones src/tools/teleprompter/lib/fonts.ts loads.
 FONTS = [
-    ("Josefin_Sans/JosefinSans-VariableFont_wght.ttf", "josefin-sans", {"wght": (300, 700)}),
-    ("Literata/Literata-VariableFont_opsz,wght.ttf", "literata", LITERATA_AXES),
-    ("Literata/Literata-Italic-VariableFont_opsz,wght.ttf", "literata-italic", LITERATA_AXES),
-    ("IBM_Plex_Mono/IBMPlexMono-Regular.ttf", "ibm-plex-mono-400", {}),
-    ("IBM_Plex_Mono/IBMPlexMono-Medium.ttf", "ibm-plex-mono-500", {}),
     ("Inter/Inter-VariableFont_opsz,wght.ttf", "inter-400", {"wght": 400}),
     ("Inter/Inter-VariableFont_opsz,wght.ttf", "inter-700", {"wght": 700}),
     ("Source_Serif_4/SourceSerif4-VariableFont_opsz,wght.ttf", "source-serif-4-400", {"wght": 400}),

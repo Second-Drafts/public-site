@@ -40,7 +40,7 @@ Which logo goes where, and its sizes and rules, are in `BRAND.md`. On this site:
 - Footers and anywhere the logo is the subject use the full lockup: `<Logo />`. It picks `logo-white.svg` in Night shift.
 - On the Highlighted band, use `logo.svg` (see the open item above).
 
-The logo files are in `public/img/`.
+The logo files are in `brand/logos/`.
 
 ## Iconography
 
@@ -48,4 +48,16 @@ Not many icons will be needed for the marketing site. Make custom icons for the 
 
 ## Components
 
-**Use the Astro components in `src/components/`** (`Button`, `Mark`, `StatusTag`, `TextField`, `ChoiceField`, `ScaleField`, `MarginNote`, `Link`, `HighlightedBand`, `Logo`), loaded through `DesignSystemHead.astro`. See them all at `/sandbox` in dev. They are ported from the foundation's reference components and keep the same `sd-*` class names. Per-component guidelines are in `design-system/components/<Name>/README.md`.
+**Use the Astro components in `src/components/`** (`Button`, `Mark`, `StatusTag`, `TextField`, `ChoiceField`, `ScaleField`, `MarginNote`, `Link`, `HighlightedBand`, `Logo`), loaded through `DesignSystemHead.astro`. See them all at `/sandbox` in dev. They are ported from the foundation's reference components and keep the same `sd-*` class names. Per-component guidelines are in `brand/foundation/components/<Name>/README.md`.
+
+## Brand files
+
+`brand/` is this site's copy of the kit's brand files (`logos/`, `fonts/`, `foundation/`), made by the brand skill's `brand-files.sh`. Don't edit anything in it: check it against the kit with `brand-files.sh status brand`, and bring in kit changes with `brand-files.sh copy brand`, then update the matching Astro components by hand. A change that should reach every product goes into the kit first.
+
+The site imports these files rather than serving the folder, so the build publishes only what pages use, under hashed `/_astro/` URLs:
+
+- `src/styles/design-system.css` imports `foundation/tokens.css`, and `src/styles/fonts.css` declares the brand fonts from `fonts/`.
+- `DesignSystemHead.astro` reads `foundation/tokens.json` and preloads Literata and Josefin Sans.
+- `Logo.astro` imports the logos.
+
+The tools' own fonts are separate, in `public/fonts/` (built by `npm run fonts`), next to the licences of every font the site serves, the brand fonts' included.
