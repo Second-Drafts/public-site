@@ -56,7 +56,7 @@ Not many icons will be needed for the marketing site. Make custom icons for the 
 
 The site imports these files rather than serving the folder, so the build publishes only what pages use, under hashed `/_astro/` URLs:
 
-- `src/styles/design-system.css` imports `foundation/tokens.css`, and `src/styles/fonts.css` declares the brand fonts from `fonts/`.
+- `src/styles/design-system.css` imports `foundation/tokens.css` and `fonts/fonts.css`.
 - `DesignSystemHead.astro` reads `foundation/tokens.json` and preloads Literata and Josefin Sans.
 - `Logo.astro` imports the logos.
 

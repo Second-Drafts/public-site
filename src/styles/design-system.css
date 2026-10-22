@@ -1,11 +1,11 @@
 /*
  * The Department of Second Drafts — global layer of the design system.
- * Tokens come straight from brand/foundation/tokens.css (generated from tokens.json; don't copy them here).
+ * Tokens and fonts come straight from brand/ (copied from second-drafts-kit; don't copy them here).
  * Component styles live in each src/components/*.astro. Only page-wide rules belong in this file.
  * Rules: DESIGN.md.
  */
 @import "../../brand/foundation/tokens.css";
-@import "./fonts.css";
+@import "../../brand/fonts/fonts.css";
 
 ::selection {
 	background: var(--selection);
