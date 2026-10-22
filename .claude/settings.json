@@ -11,5 +11,18 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "second-drafts-kit": {
+      "source": {
+        "source": "github",
+        "repo": "Second-Drafts/second-drafts-kit"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "engineering@second-drafts-kit": true,
+    "brand@second-drafts-kit": true
   }
 }

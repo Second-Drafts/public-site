@@ -1,6 +1,8 @@
 # Design system files
 
-The rules live in [`../DESIGN.md`](../DESIGN.md). This folder holds the files that implement them, copied from the design-system artifact on claude.ai (the source of truth until the system moves fully into this repo).
+This folder is the site's copy of the brand's UI foundation. The source is the `brand` plugin in [second-drafts-kit](https://github.com/Second-Drafts/second-drafts-kit) (`plugins/brand/skills/brand/assets/foundation/`), where `FOUNDATION.md` holds the rules. What's specific to this site is in [`../DESIGN.md`](../DESIGN.md).
+
+The site owns this copy, so changes in the kit never reach it on their own. Bring them in deliberately: compare with `diff -r <kit>/plugins/brand/skills/brand/assets/foundation design-system`, copy what you want, and update the matching Astro components by hand. A change that should reach every product goes into the kit first.
 
 | File | What it is |
 | --- | --- |
@@ -10,16 +12,14 @@ The rules live in [`../DESIGN.md`](../DESIGN.md). This folder holds the files th
 | `components/bundle.js` | React 18 components on `window.SecondDrafts`: Button, Mark, StatusTag, TextField, MarginNote. Needs `window.React` / `window.ReactDOM`. |
 | `components/index.d.ts` | Prop types, as documentation. |
 | `components/<Name>/README.md` | Usage guidelines per component. |
-| `fonts/` | `JosefinSans-Regular.ttf`. Literata and IBM Plex Mono load from Google Fonts for now. |
+| `fonts/` | `JosefinSans-Regular.ttf`. Not used by the site, which serves its fonts from `public/fonts/`. |
 
-Logos are in `public/img/`: the lockup (`logo.svg`, `logo-white.svg`) and the header wordmark (`sd-word-single_line-marked.svg`, `sd-word-single_line-marked-night.svg`).
+Logos are in `public/img/` and fonts in `public/fonts/`, both copied from the kit's `assets/logos/` and `assets/fonts/`.
 
 ## In this site
 
 The site uses Astro components, not the React bundle. They are ported from `bundle.css` / `bundle.js` and keep the same `sd-*` class names, so the two can be compared:
 
-- `src/components/` — `Button`, `Mark`, `StatusTag`, `TextField`, `MarginNote`, plus `Link`, `HighlightedBand` and `Logo` from DESIGN.md. Each one has its own scoped styles.
-- `src/components/DesignSystemHead.astro` — put it in a layout's `<head>`. It loads `src/styles/design-system.css` (which imports `tokens.css` here) and the Google Fonts.
+- `src/components/` — `Button`, `Mark`, `StatusTag`, `TextField`, `ChoiceField`, `ScaleField`, `MarginNote`, plus `Link`, `HighlightedBand` and `Logo` from DESIGN.md. Each one has its own scoped styles.
+- `src/components/DesignSystemHead.astro` — put it in a layout's `<head>`. It loads `src/styles/design-system.css` (which imports `tokens.css` here and `fonts.css`) and preloads the main fonts.
 - `/sandbox` (dev only) shows every component in every theme.
-
-When a new export comes in from Claude Design, replace the files in this folder, then copy any CSS or markup changes into the matching component by hand.
