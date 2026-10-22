@@ -19,10 +19,18 @@
         "repo": "Second-Drafts/second-drafts-kit"
       },
       "autoUpdate": true
+    },
+    "impeccable": {
+      "source": {
+        "source": "github",
+        "repo": "pbakaus/impeccable"
+      },
+      "autoUpdate": true
     }
   },
   "enabledPlugins": {
     "engineering@second-drafts-kit": true,
-    "brand@second-drafts-kit": true
+    "brand@second-drafts-kit": true,
+    "impeccable@impeccable": true
   }
 }

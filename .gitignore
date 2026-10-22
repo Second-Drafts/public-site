@@ -3,9 +3,6 @@ dist
 dist-privacy-scan
 .astro
 .wrangler
-
-# impeccable ships a per-platform binary; its launcher downloads one on first run
-.claude/skills/impeccable/scripts/bin/
 .venv-fonts/
 
 # Env files belong in public-env/, which is committed and holds only PUBLIC_ values
