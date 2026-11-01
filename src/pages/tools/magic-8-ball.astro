@@ -1,5 +1,5 @@
 ---
-import ToolHead from "../../components/ToolHead.astro";
+import { toolSchema } from "../../lib/seo/schema";
 import Base from "../../layouts/Base.astro";
 import AnswerLog from "../../tools/magic-8-ball/AnswerLog.astro";
 import QuestionForm from "../../tools/magic-8-ball/QuestionForm.astro";
@@ -21,17 +21,10 @@ const ogImageAlt =
   description={pageDescription}
   wide
   edgeToEdge
+  ogImage="magic-8-ball"
+  ogImageAlt={ogImageAlt}
+  schema={toolSchema({ appName: "Magic 8-Ball online", faq })}
 >
-  <ToolHead
-    slot="head"
-    title={pageTitle}
-    description={pageDescription}
-    appName="Magic 8-Ball online"
-    ogImage="magic-8-ball"
-    ogImageAlt={ogImageAlt}
-    faq={faq}
-  />
-
   <section class="m8" data-theme="dark" aria-labelledby="m8-title">
     <div class="m8__layout">
       <div class="m8__stage">

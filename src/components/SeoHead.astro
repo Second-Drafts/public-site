@@ -1,0 +1,69 @@
+---
+import { buildGraph, type PageType, type SchemaNode, serializeJsonLd } from "../lib/seo/schema";
+import { absoluteUrl, breadcrumbTrail, SITE_NAME } from "../lib/seo/site";
+
+export interface Props {
+	/** The page's own name: the breadcrumb label, and the <title> suffix. Leave out only on the home page. */
+	title?: string;
+	/** Replaces the whole <title>, for pages whose search title should lead with the page, not the site. */
+	seoTitle?: string;
+	/** Meta description. */
+	description: string;
+	/** Name of a card in public/img/og, without the extension. */
+	ogImage?: string;
+	ogImageAlt?: string;
+	/** Marks the page as an article for Open Graph. */
+	article?: { publishedTime: Date };
+	pageType?: PageType;
+	dateModified?: Date;
+	/** Nodes for the page's JSON-LD graph, from src/lib/seo/schema.ts. */
+	schema?: SchemaNode[];
+}
+
+const {
+	title,
+	seoTitle,
+	description,
+	ogImage = "site",
+	ogImageAlt = SITE_NAME,
+	article,
+	pageType = "WebPage",
+	dateModified,
+	schema = [],
+} = Astro.props;
+
+const fullTitle = seoTitle ?? (title ? `${SITE_NAME}: ${title}` : SITE_NAME);
+const canonical = absoluteUrl(Astro.url.pathname, Astro.site!);
+const imageUrl = absoluteUrl(`/img/og/${ogImage}.png`, Astro.site!);
+
+const graph = buildGraph(
+	{ site: Astro.site!, url: canonical, name: fullTitle, description },
+	{
+		type: pageType,
+		trail: breadcrumbTrail(Astro.url.pathname, title, Astro.site!),
+		imageUrl,
+		dateModified,
+		extraNodes: schema,
+	},
+);
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<meta property="og:type" content={article ? "article" : "website"} />
+<meta property="og:site_name" content={SITE_NAME} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt} />
+{article && <meta property="article:published_time" content={article.publishedTime.toISOString()} />}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={ogImageAlt} />
+<script type="application/ld+json" set:html={serializeJsonLd(graph)} />

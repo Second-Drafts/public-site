@@ -1,4 +1,5 @@
 ---
+import { toolSchema } from "../../lib/seo/schema";
 import PageHeader from "../../components/PageHeader.astro";
 import Base from "../../layouts/Base.astro";
 import CountLine from "../../tools/word-counter/CountLine.astro";
@@ -8,7 +9,6 @@ import SelectionLine from "../../tools/word-counter/SelectionLine.astro";
 import SessionProgress from "../../tools/word-counter/SessionProgress.astro";
 import TargetPanel from "../../tools/word-counter/TargetPanel.astro";
 import ToolColumn from "../../components/ToolColumn.astro";
-import ToolHead from "../../components/ToolHead.astro";
 import SeoContent from "../../tools/word-counter/SeoContent.astro";
 import { faq } from "../../tools/word-counter/faq";
 
@@ -18,16 +18,15 @@ const pageDescription =
 const ogImageAlt = "The number 712 words in large type, About 5 min aloud, and a red-pen mark under 62 words to cut against a limit of 650.";
 ---
 
-<Base title="Word Counter" seoTitle={pageTitle} description={pageDescription} wide>
-	<ToolHead
-		slot="head"
-		title={pageTitle}
-		description={pageDescription}
-		appName="Free online word counter"
-		ogImage="word-counter"
-		ogImageAlt={ogImageAlt}
-		faq={faq}
-	/>
+<Base
+	title="Word Counter"
+	seoTitle={pageTitle}
+	description={pageDescription}
+	wide
+	ogImage="word-counter"
+	ogImageAlt={ogImageAlt}
+	schema={toolSchema({ appName: "Free online word counter", faq })}
+>
 	<ToolColumn>
 		<PageHeader title="Word Counter" compact>
 			Type or paste some text to quickly check its word or character count

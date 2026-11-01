@@ -39,6 +39,17 @@ For more details especially as they relate to specific tasks (refactoring, namin
 
 For anything visual or user-facing, read DESIGN.md and the `brand:brand` skill.
 
+## Structured data
+
+Every page goes through `Base`, which renders `SeoHead`: the `<title>`, description, canonical, Open Graph and Twitter tags, and one JSON-LD `@graph` (Organization, WebSite, the page, breadcrumbs). Don't write these tags by hand.
+
+- `description` is required on `Base`. Breadcrumbs come from the URL path, so a new section needs a name in `SECTION_NAMES` in `src/lib/seo/site.ts`, or the build throws.
+- Pass `pageType` (`AboutPage`, `CollectionPage`) when the page isn't a plain `WebPage`, and `ogImage` to use a card from `public/img/og` instead of `site`.
+- Extra nodes go in the `schema` prop, built with the helpers in `src/lib/seo/schema.ts` (`toolSchema`, `blogPosting`, `blog`). Add a helper there for a new kind of page.
+- `npm run schema:check` reads `dist/` and fails a page with a missing description, canonical, Open Graph tag, or a broken graph. It is part of `npm run verify`. `tsc` doesn't check `.astro` files, so this check is what catches a missing prop.
+
+`npm run verify` (typecheck, lint, format, tests, build, spacing and schema checks) runs from the tracked `.githooks/pre-push` hook whenever you push to `main`, and again in `predeploy`. `npm install` points `core.hooksPath` at `.githooks`. Skip the hook once with `git push --no-verify`.
+
 ## Tickets
 
 We use beads `br` for tickets. Prefix: `pub`

@@ -1,7 +1,7 @@
 ---
+import { toolSchema } from "../../lib/seo/schema";
 import Base from "../../layouts/Base.astro";
 import ConfirmDialog from "../../components/ConfirmDialog.astro";
-import ToolHead from "../../components/ToolHead.astro";
 import EditPreview from "../../tools/teleprompter/EditPreview.astro";
 import EditView from "../../tools/teleprompter/EditView.astro";
 import FakeDoors from "../../tools/teleprompter/FakeDoors.astro";
@@ -22,17 +22,10 @@ const ogImageAlt = "Yellow teleprompter text on black, with the caption Free tel
 	description={pageDescription}
 	wide
 	edgeToEdge
+	ogImage="teleprompter"
+	ogImageAlt={ogImageAlt}
+	schema={toolSchema({ appName: "Free online teleprompter", faq })}
 >
-	<ToolHead
-		slot="head"
-		title={pageTitle}
-		description={pageDescription}
-		appName="Free online teleprompter"
-		ogImage="teleprompter"
-		ogImageAlt={ogImageAlt}
-		faq={faq}
-	/>
-
 	<section class="tp-tool" aria-labelledby="tp-title">
 		<div class="tp-screen">
 			<header class="tp-intro">

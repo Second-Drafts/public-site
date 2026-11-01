@@ -4,13 +4,9 @@ import Header from "../components/Header.astro";
 import ConsentBanner from "../components/privacy/ConsentBanner.astro";
 import CookieSettingsDialog from "../components/privacy/CookieSettingsDialog.astro";
 import Footer from "../components/privacy/Footer.astro";
+import SeoHead, { type Props as SeoProps } from "../components/SeoHead.astro";
 
-interface Props {
-	title?: string;
-	/** Replaces the whole <title>, for pages whose search title should lead with the page, not the site. */
-	seoTitle?: string;
-	/** Meta description. */
-	description?: string;
+interface Props extends SeoProps {
 	/** Show the wordmark in the header. Turn off on pages that already show the full lockup. */
 	headerLogo?: boolean;
 	/** Drop the manuscript measure on <main>, for tools that lay out their own width. */
@@ -19,9 +15,7 @@ interface Props {
 	edgeToEdge?: boolean;
 }
 
-const { title, seoTitle, description, headerLogo = true, wide = false, edgeToEdge = false } = Astro.props;
-const siteName = "The Department of Second Drafts";
-const fullTitle = seoTitle ?? (title ? `${siteName}: ${title}` : siteName);
+const { headerLogo = true, wide = false, edgeToEdge = false, ...seoProps } = Astro.props;
 ---
 
 <!doctype html>
@@ -30,8 +24,7 @@ const fullTitle = seoTitle ?? (title ? `${siteName}: ${title}` : siteName);
 		<meta charset="UTF-8" />
 		<meta name="viewport" content={`width=device-width, initial-scale=1.0${edgeToEdge ? ", viewport-fit=cover" : ""}`} />
 		<meta name="color-scheme" content="light dark" />
-		<title>{fullTitle}</title>
-		{description && <meta name="description" content={description} />}
+		<SeoHead {...seoProps} />
 		<link rel="icon" href="/favicon.ico" sizes="32x32" />
 		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />

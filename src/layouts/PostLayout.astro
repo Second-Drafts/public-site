@@ -1,16 +1,25 @@
 ---
 import { formatDate } from "../lib/blog";
+import { blogPosting } from "../lib/seo/schema";
 import Base from "./Base.astro";
 
 interface Props {
   title: string;
+  description: string;
   date: Date;
+  updated?: Date;
 }
 
-const { title, date } = Astro.props;
+const { title, description, date, updated } = Astro.props;
 ---
 
-<Base title={title}>
+<Base
+  title={title}
+  description={description}
+  article={{ publishedTime: date }}
+  dateModified={updated}
+  schema={[blogPosting({ datePublished: date, dateModified: updated })]}
+>
   <article>
     <h1 class="sd-text-headline">{title}</h1>
     <p class="date">

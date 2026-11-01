@@ -1,6 +1,6 @@
 ---
 import Base from "./Base.astro";
-import { policyLastUpdated } from "../lib/privacy/policy-date";
+import { policyLastUpdated, policyUpdatedDate } from "../lib/privacy/policy-date";
 
 interface Props {
 	title: string;
@@ -10,7 +10,7 @@ interface Props {
 const { title, description } = Astro.props;
 ---
 
-<Base title={title} description={description}>
+<Base title={title} description={description} dateModified={policyUpdatedDate()}>
 	<div class="legal-page">
 		<h1 class="sd-text-headline">{title}</h1>
 		<p class="updated">Last updated {policyLastUpdated()}</p>

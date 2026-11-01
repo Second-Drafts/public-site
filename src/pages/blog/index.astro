@@ -3,11 +3,17 @@ import Link from "../../components/Link.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import Base from "../../layouts/Base.astro";
 import { formatDate, getPublishedPosts } from "../../lib/blog";
+import { blog } from "../../lib/seo/schema";
 
 const posts = await getPublishedPosts();
 ---
 
-<Base title="Blog">
+<Base
+	title="Blog"
+	pageType="CollectionPage"
+	description="Thoughts on writing, editing, and storytelling, and the current state of the Department."
+	schema={[blog()]}
+>
 	<PageHeader title="Memos from the Department">
 		Thoughts on writing, editing, and storytelling, and the current state of the Department.
 	</PageHeader>

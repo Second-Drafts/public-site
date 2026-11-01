@@ -1,8 +1,8 @@
 ---
+import { toolSchema } from "../../lib/seo/schema";
 import ConfirmDialog from "../../components/ConfirmDialog.astro";
 import PageHeader from "../../components/PageHeader.astro";
 import ToolColumn from "../../components/ToolColumn.astro";
-import ToolHead from "../../components/ToolHead.astro";
 import Base from "../../layouts/Base.astro";
 import Ladder from "../../tools/ladder-of-abstraction/Ladder.astro";
 import Passage from "../../tools/ladder-of-abstraction/Passage.astro";
@@ -16,16 +16,15 @@ const ogImageAlt =
 	"A ladder of five rungs, from the line 'We hold on to whatever proves we were loved' at the top down to the crack in a chipped blue mug at the bottom.";
 ---
 
-<Base title="Ladder of Abstraction" seoTitle={pageTitle} description={pageDescription} wide>
-	<ToolHead
-		slot="head"
-		title={pageTitle}
-		description={pageDescription}
-		appName="Ladder of abstraction for writers"
-		ogImage="ladder-of-abstraction"
-		ogImageAlt={ogImageAlt}
-		faq={faq}
-	/>
+<Base
+	title="Ladder of Abstraction"
+	seoTitle={pageTitle}
+	description={pageDescription}
+	wide
+	ogImage="ladder-of-abstraction"
+	ogImageAlt={ogImageAlt}
+	schema={toolSchema({ appName: "Ladder of abstraction for writers", faq })}
+>
 	<ToolColumn>
 		<PageHeader title="Ladder of Abstraction" compact>
 			Climb from a detail to what it means, or from an idea down to something a reader can see.

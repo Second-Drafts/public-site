@@ -1,10 +1,10 @@
 ---
+import { toolSchema } from "../../lib/seo/schema";
 import PageHeader from "../../components/PageHeader.astro";
 import Base from "../../layouts/Base.astro";
 import Editor from "../../tools/draft-analysis/Editor.astro";
 import RhythmView from "../../tools/draft-analysis/RhythmView.astro";
 import ToolColumn from "../../components/ToolColumn.astro";
-import ToolHead from "../../components/ToolHead.astro";
 import SeoContent from "../../tools/draft-analysis/SeoContent.astro";
 import { faq } from "../../tools/draft-analysis/faq";
 
@@ -14,16 +14,15 @@ const pageDescription =
 const ogImageAlt = "A row of bars, one per sentence, with two long sentences in yellow rising past a dashed line.";
 ---
 
-<Base title="Draft Analysis" seoTitle={pageTitle} description={pageDescription} wide>
-	<ToolHead
-		slot="head"
-		title={pageTitle}
-		description={pageDescription}
-		appName="Free sentence length checker"
-		ogImage="draft-analysis"
-		ogImageAlt={ogImageAlt}
-		faq={faq}
-	/>
+<Base
+	title="Draft Analysis"
+	seoTitle={pageTitle}
+	description={pageDescription}
+	wide
+	ogImage="draft-analysis"
+	ogImageAlt={ogImageAlt}
+	schema={toolSchema({ appName: "Free sentence length checker", faq })}
+>
 	<ToolColumn>
 		<PageHeader title="Draft Analysis" compact>See how your draft reads, one sentence at a time</PageHeader>
 		<Editor />

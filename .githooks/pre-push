@@ -1,0 +1,14 @@
+#!/bin/sh
+# Runs the full check before anything reaches main. Skip once with `git push --no-verify`.
+
+while read -r local_ref local_sha remote_ref _remote_sha; do
+	[ "$remote_ref" = "refs/heads/main" ] || continue
+
+	if [ "$local_sha" != "$(git rev-parse HEAD)" ]; then
+		echo "Not pushing $local_ref to main: the checks run on the working tree, which is not at that commit. Check it out first." >&2
+		exit 1
+	fi
+
+	echo "Pushing to main: running npm run verify..."
+	npm run verify || exit 1
+done
