@@ -20,14 +20,15 @@ interface Props {
 const { logo = true, current = Astro.url.pathname } = Astro.props;
 
 const NAV = [
-  { href: "/tools", label: "Tools" },
-  { href: "/blog", label: "Blog" },
-  { href: "/about-us", label: "About Us" },
+  { href: "/tools/", label: "Tools" },
+  { href: "/blog/", label: "Blog" },
+  { href: "/about-us/", label: "About Us" },
 ];
 
-const path = current.replace(/\/$/, "");
-const isCurrent = (href: string) =>
-  path === href || path.startsWith(`${href}/`);
+const withTrailingSlash = (path: string) =>
+  path.endsWith("/") ? path : `${path}/`;
+const currentPath = withTrailingSlash(current);
+const isCurrent = (href: string) => currentPath.startsWith(href);
 ---
 
 <header class="sd-header">

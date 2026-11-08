@@ -2,6 +2,7 @@
 	"categories": {
 		"correctness": "off"
 	},
+	"jsPlugins": ["./tools/oxlint/trailing-slash-plugin.ts"],
 	"rules": {
 		"no-restricted-globals": [
 			"error",
@@ -128,7 +129,8 @@
 				"property": "getClientRects",
 				"message": "Reading layout makes the browser lay out the page now if anything changed since the last frame. Take geometry from a ResizeObserver or scroll event, or read before any write and disable this line with the reason."
 			}
-		]
+		],
+		"site/internal-path-needs-trailing-slash": "error"
 	},
 	"overrides": [
 		{
@@ -136,7 +138,8 @@
 			"rules": {
 				"no-restricted-globals": "off",
 				"no-restricted-imports": "off",
-				"no-restricted-properties": "off"
+				"no-restricted-properties": "off",
+				"site/internal-path-needs-trailing-slash": "off"
 			}
 		},
 		{
@@ -148,7 +151,14 @@
 		{
 			"files": ["src/pages/sandbox/**"],
 			"rules": {
-				"no-restricted-globals": "off"
+				"no-restricted-globals": "off",
+				"site/internal-path-needs-trailing-slash": "off"
+			}
+		},
+		{
+			"files": ["workers/**", "src/lib/forms/client.ts", "**/*.test.ts"],
+			"rules": {
+				"site/internal-path-needs-trailing-slash": "off"
 			}
 		}
 	]

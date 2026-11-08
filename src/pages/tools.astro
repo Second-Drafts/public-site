@@ -63,7 +63,7 @@ const tools: Record<string, Tool> = {
 			Object.entries(tools).map(([key, tool]) => (
 				<li>
 					<span class="tools__title">
-						<Link href={`/tools/${key}`} class="sd-text-heading">
+						<Link href={`/tools/${key}/`} class="sd-text-heading">
 							{tool.title}
 						</Link>
 						{tool.comingSoon && <SoonTag />}

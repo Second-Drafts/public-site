@@ -57,7 +57,7 @@ const [latestPost] = await getPublishedPosts();
 			</p>
 			<p class="home__lede">Free tools for writing and editing are ready now. Bigger things are in development.</p>
 			<div class="home__actions">
-				<Button href="/tools" variant="primary" size="lg">Try a tool</Button>
+				<Button href="/tools/" variant="primary" size="lg">Try a tool</Button>
 				<Button href="#continuity-checker" variant="secondary" size="lg">See what's coming</Button>
 			</div>
 		</header>
@@ -72,7 +72,7 @@ const [latestPost] = await getPublishedPosts();
 					freeTools.map((tool) => (
 						<li class="home__tool">
 							<h3 class="sd-text-heading">
-								<Link href={`/tools/${tool.slug}`}>{tool.title}</Link>
+								<Link href={`/tools/${tool.slug}/`}>{tool.title}</Link>
 							</h3>
 							<p>{tool.description}</p>
 						</li>
@@ -84,10 +84,10 @@ const [latestPost] = await getPublishedPosts();
 			</p>
 			<div class="home__tools-footer">
 				<p class="home__aside">
-					Procrastinating? Ask the <Link href="/tools/magic-8-ball">Magic 8-Ball</Link>. It's a little silly, but it's
+					Procrastinating? Ask the <Link href="/tools/magic-8-ball/">Magic 8-Ball</Link>. It's a little silly, but it's
 					fun.
 				</p>
-				<Link href="/tools">All tools →</Link>
+				<Link href="/tools/">All tools →</Link>
 			</div>
 		</section>
 	</div>
@@ -103,7 +103,7 @@ const [latestPost] = await getPublishedPosts();
 				</p>
 				<div class="home__actions">
 					<Button href={WAITLIST_URL} variant="primary" size="lg" data-waitlist-placement="home">Join the waitlist</Button>
-					<Link href="/tools/continuity-checker">More about the Continuity Checker</Link>
+					<Link href="/tools/continuity-checker/">More about the Continuity Checker</Link>
 				</div>
 			</div>
 			<div class="home__cc-flag">
@@ -136,7 +136,7 @@ const [latestPost] = await getPublishedPosts();
 					</div>
 					<article class="home__post">
 						<h3 class="sd-text-heading">
-							<Link href={`/blog/${latestPost.id}`}>{latestPost.data.title}</Link>
+							<Link href={`/blog/${latestPost.id}/`}>{latestPost.data.title}</Link>
 						</h3>
 						<PostMeta
 							author={latestPost.data.author}
@@ -145,7 +145,7 @@ const [latestPost] = await getPublishedPosts();
 						/>
 						<p>{latestPost.data.description}</p>
 					</article>
-					<Link href="/blog">All posts →</Link>
+					<Link href="/blog/">All posts →</Link>
 				</section>
 			)
 		}

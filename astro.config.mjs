@@ -36,6 +36,7 @@ const isNoindexPage = (pageString) => {
 // https://astro.build/config
 export default defineConfig({
 	site: "https://seconddrafts.com",
+	trailingSlash: "always",
 	vite: { envDir: "./public-env" },
 	security: {
 		csp: { directives, scriptDirective: { resources: scriptResources }, styleDirective: { resources: styleResources } },
