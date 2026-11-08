@@ -1,6 +1,6 @@
 {
 	"registryVersion": "2.10.0",
-	"sourceCommit": "adedff671c6b95451026570487a43b813fdac934",
+	"sourceCommit": "a060ed426bb249987cf5a24e650acd69db590d12",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -26,6 +26,34 @@
 				"analyticsEvents": []
 			},
 			"/blog/bon-idee/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/department/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -156,6 +184,42 @@
 				"analyticsEvents": []
 			},
 			"/blog/bon-idee/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/department/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -334,6 +398,70 @@
 				]
 			},
 			"/blog/bon-idee/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/category/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/category/department/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/desk/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/desk/department/": {
 				"storage": [
 					"cookie:_ga",
 					"cookie:_ga_RPVQBR9DFV",
@@ -591,6 +719,34 @@
 				],
 				"analyticsEvents": []
 			},
+			"/blog/category/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/cookie-policy/": {
 				"storage": [],
 				"origins": [
@@ -715,6 +871,42 @@
 				"analyticsEvents": []
 			},
 			"/blog/bon-idee/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/department/": {
 				"storage": [
 					"local:privacy:consent"
 				],
