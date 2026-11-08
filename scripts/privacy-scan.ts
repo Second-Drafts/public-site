@@ -1,5 +1,5 @@
 import { execFileSync, spawn, type ChildProcess } from "node:child_process";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { createServer } from "node:net";
 import { chromium, type Browser, type BrowserContext, type ConsoleMessage, type Page } from "playwright";
 import lzString from "lz-string";
@@ -12,6 +12,7 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	servedPaths,
 	analyticsEventNames,
 	undeclaredAnalyticsEvents,
 	type Exposure,
@@ -19,7 +20,6 @@ import {
 	type RecordedRequest,
 	type ScanState,
 } from "../src/lib/privacy/scan.ts";
-import { DOMAIN } from "../src/lib/privacy/organization.ts";
 
 const { compressToEncodedURIComponent } = lzString;
 
@@ -27,7 +27,6 @@ const { compressToEncodedURIComponent } = lzString;
 const SCAN_DIST_DIR = "dist-privacy-scan";
 const GA_TEST_MEASUREMENT_ID = "G-RPVQBR9DFV";
 const REPORT_PATH = "privacy/scan-report.json";
-const PRODUCTION_ORIGIN = `https://${DOMAIN}`;
 const TELEPROMPTER_PATH = "/tools/teleprompter/";
 // Past the draft analysis tool's 2s settle before it reports, plus its rhythm recompute.
 const DRAFT_SETTLE_MS = 2500;
@@ -105,10 +104,10 @@ async function startPreview(): Promise<{ origin: string; stop: () => void }> {
 	throw new Error("astro preview did not start");
 }
 
-function sitemapPaths(): string[] {
-	const sitemap = readFileSync(`${SCAN_DIST_DIR}/sitemap-0.xml`, "utf8");
-	const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
-	return locations.map((location) => location.replace(PRODUCTION_ORIGIN, ""));
+// Every built page, not the sitemap: pages kept out of search (noindex) still run the same scripts.
+function builtPagePaths(): string[] {
+	const files = readdirSync(SCAN_DIST_DIR, { recursive: true, encoding: "utf8" });
+	return servedPaths(files.filter((file) => file.endsWith(".html")));
 }
 
 const ENCODED_SHARE_PAYLOAD = compressToEncodedURIComponent(JSON.stringify({ v: 1, t: SENTINEL, s: {} }));
@@ -460,7 +459,7 @@ async function main(): Promise<void> {
 	buildForScan();
 	const preview = await startPreview();
 	const browser = await launchBrowser();
-	const paths = [...sitemapPaths(), shareLink(), SEARCH_QUERY_PATH];
+	const paths = [...builtPagePaths(), shareLink(), SEARCH_QUERY_PATH];
 	const violations: string[] = [];
 	const states: Record<string, Record<string, PageReport>> = {};
 

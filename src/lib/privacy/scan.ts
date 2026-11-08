@@ -142,3 +142,8 @@ export function findSentinelLeaks(exposures: Exposure[], sentinels: string[]): s
 	);
 	return [...new Set(leaks)];
 }
+
+/** The URL path each built HTML file is served at, so the scan covers every page whether or not the sitemap lists it. */
+export function servedPaths(htmlFiles: string[]): string[] {
+	return htmlFiles.map((file) => `/${file.replaceAll("\\", "/")}`.replace(/(^|\/)index\.html$/, "$1")).sort();
+}

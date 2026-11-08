@@ -5,6 +5,7 @@ import {
 	findViolations,
 	pageUrlExposure,
 	requestExposures,
+	servedPaths,
 	undeclaredAnalyticsEvents,
 	type Observation,
 } from "./scan";
@@ -217,5 +218,20 @@ describe("findSentinelLeaks", () => {
 			'console.log contains "SENTINEL"',
 			'page error contains "SENTINEL"',
 		]);
+	});
+});
+
+describe("servedPaths", () => {
+	it("serves each index.html at its directory, and other pages at their own name", () => {
+		expect(servedPaths(["index.html", "blog/desk/editorial/index.html", "about-us/index.html", "404.html"])).toEqual([
+			"/",
+			"/404.html",
+			"/about-us/",
+			"/blog/desk/editorial/",
+		]);
+	});
+
+	it("reads Windows separators as URL slashes", () => {
+		expect(servedPaths(["tools\\word-counter\\index.html"])).toEqual(["/tools/word-counter/"]);
 	});
 });
