@@ -1,10 +1,10 @@
 ---
 /*
- * PostMeta — a post's byline: its desk, date, and category, each desk and category linking to more.
+ * PostMeta — a post's byline: its desk, date, and category, the desk and category linking to their posts.
  *
  *   <PostMeta author="editorial" category="craft" date={post.data.date} />
  */
-import { CATEGORIES, type CategoryKey, categoryPath, DESKS, type DeskKey, deskPath } from "../lib/blog-taxonomy";
+import { CATEGORIES, type CategoryKey, categoryPath, DESKS, type DeskKey, deskPostsPath } from "../lib/blog-taxonomy";
 import { formatDate } from "../lib/blog";
 import Link from "./Link.astro";
 
@@ -19,7 +19,7 @@ const { author, category, date, updated } = Astro.props;
 ---
 
 <p class="post-meta sd-text-meta">
-	<Link href={deskPath(author)}>{DESKS[author].name}</Link>
+	<Link href={deskPostsPath(author)}>{DESKS[author].name}</Link>
 	<span aria-hidden="true">·</span>
 	<time datetime={date.toISOString()}>{formatDate(date)}</time>
 	{

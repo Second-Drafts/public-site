@@ -1,21 +1,22 @@
 ---
 /*
- * CategoryNav — filters the blog by category: "All posts" and then each category that has posts, the one being shown filled in ink.
+ * CategoryNav — filters the blog by category: "All posts" and then each category, the one being shown filled in ink.
+ * Leave `current` out when the page is filtered some other way, by desk, so nothing is selected.
  *
  *   <CategoryNav current="craft" />
+ *   <CategoryNav current="all" />
  */
-import { getPublishedCategories } from "../lib/blog";
-import { CATEGORIES, type CategoryKey, categoryPath } from "../lib/blog-taxonomy";
+import { CATEGORIES, CATEGORY_KEYS, type CategoryKey, categoryPath } from "../lib/blog-taxonomy";
 
 interface Props {
-	current?: CategoryKey;
+	current?: CategoryKey | "all";
 }
 
 const { current } = Astro.props;
 
 const filters = [
-	{ href: "/blog/", label: "All posts", selected: current === undefined },
-	...(await getPublishedCategories()).map((category) => ({
+	{ href: "/blog/", label: "All posts", selected: current === "all" },
+	...CATEGORY_KEYS.map((category) => ({
 		href: categoryPath(category),
 		label: CATEGORIES[category].label,
 		selected: category === current,

@@ -6,15 +6,15 @@ export interface Desk {
 export const DESKS = {
 	department: {
 		name: "The Department",
-		description: "News from the Department: what we're building, what's changed, and why.",
+		description: "General information: what we're building, what's changed, and what's ahead.",
 	},
 	editorial: {
 		name: "The Editorial Desk",
-		description: "Writing and editing: craft, revision, and the writing life.",
+		description: "Storytelling, craft, revision, and the writing life.",
 	},
 	engineering: {
 		name: "The Engineering Desk",
-		description: "How the tools are made: how they work, and the design decisions behind them.",
+		description: "Solving problems, how the tools are made, and why.",
 	},
 } as const satisfies Record<string, Desk>;
 
@@ -25,7 +25,9 @@ export const DESK_KEYS = Object.keys(DESKS) as [DeskKey, ...DeskKey[]];
 export const DEFAULT_DESK: DeskKey = "department";
 
 /** Every desk is introduced on the About page under this anchor. */
-export const deskPath = (desk: DeskKey): string => `/about-us/#${desk}-desk`;
+export const deskAboutPath = (desk: DeskKey): string => `/about-us/#${desk}-desk`;
+
+export const deskPostsPath = (desk: DeskKey): string => `/blog/desk/${desk}/`;
 
 export interface Category {
 	label: string;
@@ -35,11 +37,11 @@ export interface Category {
 export const CATEGORIES = {
 	craft: {
 		label: "Craft and process",
-		description: "Evergreen how-tos on writing, revising, and scripting.",
+		description: "How-tos and thoughts on storytelling, writing, revising, and scripting.",
 	},
 	"writing-life": {
 		label: "The writing life",
-		description: "Books, reading, the industry, and everything around the work.",
+		description: "Reading, watching, the business of storytelling, and everything around the work.",
 	},
 	department: {
 		label: "Building the Department",

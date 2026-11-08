@@ -1,12 +1,11 @@
 ---
 import BlogListing from "../../../components/BlogListing.astro";
 import Base from "../../../layouts/Base.astro";
-import { getPublishedCategories } from "../../../lib/blog";
-import { CATEGORIES, type CategoryKey } from "../../../lib/blog-taxonomy";
+import { CATEGORIES, CATEGORY_KEYS, type CategoryKey } from "../../../lib/blog-taxonomy";
 import { blog } from "../../../lib/seo/schema";
 
-export async function getStaticPaths() {
-	return (await getPublishedCategories()).map((category) => ({ params: { category }, props: { category } }));
+export function getStaticPaths() {
+	return CATEGORY_KEYS.map((category) => ({ params: { category }, props: { category } }));
 }
 
 interface Props {

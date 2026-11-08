@@ -1,0 +1,40 @@
+---
+import Link from "../../../components/Link.astro";
+import PageHeader from "../../../components/PageHeader.astro";
+import Base from "../../../layouts/Base.astro";
+import { DESK_KEYS, DESKS, deskPostsPath } from "../../../lib/blog-taxonomy";
+
+const description = "The desks that write the Department's blog, and what each one covers.";
+---
+
+<Base title="Desks" pageType="CollectionPage" description={description}>
+	<PageHeader title="Desks">Who writes what on the blog.</PageHeader>
+
+	<ul class="desks">
+		{
+			DESK_KEYS.map((desk) => (
+				<li>
+					<Link href={deskPostsPath(desk)} class="sd-text-heading">
+						{DESKS[desk].name}
+					</Link>
+					<p>{DESKS[desk].description}</p>
+				</li>
+			))
+		}
+	</ul>
+</Base>
+
+<style>
+	.desks {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-8);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	p {
+		margin: var(--space-2) 0 0;
+		color: var(--ink-muted);
+	}
+</style>

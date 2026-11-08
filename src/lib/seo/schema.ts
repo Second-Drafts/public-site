@@ -1,5 +1,13 @@
 import type { BreadcrumbList, Graph, Thing, WebPage } from "schema-dts";
-import { CATEGORIES, type CategoryKey, DEFAULT_DESK, DESKS, type DeskKey, deskPath } from "../blog-taxonomy";
+import {
+	CATEGORIES,
+	type CategoryKey,
+	DEFAULT_DESK,
+	DESKS,
+	type DeskKey,
+	deskAboutPath,
+	deskPostsPath,
+} from "../blog-taxonomy";
 import type { FaqItem } from "./faq";
 import { pageId } from "./ids.ts";
 import { absoluteUrl, type Crumb, SITE_NAME } from "./site";
@@ -142,7 +150,7 @@ interface BlogPostingOptions {
 }
 
 export const deskId = (desk: DeskKey, site: URL): string =>
-	desk === DEFAULT_DESK ? organizationId(site) : absoluteUrl(deskPath(desk), site);
+	desk === DEFAULT_DESK ? organizationId(site) : absoluteUrl(deskAboutPath(desk), site);
 
 const deskOrganization =
 	(desk: DeskKey): SchemaNode =>
@@ -151,7 +159,7 @@ const deskOrganization =
 		"@id": deskId(desk, page.site),
 		name: DESKS[desk].name,
 		description: DESKS[desk].description,
-		url: deskId(desk, page.site),
+		url: absoluteUrl(deskPostsPath(desk), page.site),
 		parentOrganization: reference(organizationId(page.site)),
 	});
 

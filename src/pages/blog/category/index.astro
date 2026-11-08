@@ -2,8 +2,7 @@
 import Link from "../../../components/Link.astro";
 import PageHeader from "../../../components/PageHeader.astro";
 import Base from "../../../layouts/Base.astro";
-import { getPublishedCategories } from "../../../lib/blog";
-import { CATEGORIES, categoryPath } from "../../../lib/blog-taxonomy";
+import { CATEGORIES, CATEGORY_KEYS, categoryPath } from "../../../lib/blog-taxonomy";
 
 const description = "Everything the Department's blog covers, by category.";
 ---
@@ -13,7 +12,7 @@ const description = "Everything the Department's blog covers, by category.";
 
 	<ul class="categories">
 		{
-			(await getPublishedCategories()).map((category) => (
+			CATEGORY_KEYS.map((category) => (
 				<li>
 					<Link href={categoryPath(category)} class="sd-text-heading">
 						{CATEGORIES[category].label}

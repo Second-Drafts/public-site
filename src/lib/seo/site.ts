@@ -7,6 +7,7 @@ export const SECTION_NAMES: Record<string, string> = {
 	tools: "Tools",
 	blog: "Blog",
 	category: "Categories",
+	desk: "Desks",
 	"continuity-checker": "Continuity Checker",
 };
 

@@ -1,7 +1,7 @@
 ---
 import Link from "../components/Link.astro";
 import PostMeta from "../components/PostMeta.astro";
-import { type CategoryKey, DESKS, type DeskKey, deskPath } from "../lib/blog-taxonomy";
+import { type CategoryKey, DESKS, type DeskKey, deskAboutPath } from "../lib/blog-taxonomy";
 import { blogPosting } from "../lib/seo/schema";
 import Base from "./Base.astro";
 
@@ -34,7 +34,7 @@ const desk = DESKS[author];
     <footer class="desk-note">
       <p>
         <strong>{desk.name}.</strong> {desk.description}{" "}
-        <Link href={deskPath(author)}>About the desks</Link>
+        <Link href={deskAboutPath(author)}>About the desks</Link>
       </p>
     </footer>
   </article>

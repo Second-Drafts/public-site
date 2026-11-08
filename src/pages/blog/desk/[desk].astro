@@ -1,0 +1,21 @@
+---
+import BlogListing from "../../../components/BlogListing.astro";
+import Base from "../../../layouts/Base.astro";
+import { DESK_KEYS, DESKS, type DeskKey } from "../../../lib/blog-taxonomy";
+import { blog } from "../../../lib/seo/schema";
+
+export function getStaticPaths() {
+	return DESK_KEYS.map((desk) => ({ params: { desk }, props: { desk } }));
+}
+
+interface Props {
+	desk: DeskKey;
+}
+
+const { desk } = Astro.props;
+const { name, description } = DESKS[desk];
+---
+
+<Base title={name} pageType="CollectionPage" description={description} schema={[blog()]}>
+	<BlogListing desk={desk} />
+</Base>

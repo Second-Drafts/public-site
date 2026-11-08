@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DESKS } from "../blog-taxonomy";
 import {
 	blogPosting,
 	buildGraph,
@@ -140,7 +141,7 @@ describe("blogPosting", () => {
 			parentOrganization: { "@id": organizationId(site) },
 			"@id": deskNodeId,
 			name: "The Editorial Desk",
-			description: "Writing and editing: craft, revision, and the writing life.",
+			description: DESKS.editorial.description,
 		});
 		expect(posting).toMatchObject({
 			author: { "@id": deskNodeId },

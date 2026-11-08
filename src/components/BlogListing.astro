@@ -1,12 +1,13 @@
 ---
 /*
  * BlogListing — the blog page: its header, the category filter, and the posts it lets through.
- * Every listing shares the same header, so switching categories only changes what's beneath it.
+ * Every listing shares the same header, so switching categories or desks only changes what's beneath it.
  *
  *   <BlogListing category="craft" />
+ *   <BlogListing desk="editorial" />
  */
 import { getPublishedPosts } from "../lib/blog";
-import { CATEGORIES, type CategoryKey } from "../lib/blog-taxonomy";
+import { CATEGORIES, type CategoryKey, DESKS, type DeskKey, deskAboutPath } from "../lib/blog-taxonomy";
 import CategoryNav from "./CategoryNav.astro";
 import Link from "./Link.astro";
 import PageHeader from "./PageHeader.astro";
@@ -14,22 +15,32 @@ import PostList from "./PostList.astro";
 
 interface Props {
 	category?: CategoryKey;
+	desk?: DeskKey;
 }
 
-const { category } = Astro.props;
-const allPosts = await getPublishedPosts();
-const posts = category ? allPosts.filter((post) => post.data.category === category) : allPosts;
+const { category, desk } = Astro.props;
+const posts = (await getPublishedPosts()).filter(
+	(post) => (!category || post.data.category === category) && (!desk || post.data.author === desk),
+);
 ---
 
 <PageHeader title="Memos from the Department">
 	Thoughts on writing, editing, and storytelling, and the current state of the Department.
 </PageHeader>
 
-<CategoryNav current={category} />
+<CategoryNav current={category ?? (desk ? undefined : "all")} />
 
 <div class="listing">
-	{category && <p class="category-description">{CATEGORIES[category].description}</p>}
-	{posts.length > 0 ? <PostList posts={posts} /> : <p class="empty">Nothing here yet. Check back soon.</p>}
+	{category && <p class="filter-description">{CATEGORIES[category].description}</p>}
+	{
+		desk && (
+			<p class="filter-description">
+				<strong>{DESKS[desk].name}.</strong> {DESKS[desk].description}{" "}
+				<Link href={deskAboutPath(desk)}>About the desks</Link>
+			</p>
+		)
+	}
+	{posts.length > 0 ? <PostList posts={posts} /> : <p class="empty">We're still drafting. Check back soon.</p>}
 </div>
 
 <p class="feed">Follow along in your reader with the <Link href="/rss.xml">RSS feed</Link>.</p>
@@ -50,10 +61,14 @@ const posts = category ? allPosts.filter((post) => post.data.category === catego
 		margin: 0;
 		color: var(--ink-muted);
 	}
-	.category-description {
+	.filter-description {
 		padding-block-end: var(--space-6);
 		border-block-end: var(--stroke-hairline) solid var(--rule);
 		color: var(--ink);
+		text-wrap: pretty;
+	}
+	.filter-description strong {
+		font-weight: 600;
 	}
 	.feed {
 		margin-block-start: var(--space-12);
