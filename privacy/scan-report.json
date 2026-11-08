@@ -1,6 +1,6 @@
 {
 	"registryVersion": "2.10.0",
-	"sourceCommit": "a060ed426bb249987cf5a24e650acd69db590d12",
+	"sourceCommit": "641bf1046dacbdc4d27d56d43e90628620c56c75",
 	"sourceDirty": false,
 	"states": {
 		"no-decision": {
@@ -39,7 +39,21 @@
 				],
 				"analyticsEvents": []
 			},
+			"/blog/category/craft/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/blog/category/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/writing-life/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -54,6 +68,20 @@
 				"analyticsEvents": []
 			},
 			"/blog/desk/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/editorial/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/engineering/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -201,7 +229,25 @@
 				],
 				"analyticsEvents": []
 			},
+			"/blog/category/craft/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/blog/category/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/writing-life/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -220,6 +266,24 @@
 				"analyticsEvents": []
 			},
 			"/blog/desk/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/editorial/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/engineering/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -429,7 +493,39 @@
 					"scroll"
 				]
 			},
+			"/blog/category/craft/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
 			"/blog/category/department/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/category/writing-life/": {
 				"storage": [
 					"cookie:_ga",
 					"cookie:_ga_RPVQBR9DFV",
@@ -462,6 +558,38 @@
 				]
 			},
 			"/blog/desk/department/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/desk/editorial/": {
+				"storage": [
+					"cookie:_ga",
+					"cookie:_ga_RPVQBR9DFV",
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self",
+					"https://www.google-analytics.com",
+					"https://www.googletagmanager.com"
+				],
+				"analyticsEvents": [
+					"page_view",
+					"scroll"
+				]
+			},
+			"/blog/desk/engineering/": {
 				"storage": [
 					"cookie:_ga",
 					"cookie:_ga_RPVQBR9DFV",
@@ -726,7 +854,21 @@
 				],
 				"analyticsEvents": []
 			},
+			"/blog/category/craft/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/blog/category/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/writing-life/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -741,6 +883,20 @@
 				"analyticsEvents": []
 			},
 			"/blog/desk/department/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/editorial/": {
+				"storage": [],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/engineering/": {
 				"storage": [],
 				"origins": [
 					"self"
@@ -888,7 +1044,25 @@
 				],
 				"analyticsEvents": []
 			},
+			"/blog/category/craft/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
 			"/blog/category/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/category/writing-life/": {
 				"storage": [
 					"local:privacy:consent"
 				],
@@ -907,6 +1081,24 @@
 				"analyticsEvents": []
 			},
 			"/blog/desk/department/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/editorial/": {
+				"storage": [
+					"local:privacy:consent"
+				],
+				"origins": [
+					"self"
+				],
+				"analyticsEvents": []
+			},
+			"/blog/desk/engineering/": {
 				"storage": [
 					"local:privacy:consent"
 				],
