@@ -108,17 +108,56 @@ describe("page-specific nodes", () => {
 	it("builds no nodes for a tool with neither an app name nor an FAQ", () => {
 		expect(toolSchema({})).toEqual([]);
 	});
+});
 
-	it("credits a post to the organization and defaults the modified date to the publish date", () => {
-		const published = new Date("2026-10-11T00:00:00Z");
-		const node = blogPosting({ datePublished: published })({ ...page, name: "Bon Idée" });
-		expect(node).toMatchObject({
+describe("blogPosting", () => {
+	const published = new Date("2026-10-11T00:00:00Z");
+	const post = { ...page, name: "Bon Idée" };
+
+	it("credits a Department post to the organization, with no desk node", () => {
+		const nodes = blogPosting({ datePublished: published, author: "department", category: "department" }).map((node) =>
+			node(post),
+		);
+		expect(nodes).toHaveLength(1);
+		expect(nodes[0]).toMatchObject({
 			"@type": "BlogPosting",
 			headline: "Bon Idée",
 			author: { "@id": organizationId(site) },
+			publisher: { "@id": organizationId(site) },
+			articleSection: "Building the Department",
 			datePublished: published.toISOString(),
 			dateModified: published.toISOString(),
 		});
+	});
+
+	it("credits a desk post to the desk, as part of the organization that publishes it", () => {
+		const [desk, posting] = blogPosting({ datePublished: published, author: "editorial", category: "craft" }).map(
+			(node) => node(post),
+		);
+		const deskNodeId = "https://seconddrafts.com/about-us/#editorial-desk";
+		expect(desk).toMatchObject({
+			"@type": "Organization",
+			parentOrganization: { "@id": organizationId(site) },
+			"@id": deskNodeId,
+			name: "The Editorial Desk",
+			description: "Writing and editing: craft, revision, and the writing life.",
+		});
+		expect(posting).toMatchObject({
+			author: { "@id": deskNodeId },
+			publisher: { "@id": organizationId(site) },
+			articleSection: "Craft and process",
+		});
+	});
+
+	it("records the modified date when the post was updated", () => {
+		const updated = new Date("2026-11-01T00:00:00Z");
+		const [posting] = blogPosting({
+			datePublished: published,
+			dateModified: updated,
+			author: "department",
+			category: "department",
+		}).map((node) => node(post));
+		expect(posting).toMatchObject({ dateModified: updated.toISOString() });
 	});
 });
 

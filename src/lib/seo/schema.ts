@@ -1,4 +1,5 @@
 import type { BreadcrumbList, Graph, Thing, WebPage } from "schema-dts";
+import { CATEGORIES, type CategoryKey, DEFAULT_DESK, DESKS, type DeskKey, deskPath } from "../blog-taxonomy";
 import type { FaqItem } from "./faq";
 import { pageId } from "./ids.ts";
 import { absoluteUrl, type Crumb, SITE_NAME } from "./site";
@@ -133,8 +134,29 @@ export const blog = (): SchemaNode => (page) => ({
 	mainEntityOfPage: reference(pageId(page.url)),
 });
 
-export const blogPosting =
-	({ datePublished, dateModified }: { datePublished: Date; dateModified?: Date }): SchemaNode =>
+interface BlogPostingOptions {
+	datePublished: Date;
+	dateModified?: Date;
+	author: DeskKey;
+	category: CategoryKey;
+}
+
+export const deskId = (desk: DeskKey, site: URL): string =>
+	desk === DEFAULT_DESK ? organizationId(site) : absoluteUrl(deskPath(desk), site);
+
+const deskOrganization =
+	(desk: DeskKey): SchemaNode =>
+	(page) => ({
+		"@type": "Organization",
+		"@id": deskId(desk, page.site),
+		name: DESKS[desk].name,
+		description: DESKS[desk].description,
+		url: deskId(desk, page.site),
+		parentOrganization: reference(organizationId(page.site)),
+	});
+
+const blogPostingNode =
+	({ datePublished, dateModified, author, category }: BlogPostingOptions): SchemaNode =>
 	(page) => ({
 		"@type": "BlogPosting",
 		"@id": `${page.url}#article`,
@@ -144,7 +166,14 @@ export const blogPosting =
 		inLanguage: "en",
 		datePublished: datePublished.toISOString(),
 		dateModified: (dateModified ?? datePublished).toISOString(),
-		author: reference(organizationId(page.site)),
+		articleSection: CATEGORIES[category].label,
+		author: reference(deskId(author, page.site)),
 		publisher: reference(organizationId(page.site)),
 		mainEntityOfPage: reference(pageId(page.url)),
 	});
+
+/** The post, and a node for its desk, a part of the Department, unless the Department itself wrote it. */
+export const blogPosting = (options: BlogPostingOptions): SchemaNode[] => [
+	...(options.author === DEFAULT_DESK ? [] : [deskOrganization(options.author)]),
+	blogPostingNode(options),
+];

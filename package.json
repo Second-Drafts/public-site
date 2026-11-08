@@ -40,6 +40,7 @@
 		"forms:deploy": "wrangler d1 migrations apply forms --remote -c workers/forms/wrangler.jsonc && wrangler deploy -c workers/forms/wrangler.jsonc"
 	},
 	"dependencies": {
+		"@astrojs/rss": "^4.0.19",
 		"@astrojs/sitemap": "^3.7.4",
 		"lz-string": "^1.5.0"
 	},

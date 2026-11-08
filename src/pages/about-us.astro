@@ -1,5 +1,7 @@
 ---
+import Link from "../components/Link.astro";
 import Base from "../layouts/Base.astro";
+import { DESK_KEYS, DESKS } from "../lib/blog-taxonomy";
 ---
 
 <Base
@@ -24,6 +26,21 @@ import Base from "../layouts/Base.astro";
 		difficult. In some ways, this is where the real work of writing begins.
 	</p>
 	<p>We're here to help with that.</p>
+
+	<h2 class="sd-text-title" id="desks">The desks</h2>
+	<p>
+		The Department is organized into desks, each with its own focus. Each will publish its own <Link href="/blog/">blog posts</Link> and news under the following bylines:
+	</p>
+	<dl class="desks">
+		{
+			DESK_KEYS.map((desk) => (
+				<div id={`${desk}-desk`}>
+					<dt class="sd-text-heading">{DESKS[desk].name}</dt>
+					<dd>{DESKS[desk].description}</dd>
+				</div>
+			))
+		}
+	</dl>
 </Base>
 
 <style>
@@ -31,8 +48,25 @@ import Base from "../layouts/Base.astro";
 		margin: 0 0 var(--space-8);
 		font-weight: 600;
 	}
+	h2 {
+		margin: var(--space-12) 0 var(--space-4);
+		font-weight: 600;
+	}
 	p {
 		margin: 0 0 var(--space-6);
 		text-wrap: pretty;
+	}
+	.desks {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		margin: 0;
+	}
+	dd {
+		margin: var(--space-1) 0 0;
+		color: var(--ink-muted);
+	}
+	[id$="-desk"] {
+		scroll-margin-block-start: var(--space-8);
 	}
 </style>

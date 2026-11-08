@@ -1,0 +1,47 @@
+---
+/*
+ * PostMeta — a post's byline: its desk, date, and category, each desk and category linking to more.
+ *
+ *   <PostMeta author="editorial" category="craft" date={post.data.date} />
+ */
+import { CATEGORIES, type CategoryKey, categoryPath, DESKS, type DeskKey, deskPath } from "../lib/blog-taxonomy";
+import { formatDate } from "../lib/blog";
+import Link from "./Link.astro";
+
+interface Props {
+	author: DeskKey;
+	category: CategoryKey;
+	date: Date;
+	updated?: Date;
+}
+
+const { author, category, date, updated } = Astro.props;
+---
+
+<p class="post-meta sd-text-meta">
+	<Link href={deskPath(author)}>{DESKS[author].name}</Link>
+	<span aria-hidden="true">·</span>
+	<time datetime={date.toISOString()}>{formatDate(date)}</time>
+	{
+		updated && (
+			<>
+				<span aria-hidden="true">·</span>
+				<span>
+					Updated <time datetime={updated.toISOString()}>{formatDate(updated)}</time>
+				</span>
+			</>
+		)
+	}
+	<span aria-hidden="true">·</span>
+	<Link href={categoryPath(category)}>{CATEGORIES[category].label}</Link>
+</p>
+
+<style>
+	.post-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 var(--space-2);
+		margin: 0;
+		color: var(--ink-muted);
+	}
+</style>

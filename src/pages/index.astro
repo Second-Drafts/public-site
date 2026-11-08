@@ -4,9 +4,10 @@ import HighlightedBand from "../components/HighlightedBand.astro";
 import Link from "../components/Link.astro";
 import Logo from "../components/Logo.astro";
 import Mark from "../components/Mark.astro";
+import PostMeta from "../components/PostMeta.astro";
 import ProofreaderMark from "../components/ProofreaderMark.astro";
 import Base from "../layouts/Base.astro";
-import { formatDate, getPublishedPosts } from "../lib/blog";
+import { getPublishedPosts } from "../lib/blog";
 import ExampleFlag from "../tools/continuity-checker/ExampleFlag.astro";
 import { EXAMPLE_FLAGS } from "../tools/continuity-checker/example-flags";
 import { WAITLIST_URL } from "../tools/continuity-checker/waitlist";
@@ -137,9 +138,11 @@ const [latestPost] = await getPublishedPosts();
 						<h3 class="sd-text-heading">
 							<Link href={`/blog/${latestPost.id}`}>{latestPost.data.title}</Link>
 						</h3>
-						<p class="sd-text-meta">
-							<time datetime={latestPost.data.date.toISOString()}>{formatDate(latestPost.data.date)}</time>
-						</p>
+						<PostMeta
+							author={latestPost.data.author}
+							category={latestPost.data.category}
+							date={latestPost.data.date}
+						/>
 						<p>{latestPost.data.description}</p>
 					</article>
 					<Link href="/blog">All posts →</Link>

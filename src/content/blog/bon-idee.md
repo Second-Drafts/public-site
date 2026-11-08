@@ -2,6 +2,8 @@
 title: Bon Idée
 description: A few words about why we are here and what you can expect from the Department.
 date: 10/11/2026
+author: department
+category: department
 ---
 
 Ah, the blank page.

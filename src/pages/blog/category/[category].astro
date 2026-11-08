@@ -1,0 +1,22 @@
+---
+import BlogListing from "../../../components/BlogListing.astro";
+import Base from "../../../layouts/Base.astro";
+import { getPublishedCategories } from "../../../lib/blog";
+import { CATEGORIES, type CategoryKey } from "../../../lib/blog-taxonomy";
+import { blog } from "../../../lib/seo/schema";
+
+export async function getStaticPaths() {
+	return (await getPublishedCategories()).map((category) => ({ params: { category }, props: { category } }));
+}
+
+interface Props {
+	category: CategoryKey;
+}
+
+const { category } = Astro.props;
+const { label, description } = CATEGORIES[category];
+---
+
+<Base title={label} pageType="CollectionPage" description={description} schema={[blog()]}>
+	<BlogListing category={category} />
+</Base>

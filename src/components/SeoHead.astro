@@ -51,6 +51,7 @@ const graph = buildGraph(
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+<link rel="alternate" type="application/rss+xml" title={`${SITE_NAME}: Blog`} href={absoluteUrl("/rss.xml", Astro.site!)} />
 <meta property="og:type" content={article ? "article" : "website"} />
 <meta property="og:site_name" content={SITE_NAME} />
 <meta property="og:title" content={fullTitle} />
