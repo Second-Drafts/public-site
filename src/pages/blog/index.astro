@@ -1,7 +1,10 @@
 ---
 import BlogListing from "../../components/BlogListing.astro";
 import Base from "../../layouts/Base.astro";
+import { getPublishedPosts } from "../../lib/blog";
 import { blog } from "../../lib/seo/schema";
+
+const posts = await getPublishedPosts();
 ---
 
 <Base
@@ -10,5 +13,5 @@ import { blog } from "../../lib/seo/schema";
 	description="Thoughts on writing, editing, and storytelling, and the current state of the Department."
 	schema={[blog()]}
 >
-	<BlogListing />
+	<BlogListing posts={posts} />
 </Base>

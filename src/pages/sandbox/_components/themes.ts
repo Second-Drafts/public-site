@@ -45,5 +45,6 @@ export const SANDBOX_PAGES = [
 	{ href: "/sandbox/logo", label: "Logo", description: "The lockup in each theme, with its clear space." },
 	{ href: "/sandbox/header", label: "Header", description: "The site header: wordmark and main navigation." },
 	{ href: "/sandbox/highlighted-band", label: "HighlightedBand", description: "The one pink band per page." },
+	{ href: "/sandbox/blog", label: "Blog", description: "The post byline and the category filter pills." },
 	{ href: "/sandbox/composition", label: "Composition", description: "Everything together on one page." },
 ];

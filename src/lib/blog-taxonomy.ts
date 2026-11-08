@@ -14,7 +14,7 @@ export const DESKS = {
 	},
 	engineering: {
 		name: "The Engineering Desk",
-		description: "Solving problems, how the tools are made, and why.",
+		description: "The problems we're thinking about, how the tools are made, and why.",
 	},
 } as const satisfies Record<string, Desk>;
 

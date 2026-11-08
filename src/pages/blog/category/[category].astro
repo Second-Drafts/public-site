@@ -1,7 +1,8 @@
 ---
 import BlogListing from "../../../components/BlogListing.astro";
 import Base from "../../../layouts/Base.astro";
-import { CATEGORIES, CATEGORY_KEYS, type CategoryKey } from "../../../lib/blog-taxonomy";
+import { categoryListing, getFilteredPosts } from "../../../lib/blog";
+import { CATEGORY_KEYS, type CategoryKey } from "../../../lib/blog-taxonomy";
 import { blog } from "../../../lib/seo/schema";
 
 export function getStaticPaths() {
@@ -13,9 +14,10 @@ interface Props {
 }
 
 const { category } = Astro.props;
-const { label, description } = CATEGORIES[category];
+const { title, description } = categoryListing(category);
+const posts = await getFilteredPosts({ category });
 ---
 
-<Base title={label} pageType="CollectionPage" description={description} schema={[blog()]}>
-	<BlogListing category={category} />
+<Base title={title} pageType="CollectionPage" description={description} noindex={posts.length === 0} schema={[blog()]}>
+	<BlogListing posts={posts} category={category} />
 </Base>

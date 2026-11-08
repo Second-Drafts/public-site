@@ -1,7 +1,7 @@
 ---
 import Link from "../components/Link.astro";
 import PostMeta from "../components/PostMeta.astro";
-import { type CategoryKey, DESKS, type DeskKey, deskAboutPath } from "../lib/blog-taxonomy";
+import { CATEGORIES, type CategoryKey, type DeskKey } from "../lib/blog-taxonomy";
 import { blogPosting } from "../lib/seo/schema";
 import Base from "./Base.astro";
 
@@ -15,52 +15,37 @@ interface Props {
 }
 
 const { title, description, date, updated, author, category } = Astro.props;
-const desk = DESKS[author];
 ---
 
 <Base
   title={title}
   description={description}
-  article={{ publishedTime: date }}
+  article={{ publishedTime: date, section: CATEGORIES[category].label }}
   dateModified={updated}
   schema={blogPosting({ datePublished: date, dateModified: updated, author, category })}
 >
   <article>
+    <p class="back">
+      <Link href="/blog/"><span aria-hidden="true">←</span> All posts</Link>
+    </p>
     <h1 class="sd-text-headline">{title}</h1>
     <PostMeta author={author} category={category} date={date} updated={updated} />
     <div class="prose">
       <slot />
     </div>
-    <footer class="desk-note">
-      <p>
-        <strong>{desk.name}.</strong> {desk.description}{" "}
-        <Link href={deskAboutPath(author)}>About the desks</Link>
-      </p>
-    </footer>
   </article>
 </Base>
 
 <style>
+  .back {
+    margin: 0 0 var(--space-6);
+  }
   h1 {
     margin: 0 0 var(--space-2);
     font-weight: 600;
   }
   .prose {
     margin-block-start: var(--space-8);
-  }
-  .desk-note {
-    margin-block-start: var(--space-12);
-    padding-block-start: var(--space-4);
-    border-block-start: var(--stroke-hairline) solid var(--rule-strong);
-    color: var(--ink-muted);
-  }
-  .desk-note p {
-    margin: 0;
-    text-wrap: pretty;
-  }
-  .desk-note strong {
-    color: var(--ink);
-    font-weight: 600;
   }
   /* Rendered markdown has no classes, so style it from the wrapper. */
   .prose :global(h2),

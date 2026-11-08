@@ -1,7 +1,7 @@
 ---
 title: Bon Idée
 description: A few words about why we are here and what you can expect from the Department.
-date: 10/11/2026
+date: 2026-10-11
 author: department
 category: department
 ---

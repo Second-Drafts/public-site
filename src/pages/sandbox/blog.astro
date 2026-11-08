@@ -1,0 +1,44 @@
+---
+import CategoryNav from "../../components/CategoryNav.astro";
+import PostMeta from "../../components/PostMeta.astro";
+import Guidelines from "./_components/Guidelines.astro";
+import SandboxLayout from "./_components/SandboxLayout.astro";
+import Specimen from "./_components/Specimen.astro";
+import ThemePanel from "./_components/ThemePanel.astro";
+import { THEMES } from "./_components/themes";
+
+const published = new Date("2026-10-11T00:00:00Z");
+const updated = new Date("2026-11-08T00:00:00Z");
+---
+
+<SandboxLayout title="Blog" description="The post byline and the category filter.">
+	<Guidelines source="src/lib/blog-taxonomy.ts">
+		<p>
+			Desks and categories are data in <code>blog-taxonomy.ts</code>. The byline links the desk and category to their
+			posts; the filter fills the one being shown in <code>ink</code>.
+		</p>
+	</Guidelines>
+
+	<Specimen title="PostMeta" description="Desk, date, an optional updated date, and category." min="24rem">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<PostMeta author="editorial" category="craft" date={published} />
+					<PostMeta author="department" category="department" date={published} updated={updated} />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+
+	<Specimen title="CategoryNav" description="All posts selected, a category selected, and nothing selected on a desk page." min="24rem">
+		{
+			THEMES.map((theme) => (
+				<ThemePanel theme={theme} layout="stack">
+					<CategoryNav current="all" />
+					<CategoryNav current="writing-life" />
+					<CategoryNav />
+				</ThemePanel>
+			))
+		}
+	</Specimen>
+</SandboxLayout>

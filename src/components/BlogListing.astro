@@ -1,12 +1,11 @@
 ---
 /*
- * BlogListing — the blog page: its header, the category filter, and the posts it lets through.
+ * BlogListing — the blog page: its header, the category filter, and the posts the page has filtered.
  * Every listing shares the same header, so switching categories or desks only changes what's beneath it.
  *
- *   <BlogListing category="craft" />
- *   <BlogListing desk="editorial" />
+ *   <BlogListing posts={await getFilteredPosts({ category: "craft" })} category="craft" />
  */
-import { getPublishedPosts } from "../lib/blog";
+import type { CollectionEntry } from "astro:content";
 import { CATEGORIES, type CategoryKey, DESKS, type DeskKey, deskAboutPath } from "../lib/blog-taxonomy";
 import CategoryNav from "./CategoryNav.astro";
 import Link from "./Link.astro";
@@ -14,14 +13,12 @@ import PageHeader from "./PageHeader.astro";
 import PostList from "./PostList.astro";
 
 interface Props {
+	posts: CollectionEntry<"blog">[];
 	category?: CategoryKey;
 	desk?: DeskKey;
 }
 
-const { category, desk } = Astro.props;
-const posts = (await getPublishedPosts()).filter(
-	(post) => (!category || post.data.category === category) && (!desk || post.data.author === desk),
-);
+const { posts, category, desk } = Astro.props;
 ---
 
 <PageHeader title="Memos from the Department">
@@ -43,7 +40,10 @@ const posts = (await getPublishedPosts()).filter(
 	{posts.length > 0 ? <PostList posts={posts} /> : <p class="empty">We're still drafting. Check back soon.</p>}
 </div>
 
-<p class="feed">Follow along in your reader with the <Link href="/rss.xml">RSS feed</Link>.</p>
+<p class="browse">
+	Browse every <Link href="/blog/category/">category</Link> or <Link href="/blog/desk/">desk</Link>, or follow along in
+	your reader with the <Link href="/rss.xml">RSS feed</Link>.
+</p>
 
 <style>
 	@media (prefers-reduced-motion: no-preference) {
@@ -70,7 +70,7 @@ const posts = (await getPublishedPosts()).filter(
 	.filter-description strong {
 		font-weight: 600;
 	}
-	.feed {
+	.browse {
 		margin-block-start: var(--space-12);
 	}
 </style>

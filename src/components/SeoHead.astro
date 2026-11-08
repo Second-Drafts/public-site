@@ -12,8 +12,10 @@ export interface Props {
 	/** Name of a card in public/img/og, without the extension. */
 	ogImage?: string;
 	ogImageAlt?: string;
-	/** Marks the page as an article for Open Graph. */
-	article?: { publishedTime: Date };
+	/** Marks the page as an article for Open Graph, with its section (the post's category). */
+	article?: { publishedTime: Date; section: string };
+	/** Keeps the page out of search results and the sitemap, for a page with nothing on it yet. */
+	noindex?: boolean;
 	pageType?: PageType;
 	dateModified?: Date;
 	/** Nodes for the page's JSON-LD graph, from src/lib/seo/schema.ts. */
@@ -30,6 +32,7 @@ const {
 	pageType = "WebPage",
 	dateModified,
 	schema = [],
+	noindex = false,
 } = Astro.props;
 
 const fullTitle = seoTitle ?? (title ? `${SITE_NAME}: ${title}` : SITE_NAME);
@@ -50,6 +53,7 @@ const graph = buildGraph(
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
+{noindex && <meta name="robots" content="noindex" />}
 <link rel="canonical" href={canonical} />
 <link rel="alternate" type="application/rss+xml" title={`${SITE_NAME}: Blog`} href={absoluteUrl("/rss.xml", Astro.site!)} />
 <meta property="og:type" content={article ? "article" : "website"} />
@@ -61,7 +65,15 @@ const graph = buildGraph(
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
 <meta property="og:image:alt" content={ogImageAlt} />
-{article && <meta property="article:published_time" content={article.publishedTime.toISOString()} />}
+{
+	article && (
+		<>
+			<meta property="article:published_time" content={article.publishedTime.toISOString()} />
+			{dateModified && <meta property="article:modified_time" content={dateModified.toISOString()} />}
+			<meta property="article:section" content={article.section} />
+		</>
+	)
+}
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
