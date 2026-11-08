@@ -10,8 +10,8 @@ const pageHtml = (path: string, { head = "", graphScript }: { head?: string; gra
 	const url = new URL(path, site).href;
 	const trail = breadcrumbTrail(path, "A page", site);
 	const graph = buildGraph(
-		{ site, url, name: "A page", description: "About it." },
-		{ type: "WebPage", trail, imageUrl },
+		{ site, url, name: "A page", description: "About it.", imageUrl },
+		{ type: "WebPage", trail },
 	);
 	return `<html><head>
 		<meta name="description" content="About it.">
@@ -26,8 +26,8 @@ const pageHtml = (path: string, { head = "", graphScript }: { head?: string; gra
 const withGraph = (path: string, edit: (graph: { "@graph": Record<string, unknown>[] }) => void) => {
 	const url = new URL(path, site).href;
 	const graph = buildGraph(
-		{ site, url, name: "A page", description: "About it." },
-		{ type: "WebPage", trail: breadcrumbTrail(path, "A page", site), imageUrl },
+		{ site, url, name: "A page", description: "About it.", imageUrl },
+		{ type: "WebPage", trail: breadcrumbTrail(path, "A page", site) },
 	) as unknown as { "@graph": Record<string, unknown>[] };
 	edit(graph);
 	return pageHtml(path, { graphScript: `<script type="application/ld+json">${JSON.stringify(graph)}</script>` });

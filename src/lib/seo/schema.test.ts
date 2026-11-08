@@ -14,9 +14,9 @@ import { breadcrumbTrail } from "./site";
 
 const site = new URL("https://seconddrafts.com/");
 const url = "https://seconddrafts.com/tools/word-counter/";
-const page = { site, url, name: "Word Counter", description: "Count words." };
 const trail = breadcrumbTrail("/tools/word-counter/", "Word Counter", site);
 const imageUrl = "https://seconddrafts.com/img/og/site.png";
+const page = { site, url, name: "Word Counter", description: "Count words.", imageUrl };
 
 const nodesOf = (graph: ReturnType<typeof buildGraph>) => graph["@graph"] as unknown as Record<string, unknown>[];
 
@@ -52,7 +52,6 @@ describe("buildGraph", () => {
 	const graph = buildGraph(page, {
 		type: "WebPage",
 		trail,
-		imageUrl,
 		extraNodes: toolSchema({ appName: "Word counter" }),
 	});
 	const nodes = nodesOf(graph);
@@ -74,7 +73,7 @@ describe("buildGraph", () => {
 	});
 
 	it("leaves out the breadcrumb on the home page", () => {
-		const home = buildGraph({ ...page, url: site.href }, { type: "WebPage", trail: [], imageUrl });
+		const home = buildGraph({ ...page, url: site.href }, { type: "WebPage", trail: [] });
 		const nodes = nodesOf(home);
 		expect(nodes.map((node) => node["@type"])).toEqual(["Organization", "WebSite", "WebPage"]);
 		expect(nodes[2]).not.toHaveProperty("breadcrumb");
@@ -82,7 +81,7 @@ describe("buildGraph", () => {
 
 	it("uses the page type it is given and records when it was modified", () => {
 		const modified = new Date("2026-10-01T00:00:00Z");
-		const about = nodesOf(buildGraph(page, { type: "AboutPage", trail, imageUrl, dateModified: modified }))[2];
+		const about = nodesOf(buildGraph(page, { type: "AboutPage", trail, dateModified: modified }))[2];
 		expect(about["@type"]).toBe("AboutPage");
 		expect(about.dateModified).toBe("2026-10-01T00:00:00.000Z");
 	});
@@ -126,6 +125,7 @@ describe("blogPosting", () => {
 			author: { "@id": organizationId(site) },
 			publisher: { "@id": organizationId(site) },
 			articleSection: "Building the Department",
+			image: { "@type": "ImageObject", url: imageUrl },
 			datePublished: published.toISOString(),
 			dateModified: published.toISOString(),
 		});
@@ -166,7 +166,7 @@ describe("serializeJsonLd", () => {
 	it("cannot be closed early by page text", () => {
 		const graph = buildGraph(
 			{ ...page, description: "</script><script>alert(1)</script>" },
-			{ type: "WebPage", trail, imageUrl },
+			{ type: "WebPage", trail },
 		);
 		const json = serializeJsonLd(graph);
 		expect(json).not.toContain("<");

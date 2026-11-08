@@ -40,11 +40,10 @@ const canonical = absoluteUrl(Astro.url.pathname, Astro.site!);
 const imageUrl = absoluteUrl(`/img/og/${ogImage}.png`, Astro.site!);
 
 const graph = buildGraph(
-	{ site: Astro.site!, url: canonical, name: fullTitle, description },
+	{ site: Astro.site!, url: canonical, name: fullTitle, description, imageUrl },
 	{
 		type: pageType,
 		trail: breadcrumbTrail(Astro.url.pathname, title, Astro.site!),
-		imageUrl,
 		dateModified,
 		extraNodes: schema,
 	},

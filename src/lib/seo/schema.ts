@@ -1,4 +1,4 @@
-import type { BreadcrumbList, Graph, Thing, WebPage } from "schema-dts";
+import type { BreadcrumbList, Graph, ImageObject, Thing, WebPage } from "schema-dts";
 import {
 	CATEGORIES,
 	type CategoryKey,
@@ -20,11 +20,15 @@ export interface PageContext {
 	url: string;
 	name: string;
 	description: string;
+	/** The page's social card. */
+	imageUrl: string;
 }
 
 export type SchemaNode = (page: PageContext) => Thing;
 
 const reference = (id: string) => ({ "@id": id });
+
+const pageImage = (page: PageContext): ImageObject => ({ "@type": "ImageObject", url: page.imageUrl });
 
 export const organizationId = (site: URL) => absoluteUrl("/#organization", site);
 export const websiteId = (site: URL) => absoluteUrl("/#website", site);
@@ -60,11 +64,10 @@ const breadcrumbList = (page: PageContext, trail: Crumb[]): BreadcrumbList => ({
 interface PageNodeOptions {
 	type: PageType;
 	trail: Crumb[];
-	imageUrl: string;
 	dateModified?: Date;
 }
 
-const pageNode = (page: PageContext, { type, trail, imageUrl, dateModified }: PageNodeOptions): WebPage => ({
+const pageNode = (page: PageContext, { type, trail, dateModified }: PageNodeOptions): WebPage => ({
 	"@type": type,
 	"@id": pageId(page.url),
 	url: page.url,
@@ -72,7 +75,7 @@ const pageNode = (page: PageContext, { type, trail, imageUrl, dateModified }: Pa
 	description: page.description,
 	inLanguage: "en",
 	isPartOf: reference(websiteId(page.site)),
-	primaryImageOfPage: { "@type": "ImageObject", url: imageUrl },
+	primaryImageOfPage: pageImage(page),
 	...(trail.length > 0 && { breadcrumb: reference(`${page.url}#breadcrumb`) }),
 	...(dateModified && { dateModified: dateModified.toISOString() }),
 });
@@ -174,6 +177,7 @@ const blogPostingNode =
 		inLanguage: "en",
 		datePublished: datePublished.toISOString(),
 		dateModified: (dateModified ?? datePublished).toISOString(),
+		image: pageImage(page),
 		articleSection: CATEGORIES[category].label,
 		author: reference(deskId(author, page.site)),
 		publisher: reference(organizationId(page.site)),
